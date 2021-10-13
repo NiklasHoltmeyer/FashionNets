@@ -1,20 +1,7 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-import random
 import tensorflow as tf
-from pathlib import Path
-from tensorflow.keras import applications
-from tensorflow.keras import layers
-from tensorflow.keras import losses
-from tensorflow.keras import optimizers
-from tensorflow.keras import metrics
 from tensorflow.keras import Model
-from tensorflow.keras.applications import resnet
-from fashiondatasets.utils.notebook.visualize.quadruplets import *
-from fashiondatasets.own.Quadruplets import Quadruplets
-from random import choice
-from fashiondatasets.own.helper.mappings import preprocess_image
+from tensorflow.keras import metrics
+from tensorflow.keras import optimizers
 
 from fashionnets.models.embedding.resnet50 import ResNet50Builder
 from fashionnets.networks.SiameseNetwork import SiameseNetwork
@@ -31,13 +18,19 @@ class SiameseModel(Model):
        L(A, P, N) = max(‖f(A) - f(P)‖² - ‖f(A) - f(N)‖² + margin, 0)
     """
 
-    def __init__(self, siamese_network, triplet_loss, margin=0.5):
+    def __init__(self, siamese_network, triplet_loss, alpha, beta=None):
         super(SiameseModel, self).__init__()
         self.siamese_network = siamese_network
-        self.margin = margin
+
+        self.alpha = alpha
+        self.beta = beta
+
         self.loss_tracker = metrics.Mean(name="loss")
         if triplet_loss:
             self._compute_loss = self._compute_triplet_loss_
+        else:
+            self._compute_loss = self._compute_quadruplet_loss_
+            assert beta, "Beta must be set."
 
     def call(self, inputs):
         return self.siamese_network(inputs)
@@ -70,7 +63,7 @@ class SiameseModel(Model):
         self.loss_tracker.update_state(loss)
         return {"loss": self.loss_tracker.result()}
 
-    def _compute_triplet_loss_(self, data):
+    def _compute_triplet_loss_(self, data):  # Triplet loss = AP - AN + alpha
         # The output of the network is a tuple containing the distances
         # between the anchor and the positive example, and the anchor and
         # the negative example.
@@ -78,8 +71,18 @@ class SiameseModel(Model):
 
         # Computing the Triplet Loss by subtracting both distances and
         # making sure we don't get a negative value.
-        loss = ap_distance - an_distance
-        loss = tf.maximum(loss + self.margin, 0.0)
+        loss = ap_distance - an_distance + self.alpha
+        loss = tf.maximum(loss, 0.0)
+        return loss
+
+    def _compute_quadruplet_loss_(self, data):  # AP-AN + alpha_1 + AP-NN + alpha_2
+        ap_distance, an_distance, nn_distance = self.siamese_network(data)
+
+        # Computing the Triplet Loss by subtracting both distances and
+        # making sure we don't get a negative value.
+        loss = tf.maximum((ap_distance - an_distance + self.alpha), 0) + \
+               tf.maximum((ap_distance - nn_distance + self.beta), 0)
+
         return loss
 
     @property
@@ -88,13 +91,15 @@ class SiameseModel(Model):
         # called automatically.
         return [self.loss_tracker]
 
+
 if __name__ == "__main__":
     target_shape = (144, 144)
 
     embedding, preprocess_input = ResNet50Builder.build(target_shape)
-    siamese_network = SiameseNetwork.build(embedding, triplets=False, input_shape=target_shape, preprocess_input=preprocess_input,
-                         channels=3)
+    siamese_network = SiameseNetwork.build(embedding, triplets=False, input_shape=target_shape,
+                                           preprocess_input=preprocess_input,
+                                           channels=3)
 
     siamese_model = SiameseModel(siamese_network, triplet_loss=True)
     siamese_model.compile(optimizer=optimizers.Adam(0.0001))
-    pass
+    # alpha 1, beta 0.5

@@ -1,6 +1,6 @@
 from tensorflow.keras import layers
-from tensorflow.keras import layers
 from tensorflow.keras.applications import resnet
+from tensorflow.keras import Model
 
 
 class ResNet50Builder:
@@ -27,4 +27,5 @@ class ResNet50Builder:
 
         return embedding, resnet.preprocess_input
 
-
+if __name__ == "__main__":
+    ResNet50Builder.build((144,144))
