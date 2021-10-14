@@ -6,7 +6,7 @@ from tensorflow import keras
 
 
 class DeleteOldModel(keras.callbacks.Callback):
-    def __init__(self, checkpoint_path, name, keep_n, save_format=None, only_weights=False):
+    def __init__(self, checkpoint_path, name, keep_n, save_format=None, save_weights_only=False):
         super(DeleteOldModel, self).__init__()
         assert save_format in ["tf", "h5", None]
 
@@ -19,7 +19,7 @@ class DeleteOldModel(keras.callbacks.Callback):
         self.save_format = save_format
         self.ext = f".{save_format}" if save_format else ""
         self.keep_n = keep_n
-        self.only_weights = only_weights
+        self.only_weights = save_weights_only
 
     def on_epoch_end(self, epoch, logs=None):
         fname_checkpoints = self.list_checkpoints()
