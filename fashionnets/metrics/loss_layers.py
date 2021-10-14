@@ -32,7 +32,7 @@ class QuadrupletLoss(layers.Layer):
         an_distance = tf.reduce_sum(tf.square(anchor - negative1), -1)
         nn_distance = tf.reduce_sum(tf.square(negative1 - negative2), -1)
 
-        loss = ap_distance - an_distance + self.alpha + ap_distance - nn_distance - self.beta
-        loss = tf.maximum(loss, 0.0)
+        loss = tf.maximum(ap_distance - an_distance + self.alpha, 0.0) + \
+               tf.maximum(ap_distance - nn_distance - self.beta, 0.0)
 
         return tf.reduce_sum(loss, axis=0)

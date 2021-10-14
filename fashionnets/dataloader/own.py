@@ -129,7 +129,7 @@ def _load_dataset_base_path(**settings):
     if notebook == "google":
         checkpoint_path = "/content/own_256" #/content/own_256
     elif notebook == "kaggle":
-        assert False
+        checkpoint_path = "../input/own-sl-256"
     else:
         checkpoint_path = "F:\\workspace\\datasets\\own"
 
