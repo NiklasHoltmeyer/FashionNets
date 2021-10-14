@@ -125,7 +125,7 @@ def _load_dataset_base_path(**settings):
     assert notebook in ["google", "kaggle", "local"]
 
     if notebook == "google":
-        checkpoint_path = "/content/"
+        checkpoint_path = "/content/own_256" #/content/own_256
     elif notebook == "kaggle":
         assert False
     else:
