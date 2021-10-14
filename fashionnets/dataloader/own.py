@@ -115,7 +115,7 @@ def _load_checkpoint_path(run_name, **settings):
     if notebook == "google":
         checkpoint_path = f"/gdrive/MyDrive/results/{run_name}"
     elif notebook == "kaggle":
-        assert False
+        checkpoint_path = f"./{run_name}"
     else:
         checkpoint_path = fr"F:\workspace\FashNets\{run_name}"
 
