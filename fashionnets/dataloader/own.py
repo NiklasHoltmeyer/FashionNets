@@ -78,6 +78,8 @@ def _split_dataset(dataset, n_items, verbose, **ds_settings):
 
 
 def _load_dataset(base_path, **ds_settings):
+
+
     quad_helper = Quadruplets(base_path, **ds_settings)
     dataset = quad_helper.load_as_dataset()
     dataset = dataset.shuffle(ds_settings["buffer_size"])
