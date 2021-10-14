@@ -1,7 +1,6 @@
 from tensorflow.keras import Model
 from tensorflow.keras import layers
 
-from fashionnets.metrics.distance_layer_alt import DistanceLayerTriplets, DistanceLayerQuadruplets
 from fashionnets.metrics.loss_layers import TripletLoss, QuadrupletLoss
 from fashionnets.models.embedding.resnet50 import ResNet50Builder
 
