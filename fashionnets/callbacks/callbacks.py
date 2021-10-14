@@ -12,7 +12,7 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
 
     return [
         keras.callbacks.EarlyStopping(monitor='loss', patience=3),
-        *model_checkpoint(checkpoint_path, name, monitor),
+        *model_checkpoint(checkpoint_path, name, monitor, save_weights_only=save_weights_only),
         DeleteOldModel(checkpoint_path=checkpoint_path, name=name, keep_n=keep_n,
                        save_format=save_format, save_weights_only=save_weights_only),
     ]
