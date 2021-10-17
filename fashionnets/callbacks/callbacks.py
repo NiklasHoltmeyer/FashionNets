@@ -5,9 +5,10 @@ from tensorflow import keras
 
 from fashionnets.callbacks.custom_save_weights import CustomSaveModel, CustomSaveWeights
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
+from fashionnets.callbacks.zip_results import ZipResults
 
 
-def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_weights_only=False, keep_n=2):
+def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_weights_only=False, keep_n=2,remove_after_zip=True):
     #save_callback = CustomSaveModel(checkpoint_path, name) if not save_weights_only else CustomSaveWeights(checkpoint_path, name)
 
     return [
@@ -15,6 +16,7 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         *model_checkpoint(checkpoint_path, name, monitor, save_weights_only=save_weights_only),
         DeleteOldModel(checkpoint_path=checkpoint_path, name=name, keep_n=keep_n,
                        save_format=save_format, save_weights_only=save_weights_only),
+        ZipResults(checkpoint_path=checkpoint_path,remove_after_zip=remove_after_zip)
     ]
 
 def model_checkpoint(checkpoint_path, name, monitor='val_accuracy', save_weights_only=False):

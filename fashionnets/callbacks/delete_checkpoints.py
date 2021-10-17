@@ -39,12 +39,13 @@ class DeleteOldModel(keras.callbacks.Callback):
             for ep, paths in files_to_del:
                 for path in paths:
                     path = Path(path)
-                    if self.delete_path(path):
+                    if DeleteOldModel.delete_path(path):
                         print(f"Removing CP (EP={ep}): ./{path.name}")
                     else:
                         print(f"Removing CP (EP={ep}): ./{path.name} FAILED!!!")
 
-    def delete_path(self, path):
+    @staticmethod
+    def delete_path(path):
         try:
             path.unlink()
             return True

@@ -5,6 +5,8 @@ from pathlib import Path
 from numba.core.typing.builtins import Zip
 from tensorflow import keras
 
+from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
+
 
 class ZipResults(keras.callbacks.Callback):
     def __init__(self, checkpoint_path, remove_after_zip):
@@ -13,15 +15,20 @@ class ZipResults(keras.callbacks.Callback):
         self.remove_after_zip = remove_after_zip
 
     def on_epoch_end(self, epoch, logs=None):
-        ZipResults.zip_results(self.checkpoint_path)
-        pass
+        self.zip_results(self.checkpoint_path, True)
 
-    @staticmethod
-    def zip_results(folder_path, overwrite=False):
+    def zip_results(self, folder_path, overwrite=False):
         if not overwrite and Path(folder_path + ".zip").exists():
             return
         print(f"Zipping: {folder_path}")
-        shutil.make_archive(folder_path, 'zip', folder_path)
+        try:
+            shutil.make_archive(folder_path, 'zip', folder_path)
+            if self.remove_after_zip:
+                if not DeleteOldModel.delete_path(folder_path):
+                    print("Couldnt Remove:", folder_path)
+        except Exception as e:
+            print("zip_results Expcetion")
+            print(e)
 
     @staticmethod
     def list_subfolders(path):
