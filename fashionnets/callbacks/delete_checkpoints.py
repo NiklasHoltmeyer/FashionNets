@@ -23,7 +23,10 @@ class DeleteOldModel(keras.callbacks.Callback):
 
 
     def on_epoch_end(self, epoch, logs=None):
-        fname_checkpoints = self.list_checkpoints()
+        try:
+            fname_checkpoints = self.list_checkpoints()
+        except:
+            return
 
         if self.keep_n >= len(fname_checkpoints):
             return
