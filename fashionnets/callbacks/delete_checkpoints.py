@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 from collections import defaultdict
 import collections
@@ -38,8 +39,22 @@ class DeleteOldModel(keras.callbacks.Callback):
             for ep, paths in files_to_del:
                 for path in paths:
                     path = Path(path)
-                    print(f"Removing CP (EP={ep}): ./{path.name}")
-                    path.unlink()
+                    if self.delete_path(path):
+                        print(f"Removing CP (EP={ep}): ./{path.name}")
+                    else:
+                        print(f"Removing CP (EP={ep}): ./{path.name} FAILED!!!")
+
+    def delete_path(self, path):
+        try:
+            path.unlink()
+            return True
+        except:
+            pass
+        try:
+            shutil.rmtree(path)
+            return True
+        except:
+            return False
 
     def sorted_checkpoints(self, checkpoints):
         best_cps, train_cp = defaultdict(lambda: []), defaultdict(lambda: [])
