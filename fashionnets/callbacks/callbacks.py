@@ -21,12 +21,13 @@ def model_checkpoint(checkpoint_path, name, monitor='val_accuracy', save_weights
     model_cp_path = Path(checkpoint_path, f"{name}_best_") # .h5
     model_cp_latest_path = Path(checkpoint_path, name+"_") #.h5
 
+    model_cp_path.parent.mkdir(parents=True, exist_ok=True)
+
     model_cp_path = str(model_cp_path.resolve()) + "cp-{epoch:04d}.ckpt"
     model_cp_latest_path = str(model_cp_latest_path.resolve()) + "cp-{epoch:04d}.ckpt"
 
     history_cp_path = Path(checkpoint_path, "history.csv")
 
-    model_cp_path.parent.mkdir(parents=True, exist_ok=True)
     return [
         tf.keras.callbacks.CSVLogger(history_cp_path, append=True, separator=";"),
         keras.callbacks.ModelCheckpoint(model_cp_path, save_best_only=True, monitor=monitor,

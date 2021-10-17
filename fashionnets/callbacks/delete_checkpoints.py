@@ -59,7 +59,7 @@ class DeleteOldModel(keras.callbacks.Callback):
             is_checkpoint = lambda x: x[-3:] == self.ext
         else:
             is_checkpoint = lambda x: "_ep" in x and (x.endswith(".index") or ".data-" in x)
-        is_not_best = lambda x: not "best_only" in x
+        is_not_best = lambda x: not "_best_" in x
 
         checkpoints = filter(is_checkpoint, os.listdir(self.checkpoint_path))
         if keep_best:

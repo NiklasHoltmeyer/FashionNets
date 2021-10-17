@@ -131,6 +131,6 @@ def _load_dataset_base_path(**settings):
     elif notebook == "kaggle":
         dataset_base_path = "/kaggle/working/own_256" #"../input/own-sl-256/own_256"
     else:
-        dataset_base_path = "F:\\workspace\\datasets\\own"
+        dataset_base_path = "F:\\workspace\\datasets\\own_256"
 
     return dataset_base_path
