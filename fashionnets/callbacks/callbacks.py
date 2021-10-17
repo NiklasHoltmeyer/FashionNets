@@ -26,6 +26,7 @@ def model_checkpoint(checkpoint_path, name, monitor='val_accuracy', save_weights
     model_cp_path = str(model_cp_path.resolve()) + "cp-{epoch:04d}.ckpt"
     model_cp_latest_path = str(model_cp_latest_path.resolve()) + "cp-{epoch:04d}.ckpt"
 
+    print("model_cp_path", model_cp_path)
     history_cp_path = Path(checkpoint_path, "history.csv")
 
     return [
