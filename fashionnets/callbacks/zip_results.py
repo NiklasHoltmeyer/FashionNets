@@ -10,20 +10,15 @@ from fashionnets.util.io import read_file, write_file
 
 
 class ZipResults(keras.callbacks.Callback):
-    def __init__(self, checkpoint_path, remove_after_zip, force_delete_zip=True):
+    def __init__(self, checkpoint_path, remove_after_zip):
         super(ZipResults, self).__init__()
         self.checkpoint_path = checkpoint_path
         self.remove_after_zip = remove_after_zip
-        self.force_delete_zip = force_delete_zip
 
     def on_epoch_end(self, epoch, logs=None):
         self.zip_results(self.checkpoint_path, True, epoch=epoch)
 
     def zip_results(self, folder_path, overwrite=False, epoch=None):
-        if self.force_delete_zip:
-            print("Force Folder", Path(folder_path + ".zip"))
-            DeleteOldModel.delete_path(Path(folder_path + ".zip"))
-
         if not overwrite and Path(folder_path + ".zip").exists():
             return
         print(f"Zipping: {folder_path}")
