@@ -32,11 +32,14 @@ class ZipResults(keras.callbacks.Callback):
             if self.remove_after_zip:
                 history_path = Path(folder_path, "history.csv")
                 history = read_file(history_path) if history_path.exists() else None
+                print("History:")
+                print((history if history is not None else "NONE"))
 
                 if not DeleteOldModel.delete_path(folder_path):
                     print("Couldnt Remove:", folder_path)
 
                 if history:
+                    print("WRITE-History:",str(history_path))
                     history_path.parent.mkdir(parents=True,exist_ok=True)
                     write_file(history_path, history)
 
