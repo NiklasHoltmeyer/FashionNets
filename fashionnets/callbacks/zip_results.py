@@ -6,6 +6,7 @@ from numba.core.typing.builtins import Zip
 from tensorflow import keras
 
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
+from fashionnets.util.io import read_file, write_file
 
 
 class ZipResults(keras.callbacks.Callback):
@@ -29,8 +30,16 @@ class ZipResults(keras.callbacks.Callback):
         try:
             shutil.make_archive(folder_path + f"{epoch:04d}", 'zip', folder_path)
             if self.remove_after_zip:
+                history_path = Path(folder_path, "history.csv")
+                history = read_file(history_path) if history_path.exists() else None
+
                 if not DeleteOldModel.delete_path(folder_path):
                     print("Couldnt Remove:", folder_path)
+
+                if history:
+                    history_path.parent.mkdir(parents=True,exist_ok=True)
+                    write_file(history_path, history)
+
         except Exception as e:
             print("zip_results Expcetion")
             print(e)
