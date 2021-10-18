@@ -37,9 +37,12 @@ class SiameseModel(Model):
         self.logger.debug("Test_Step: Calc Val_Loss")
         loss = self.siamese_network(data)
 
-        self.loss_tracker.update_state(loss)
         self.logger.debug("Test_Step: Update Val_Loss")
-        return {"loss": self.loss_tracker.result()}
+        self.loss_tracker.update_state(loss)
+        self.logger.debug("Test_Step: Tracker.Result()")
+        loss = self.loss_tracker.result()
+        self.logger.debug("Test_Step: Tracker.Result() DONE")
+        return {"loss": loss}
 
     def fake_predict(self, input_shape, is_triplet):
         """
