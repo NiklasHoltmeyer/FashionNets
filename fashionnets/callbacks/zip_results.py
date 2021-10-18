@@ -13,12 +13,12 @@ class ZipResults(keras.callbacks.Callback):
         super(ZipResults, self).__init__()
         self.checkpoint_path = checkpoint_path
         self.remove_after_zip = remove_after_zip
-        self.force_delete_zip=force_delete_zip
+        self.force_delete_zip = force_delete_zip
 
     def on_epoch_end(self, epoch, logs=None):
-        self.zip_results(self.checkpoint_path, True)
+        self.zip_results(self.checkpoint_path, True, epoch=epoch)
 
-    def zip_results(self, folder_path, overwrite=False):
+    def zip_results(self, folder_path, overwrite=False, epoch=None):
         if self.force_delete_zip:
             print("Force Folder", Path(folder_path + ".zip"))
             DeleteOldModel.delete_path(Path(folder_path + ".zip"))
@@ -27,7 +27,7 @@ class ZipResults(keras.callbacks.Callback):
             return
         print(f"Zipping: {folder_path}")
         try:
-            shutil.make_archive(folder_path, 'zip', folder_path)
+            shutil.make_archive(folder_path + f"{epoch:04d}", 'zip', folder_path)
             if self.remove_after_zip:
                 if not DeleteOldModel.delete_path(folder_path):
                     print("Couldnt Remove:", folder_path)
