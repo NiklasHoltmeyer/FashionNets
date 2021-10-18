@@ -48,11 +48,16 @@ def load_dataset(**settings):
 
     base_path = _load_dataset_base_path(**settings)
     dataset, n_items = _load_dataset(base_path, **ds_settings)
-    train_dataset, val_dataset = _split_dataset(dataset, n_items, verbose, **ds_settings)
+    train_dataset, val_dataset, n_train, n_val = _split_dataset(dataset, n_items, verbose, **ds_settings)
     return {
         "train": train_dataset,
         "val": val_dataset,
-        "shape": ds_settings.get("target_shape")
+        "shape": ds_settings.get("target_shape"),
+        "n_items": {
+            "total": n_items,
+            "validation": n_val,
+            "train": n_train
+        }
     }
 
 
@@ -60,8 +65,11 @@ def _split_dataset(dataset, n_items, verbose, **ds_settings):
     split = ds_settings.pop("train_split")
     batch_size = ds_settings["batch_size"]
 
-    train_dataset = dataset.take(round(n_items * split))
-    val_dataset = dataset.skip(round(n_items * split))
+    n_train_items = round(n_items * split)
+    n_val_items = n_items - n_train_items
+
+    train_dataset = dataset.take(n_train_items)
+    val_dataset = dataset.skip(n_train_items)
 
     train_dataset = train_dataset.batch(batch_size, drop_remainder=False)
     train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE) #.prefetch(tf.data.AUTOTUNE)
@@ -74,7 +82,7 @@ def _split_dataset(dataset, n_items, verbose, **ds_settings):
         print("# Train", round(n_items * 0.8))
         print("# Val  ", n_items - round(n_items * 0.8))
 
-    return train_dataset, val_dataset
+    return train_dataset, val_dataset, n_train_items, n_val_items
 
 
 def _load_dataset(base_path, **ds_settings):
