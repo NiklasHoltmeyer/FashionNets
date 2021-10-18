@@ -1,6 +1,6 @@
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
-
+import tensorflow as tf
 
 def load_train_job(name, **kwargs):
     path = {
@@ -64,10 +64,10 @@ def _split_dataset(dataset, n_items, verbose, **ds_settings):
     val_dataset = dataset.skip(round(n_items * split))
 
     train_dataset = train_dataset.batch(batch_size, drop_remainder=False)
-    train_dataset = train_dataset.prefetch(8)
+    train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE) #.prefetch(tf.data.AUTOTUNE)
 
     val_dataset = val_dataset.batch(batch_size, drop_remainder=False)
-    val_dataset = val_dataset.prefetch(8)
+    val_dataset = val_dataset.prefetch(tf.data.AUTOTUNE) #8
 
     if verbose:
         print("# Items", n_items)

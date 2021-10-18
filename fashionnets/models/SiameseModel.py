@@ -20,29 +20,24 @@ class SiameseModel(Model):
         return self.siamese_network(inputs)
 
     def train_step(self, data):
-        self.logger.debug("Train_Step: Calc Loss")
         with tf.GradientTape() as tape:
             loss = self.siamese_network(data)
-        self.logger.debug("Train_Step: Tape.Gradient")
+
         gradients = tape.gradient(loss, self.siamese_network.trainable_weights)
-        self.logger.debug("Train_Step: Gradient.Apply")
+
         self.optimizer.apply_gradients(
             zip(gradients, self.siamese_network.trainable_weights)
         )
-        self.logger.debug("Train_Step: Update Loss")
+
         self.loss_tracker.update_state(loss)
         return {"loss": self.loss_tracker.result()}
 
     def test_step(self, data):
-        self.logger.debug("Test_Step: Calc Val_Loss")
         loss = self.siamese_network(data)
 
-        self.logger.debug("Test_Step: Update Val_Loss")
         self.loss_tracker.update_state(loss)
-        self.logger.debug("Test_Step: Tracker.Result()")
-        loss = self.loss_tracker.result()
-        self.logger.debug("Test_Step: Tracker.Result() DONE")
-        return {"loss": loss}
+
+        return {"loss": self.loss_tracker.result()}
 
     def fake_predict(self, input_shape, is_triplet):
         """
