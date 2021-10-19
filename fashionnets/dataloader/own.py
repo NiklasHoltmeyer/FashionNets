@@ -65,6 +65,11 @@ def _split_dataset(dataset, n_items, verbose, **ds_settings):
     split = ds_settings.pop("train_split")
     batch_size = ds_settings["batch_size"]
 
+    if not split:
+        dataset = dataset.batch(batch_size, drop_remainder=False)
+        dataset = dataset.prefetch(tf.data.AUTOTUNE)
+        return dataset, None, n_items, 0
+
     n_train_items = round(n_items * split)
     n_val_items = n_items - n_train_items
 
