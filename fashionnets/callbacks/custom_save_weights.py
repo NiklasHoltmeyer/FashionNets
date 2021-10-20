@@ -1,11 +1,5 @@
 from pathlib import Path
 
-import tensorflow as tf
-from tensorflow import keras
-
-from pathlib import Path
-
-import tensorflow as tf
 from tensorflow import keras
 
 

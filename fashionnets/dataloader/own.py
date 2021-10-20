@@ -74,8 +74,9 @@ def _load_image_preprocessor(format, target_shape, preprocess_input=None, **kwar
 
 def _load_dataset(base_path, batch_size, buffer_size, train_split, format, **settings):
     split = train_split
+    settings["format"] = format
 
-    quad = Quadruplets(base_path, map_full_paths=True, format=format)
+    quad = Quadruplets(base_path, **settings)
 
     dataset = quad.load_as_dataset()
     dataset = dataset.shuffle(buffer_size)
@@ -87,18 +88,14 @@ def _load_dataset(base_path, batch_size, buffer_size, train_split, format, **set
     n_train_batches = n_train_items // batch_size
 
     train_dataset = dataset.take(n_train_batches)\
-        .map(_load_image_preprocessor(format, **settings))\
-        .batch(batch_size, drop_remainder=False)\
-        .prefetch(tf.data.AUTOTUNE)
-    val_dataset = dataset.skip(n_train_batches)\
-        .map(_load_image_preprocessor(format, **settings))\
+        .map(_load_image_preprocessor(**settings))\
         .batch(batch_size, drop_remainder=False)\
         .prefetch(tf.data.AUTOTUNE)
 
-    print("n_total_items", "\t", n_total_items)
-    print("n_train_items", "\t", n_train_items)
-    print("n_val_items", "\t", n_val_items)
-    print("n_train_batches", " ", n_train_batches)
+    val_dataset = dataset.skip(n_train_batches)\
+        .map(_load_image_preprocessor(**settings))\
+        .batch(batch_size, drop_remainder=False)\
+        .prefetch(tf.data.AUTOTUNE)
 
     return train_dataset, val_dataset, n_train_items, n_val_items
 
