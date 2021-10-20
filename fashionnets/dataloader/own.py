@@ -79,8 +79,6 @@ def _load_dataset(base_path, batch_size, buffer_size, train_split, format, **set
 
     dataset = quad.load_as_dataset()
     dataset = dataset.shuffle(buffer_size)
-    dataset = dataset.batch(batch_size, drop_remainder=False)\
-        .prefetch(tf.data.AUTOTUNE)
 
     n_total_items = len(quad)
     n_train_items = round(split * n_total_items) #  // batch_size
@@ -88,8 +86,14 @@ def _load_dataset(base_path, batch_size, buffer_size, train_split, format, **set
 
     n_train_batches = n_train_items // batch_size
 
-    train_dataset = dataset.take(n_train_batches).map(_load_image_preprocessor(format, **settings))
-    val_dataset = dataset.skip(n_train_batches).map(_load_image_preprocessor(format, **settings))
+    train_dataset = dataset.take(n_train_batches)\
+        .map(_load_image_preprocessor(format, **settings))\
+        .batch(batch_size, drop_remainder=False)\
+        .prefetch(tf.data.AUTOTUNE)
+    val_dataset = dataset.skip(n_train_batches)\
+        .map(_load_image_preprocessor(format, **settings))\
+        .batch(batch_size, drop_remainder=False)\
+        .prefetch(tf.data.AUTOTUNE)
 
     print("n_total_items", "\t", n_total_items)
     print("n_train_items", "\t", n_train_items)
