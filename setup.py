@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-
 from setuptools import setup, find_packages
+
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
 
 # with open('LICENSE') as f:
 #   license = f.read()
@@ -17,5 +19,5 @@ setup(
     url='https://github.com/NiklasHoltmeyer/FashionNets',
     # license=license,
     packages=find_packages(exclude=('tests', 'docs')),
-    # install_requires=[],
+    install_requires=required,
 )
