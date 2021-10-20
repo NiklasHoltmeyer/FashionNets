@@ -85,14 +85,12 @@ def _load_dataset(base_path, batch_size, buffer_size, train_split, format, **set
     n_train_items = round(split * n_total_items) #  // batch_size
     n_val_items = n_total_items - n_train_items
 
-    n_train_batches = n_train_items // batch_size
-
-    train_dataset = dataset.take(n_train_batches)\
+    train_dataset = dataset.take(n_train_items)\
         .map(_load_image_preprocessor(**settings))\
         .batch(batch_size, drop_remainder=False)\
         .prefetch(tf.data.AUTOTUNE)
 
-    val_dataset = dataset.skip(n_train_batches)\
+    val_dataset = dataset.skip(n_train_items)\
         .map(_load_image_preprocessor(**settings))\
         .batch(batch_size, drop_remainder=False)\
         .prefetch(tf.data.AUTOTUNE)
