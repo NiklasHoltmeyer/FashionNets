@@ -2,6 +2,9 @@ from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 import tensorflow as tf
 
+from fashionnets.models.embedding.simple_cnn import SimpleCNN
+
+
 def load_train_job(name, **kwargs):
     path = {
         "checkpoint": _load_checkpoint_path(name, **kwargs),
@@ -47,79 +50,74 @@ def load_dataset(**settings):
         print("*" * len(header_str))
 
     base_path = _load_dataset_base_path(**settings)
-    dataset, n_items = _load_dataset(base_path, **ds_settings)
-    train_dataset, val_dataset, n_train, n_val = _split_dataset(dataset, n_items, verbose, **ds_settings)
+    train_dataset, val_dataset, n_train, n_val = _load_dataset(**{"base_path":base_path, **ds_settings})
     return {
         "train": train_dataset,
         "val": val_dataset,
         "shape": ds_settings.get("target_shape"),
         "n_items": {
-            "total": n_items,
+            "total": n_val+n_train,
             "validation": n_val,
             "train": n_train
         }
     }
 
 
-def _split_dataset(dataset, n_items, verbose, **ds_settings):
-    split = ds_settings.pop("train_split")
-    batch_size = ds_settings["batch_size"]
+def _load_image_preprocessor(format, target_shape, preprocess_input=None, **kwargs):
+    is_triplet = "triplet" in format
+    prep_image = preprocess_image(target_shape, preprocess_img=preprocess_input)
 
-    if not split:
-        dataset = dataset.batch(batch_size, drop_remainder=False)
-        dataset = dataset.prefetch(tf.data.AUTOTUNE)
-        return dataset, None, n_items, 0
+    if is_triplet:
+        return lambda a, p, n: (prep_image(a), prep_image(p), prep_image(n))
+    else:
+        return lambda a, p, n1, n2: (prep_image(a), prep_image(p), prep_image(n1), prep_image(n2))
 
-    n_train_items = round(n_items * split)
-    n_val_items = n_items - n_train_items
+def _load_dataset(base_path, batch_size, buffer_size, train_split, format, **settings):
+    split = train_split
 
-    train_dataset = dataset.take(n_train_items)
-    val_dataset = dataset.skip(n_train_items)
+    quad = Quadruplets(base_path, map_full_paths=True, format=format)
 
-    train_dataset = train_dataset.batch(batch_size, drop_remainder=False)
-    train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE) #.prefetch(tf.data.AUTOTUNE)
+    dataset = quad.load_as_dataset()
+    dataset = dataset.shuffle(buffer_size)
+    dataset = dataset.batch(batch_size, drop_remainder=False)\
+        .prefetch(tf.data.AUTOTUNE)
 
-    val_dataset = val_dataset.batch(batch_size, drop_remainder=False)
-    val_dataset = val_dataset.prefetch(tf.data.AUTOTUNE) #8
+    n_total_items = len(quad)
+    n_train_items = round(split * n_total_items) #  // batch_size
+    n_val_items = n_total_items - n_train_items
 
-    if verbose:
-        print("# Items", n_items)
-        print("# Train", round(n_items * 0.8))
-        print("# Val  ", n_items - round(n_items * 0.8))
+    n_train_batches = n_train_items // batch_size
+
+    train_dataset = dataset.take(n_train_batches).map(_load_image_preprocessor(format, **settings))
+    val_dataset = dataset.skip(n_train_batches).map(_load_image_preprocessor(format, **settings))
+
+    print("n_total_items", "\t", n_total_items)
+    print("n_train_items", "\t", n_train_items)
+    print("n_val_items", "\t", n_val_items)
+    print("n_train_batches", " ", n_train_batches)
 
     return train_dataset, val_dataset, n_train_items, n_val_items
 
+#    n_items = len(dataset)
+#    n_train_items = round(n_items * split)
 
-def _load_dataset(base_path, **ds_settings):
+#    train_dataset = dataset.take(n_train_items)
+#    val_dataset = dataset.skip(n_train_items)
 
+#    n_val_items = len(val_dataset)
 
-    quad_helper = Quadruplets(base_path, **ds_settings)
-    dataset = quad_helper.load_as_dataset()
-    dataset = dataset.shuffle(ds_settings["buffer_size"])
-    dataset = dataset.map(_load_image_preprocessor(**ds_settings))
+#    train_dataset = train_dataset.batch(batch_size, drop_remainder=False)
+#    train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE) #.prefetch(tf.data.AUTOTUNE)
 
-    return dataset, len(quad_helper)
+#    val_dataset = val_dataset.batch(batch_size, drop_remainder=False)
+#    val_dataset = val_dataset.prefetch(tf.data.AUTOTUNE)
 
+#    if settings.get("verbose", False):
+#        print("# Items", n_items)
+#        print("# Train", n_train_items)
+#        print("# Val  ", n_val_items)
 
-def _load_image_preprocessor(**ds_settings):
-    target_shape = ds_settings.get("target_shape")
-
-    is_triplet = "triplet" in ds_settings["format"]
-
-    preprocess_img = ds_settings.get("preprocess_input", None)
-    prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img)
-
-    def preprocess_quadruplet(a, p, n1, n2):
-        return prep_image(a), prep_image(p), prep_image(n1), prep_image(n2)
-
-    def preprocess_triplet(a, p, n):
-        return prep_image(a), prep_image(p), prep_image(n)
-
-    if is_triplet:
-        return preprocess_triplet
-
-    return preprocess_quadruplet
-
+#    return train_dataset, val_dataset, n_train_items, n_val_items
 
 def _load_checkpoint_path(run_name, **settings):
     notebook = settings["notebook"]
@@ -147,3 +145,52 @@ def _load_dataset_base_path(**settings):
         dataset_base_path = "F:\\workspace\\datasets\\own_256"
 
     return dataset_base_path
+
+if __name__ == "__main__":
+    global_settings = {
+        "batch_size": 32,
+        "notebook": "local",
+        "verbose": True,
+        #    "nrows": 1,
+        "epochs": 25
+    }
+    def job_3(input_shape):
+        alpha = 1.0
+        beta = 0.5
+
+        weights = "none"
+        back_bone = "simplecnn"
+
+        is_triplet = True
+
+        run_name = f"{back_bone}_{weights}"
+
+        back_bone, preprocess_input = SimpleCNN.build(input_shape), None
+
+        _format = "triplet" if is_triplet else "quadruplet"
+
+        d = load_train_job(run_name, format=_format, preprocess_input=preprocess_input,
+                           **global_settings, target_shape=input_shape)
+
+        local_settings = {
+            "alpha": alpha, "beta": beta,
+            "triplets": is_triplet, "is_triplet": is_triplet,
+            "input_shape": input_shape,
+            "back_bone": back_bone,
+            "preprocess_input": preprocess_input
+
+        }
+        return {**global_settings, **d, **local_settings}
+
+    job = job_3((144,144))
+    ds = job["run"]["dataset"]
+    train, val = ds["train"], ds["val"]
+
+    print("TRAIN DS")
+    if list(iter(train.take(1))) is None:
+        print("Train Fail")
+
+    print("VAL DS")
+    if list(iter(val.take(1))) is None:
+        print("Val Fail")
+    print(job.keys())
