@@ -72,7 +72,7 @@ def load_job_from_notebook_name(notebook_name):
     #global_settings = global_settings(env.notebook)
     job_info = job_list().get(notebook_name, None)
 
-    env.dependencies["kaggle"] = job_info["dataset"].values()
+    env.dependencies["kaggle"] = job_info["dataset"]
 
     assert job_info, "Job = None"
 
