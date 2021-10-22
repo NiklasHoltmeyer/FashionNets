@@ -49,8 +49,8 @@ def job_list():
         "name": "deep_fashion_256",
         "variation": "df_quad_3",
         "cleanup_ops": [
-            ("rename", "./df_quad_3", "./deep_fashion")
-            ("mv", "./train_256/images", "./deep_fashion/train")
+            ("rename", "./df_quad_3", "./deep_fashion"),
+            ("mv", "./train_256/images", "./deep_fashion/train"),
             ("mv", "./validation_256/images", "./deep_fashion/validation"),
             ("rm", "./validation_256", None),
             ("rm", "./train_256", None)
