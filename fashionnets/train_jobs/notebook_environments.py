@@ -4,6 +4,7 @@ from pathlib import Path
 
 from fashionnets.util.io import json_load, download_extract_kaggle
 from fashionnets.util.remote import WebDav
+import kaggle
 
 try:
     # Imports that only work withing Kaggle
@@ -54,8 +55,10 @@ class Environment:
         self.webdav = WebDav(**webdav_secrets)
 
     def init(self):
+        print("Loading Kaggle")
         self.load_kaggle()
-
+        kaggle.api.authenticate()
+        print("Kaggle authenticate")
         secrets = self.load_webdav()
         self.build_webdav_settings(secrets)
 
@@ -78,7 +81,8 @@ class GoogleColabEnvironment(Environment):
         if Path("~/.kaggle").exists():
             return
 
-        drive.mount('/gdrive/')
+        if not Path("/gdrive/").exists():
+          drive.mount('/gdrive/')
 
         os.system("mkdir ~/.kaggle")
 

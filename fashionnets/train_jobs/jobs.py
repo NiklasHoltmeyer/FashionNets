@@ -68,8 +68,6 @@ def job_list():
 def load_job_from_notebook_name(notebook_name):
     env = environment(notebook_name)
 
-    settings = {}  # <- settings von hier irgendwo laden
-
     #global_settings = global_settings(env.notebook)
     job_info = job_list().get(notebook_name, None)
 
@@ -115,12 +113,13 @@ def load_job(back_bone_name, is_triplet, weights, input_shape, alpha, beta, envi
         "preprocess_input": preprocess_input
     }
     _format = "triplet" if is_triplet else "quadruplet"
+    assert environment, "ENV must be Set!"
 
-    if environment:
-        environment.train_job_name = run_name
-        environment.init()
-        settings["environment"] = environment
-        settings["notebook"] = environment.notebook
+    environment.train_job_name = run_name
+    environment.init()
+
+    settings["environment"] = environment
+    settings["notebook"] = environment.notebook
 
     d = load_train_job(run_name, format=_format, preprocess_input=preprocess_input,
                        **settings, target_shape=input_shape)
