@@ -1,6 +1,4 @@
 import json
-import kaggle
-
 
 def read_file(path, flag="r"):
     with open(path, flag) as f:
@@ -26,5 +24,9 @@ def json_load(file_path):
 
 
 def download_extract_kaggle(ds_name, path="./", unzip=True):
-    kaggle.api.authenticate()
-    kaggle.api.dataset_download_files(ds_name, path, unzip=unzip)
+    try:
+        import kaggle
+        kaggle.api.authenticate()
+        kaggle.api.dataset_download_files(ds_name, path, unzip=unzip)
+    except:
+        print("Could not find kaggle.json. Make sure it's located in /root/.kaggle. Or use the environment method.")
