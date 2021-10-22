@@ -78,7 +78,7 @@ class GoogleColabEnvironment(Environment):
 
     def load_kaggle(self):
         # Load Secrets
-        if Path("~/.kaggle").exists():
+        if Path("~/.kaggle/kaggle.json").exists():
             return
 
         if not Path("/gdrive/").exists():
