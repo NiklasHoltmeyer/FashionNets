@@ -31,6 +31,8 @@ class Environment:
         self.download_dependencies = download_dependencies
         self.dataset_prefix = dataset_prefix
 
+        print("Environment:", self)
+
     def set_name(self, name):
         self.train_job_name = name
 
@@ -55,10 +57,8 @@ class Environment:
         self.webdav = WebDav(**webdav_secrets)
 
     def init(self):
-        print("Loading Kaggle")
         self.load_kaggle()
         kaggle.api.authenticate()
-        print("Kaggle authenticate")
         secrets = self.load_webdav()
         self.build_webdav_settings(secrets)
 
