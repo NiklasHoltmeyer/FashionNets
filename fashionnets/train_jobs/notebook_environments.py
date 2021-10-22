@@ -54,10 +54,11 @@ class Environment:
         self.webdav = WebDav(**webdav_secrets)
 
     def init(self):
+        self.load_kaggle()
+
         secrets = self.load_webdav()
         self.build_webdav_settings(secrets)
 
-        self.load_kaggle()
         self.load_dependencies()
 
     def __str__(self):
