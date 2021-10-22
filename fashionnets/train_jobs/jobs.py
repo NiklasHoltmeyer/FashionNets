@@ -85,14 +85,9 @@ def load_train_job(name, **kwargs):
         "checkpoint": _load_checkpoint_path(name, **kwargs),
     }
 
-    try:
-        ds = load_dataset(**kwargs)
-    except:
-        ds = lambda: load_dataset(**kwargs)
-
     run = {
         "name": name,
-        "dataset": ds
+        "dataset": load_dataset(**kwargs)
     }
 
     return {
@@ -126,13 +121,16 @@ def load_job(back_bone_name, is_triplet, weights, input_shape, alpha, beta, envi
     settings["environment"] = environment
     settings["notebook"] = environment.notebook
 
-    d = load_train_job(run_name, format=_format, preprocess_input=preprocess_input,
-                       **settings, target_shape=input_shape)
-    job_settings = {**d, **local_settings, **settings}
+    def load_job():
+        d = load_train_job(run_name, format=_format, preprocess_input=preprocess_input,
+                           **settings, target_shape=input_shape)
+        job_settings = {**d, **local_settings, **settings}
 
-    dump_settings(job_settings)
+        dump_settings(job_settings)
 
-    return job_settings
+        return job_settings
+
+    return settings, load_job
 
 
 def dump_settings(job_settings):
