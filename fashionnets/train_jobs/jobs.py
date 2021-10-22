@@ -12,6 +12,7 @@ from fashionnets.train_jobs.notebook_environments import environment
 from fashionnets.util.csv import HistoryCSVHelper
 from fashionnets.util.io import json_dump
 
+
 def job_list():
     global_settings = {
         "input_shape": (144, 144),
@@ -47,7 +48,13 @@ def job_list():
     ds = {
         "name": "deep_fashion_256",
         "variation": "df_quad_3",
-        "rename_jobs": [("deep_fashion_256", "deep_fashion_256"), ("df_quad_3", "deep_fashion") ] #src, dst
+        "cleanup_ops": [
+            ("rename", "./df_quad_3", "./deep_fashion")
+            ("mv", "./train_256/images", "./deep_fashion/train")
+            ("mv", "./validation_256/images", "./deep_fashion/validation"),
+            ("rm", "./validation_256", None),
+            ("rm", "./train_256", None)
+        ]  # src, dst
     }
 
     return {
@@ -63,13 +70,10 @@ def job_list():
     }
 
 
-
-
-
 def load_job_from_notebook_name(notebook_name):
     env = environment(notebook_name)
 
-    #global_settings = global_settings(env.notebook)
+    # global_settings = global_settings(env.notebook)
     job_info = job_list().get(notebook_name, None)
 
     env.dependencies["kaggle"] = job_info["dataset"]
@@ -172,6 +176,7 @@ def get_checkpoint(train_job, logger):
     else:
         logger.debug(f"No Checkpoints found in: {cp_path}")
     return init_epoch, None
+
 
 def load_siamese_model(train_job, input_shape, keep_n=1, optimizer=None, verbose=False, result_uploader=None):
     logger = defaultLogger("Load_Siamese_Model")
