@@ -44,8 +44,10 @@ class Environment:
     def load_dependencies(self):
         if not self.download_dependencies:
             return
-        kaggle_dependencies = self.dependencies.get("kaggle", [])
-        [download_extract_kaggle(self.dataset_prefix + x, path="./", unzip=True) for x in kaggle_dependencies]
+        #kaggle_dependencies = self.dependencies.get("kaggle", [])
+        #[download_extract_kaggle(self.dataset_prefix + x, path="./", unzip=True) for x in kaggle_dependencies]
+
+        #^ doesnt work on google colab
 
     def build_webdav_settings(self, webdav_secrets):
         if not webdav_secrets["base_path"].endswith("/"):
