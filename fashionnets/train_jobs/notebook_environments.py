@@ -4,7 +4,6 @@ from pathlib import Path
 
 from fashionnets.util.io import json_load, download_extract_kaggle
 from fashionnets.util.remote import WebDav
-import kaggle
 
 try:
     # Imports that only work withing Kaggle
@@ -58,6 +57,7 @@ class Environment:
 
     def init(self):
         self.load_kaggle()
+        import kaggle
         kaggle.api.authenticate()
         secrets = self.load_webdav()
         self.build_webdav_settings(secrets)
