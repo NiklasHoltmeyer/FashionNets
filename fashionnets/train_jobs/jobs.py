@@ -47,6 +47,7 @@ def job_list():
     ds = {
         "name": "deep_fashion_256",
         "variation": "df_quad_3",
+        "rename_jobs": [("deep_fashion_256", "deep_fashion_256"), ("df_quad_3", "deep_fashion") ] #src, dst
     }
 
     return {
