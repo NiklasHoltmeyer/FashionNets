@@ -85,9 +85,14 @@ def load_train_job(name, **kwargs):
         "checkpoint": _load_checkpoint_path(name, **kwargs),
     }
 
+    try:
+        ds = load_dataset(**kwargs)
+    except:
+        ds = lambda: load_dataset(**kwargs)
+
     run = {
         "name": name,
-        "dataset": load_dataset(**kwargs)
+        "dataset": ds
     }
 
     return {
