@@ -53,7 +53,8 @@ def job_list():
             ("mv", "./train_256/images", "./deep_fashion/train"),
             ("mv", "./validation_256/images", "./deep_fashion/validation"),
             ("rm", "./validation_256", None),
-            ("rm", "./train_256", None)
+            ("rm", "./train_256", None),
+            ("mv", "./deep_fashion", "./deep_fashion_256")
         ]  # src, dst
     }
 
@@ -126,16 +127,13 @@ def load_job(back_bone_name, is_triplet, weights, input_shape, alpha, beta, envi
     settings["environment"] = environment
     settings["notebook"] = environment.notebook
 
-    def load_job():
-        d = load_train_job(run_name, format=_format, preprocess_input=preprocess_input,
-                           **settings, target_shape=input_shape)
-        job_settings = {**d, **local_settings, **settings}
+    return {**local_settings, **settings}
 
-        dump_settings(job_settings)
+def load_job_f_settings(**settings):
+    d = load_train_job(**settings)
+    dump_settings(settings)
 
-        return job_settings
-
-    return settings, load_job
+    return {**settings, **d}
 
 
 def dump_settings(job_settings):
