@@ -4,10 +4,7 @@ from pathlib import Path
 
 from fashionnets.util.io import json_load, download_extract_kaggle
 from fashionnets.util.remote import WebDav
-try:
-    import kaggle
-except:
-    pass
+import kaggle
 
 try:
     # Imports that only work withing Kaggle
