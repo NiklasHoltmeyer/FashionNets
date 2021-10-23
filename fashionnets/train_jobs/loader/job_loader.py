@@ -17,4 +17,3 @@ def _load_dataset_base_path(**settings):
     return notebooks[notebook]["paths"]["dataset_base_path"] + settings["dataset"]["name"]
 
 
-
