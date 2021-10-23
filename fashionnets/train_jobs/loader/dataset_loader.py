@@ -13,7 +13,7 @@ def loader_info(name, variation):
     raise Exception("TODO")
 
 def deep_fashion_loader_info(variation):
-    variation_cmds = "df-quad-2".replace("-", "_")
+    variation_cmds = variation.replace("-", "_")
     return {
         "name": "deep_fashion_256",
         "variation": variation,#"df_quad_3",
