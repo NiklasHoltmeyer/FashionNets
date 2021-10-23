@@ -7,6 +7,7 @@ from fashionnets.callbacks.callbacks import callbacks
 from fashionnets.models.SiameseModel import SiameseModel
 from fashionnets.networks.SiameseNetwork import SiameseNetwork
 from fashionnets.train_jobs.backbone_loader import *
+from fashionnets.train_jobs.dataset_loader import loader_info
 from fashionnets.train_jobs.job_loader import _load_checkpoint_path, load_dataset
 from fashionnets.train_jobs.notebook_environments import environment
 from fashionnets.util.csv import HistoryCSVHelper
@@ -45,32 +46,20 @@ def job_list():
 
     # ds_name = "own_256" <- "masterokay/own-sl-256"
 
-    ds = {
-        "name": "deep_fashion_256",
-        "variation": "df_quad_3",
-        "cleanup_ops": [
-            ("rename", "./df_quad_3", "./deep_fashion_256"),
-            ("mv", "./train_256/images", "./deep_fashion/train_256"),
-            ("mv", "./validation_256/images", "./deep_fashion/validation_256"),
-            ("rm", "./validation_256", None),
-            ("rm", "./train_256", None),
-#            ("mv", "./deep_fashion", "./deep_fashion_256")
-        ]  # src, dst
-    }
-
+    ds_info = loader_info("deep_fashion_256", "df_quad_3")
 #    / content / deep_fashion_256 / train
 #    / content / deep_fashion_256 / validation
 
     return {
-        "g_i": {**back_bone_variants[-1], "dataset": ds, "run_idx": 0},
-        "k_ok": {**back_bone_variants[-2], "dataset": ds, "run_idx": 1},
-        "g_v": {**back_bone_variants[-3], "dataset": ds, "run_idx": 2},
-        "g_p": {**back_bone_variants[-4], "dataset": ds, "run_idx": 3},
+        "g_i": {**back_bone_variants[-1], "dataset": ds_info, "run_idx": 0},
+        "k_ok": {**back_bone_variants[-2], "dataset": ds_info, "run_idx": 1},
+        "g_v": {**back_bone_variants[-3], "dataset": ds_info, "run_idx": 2},
+        "g_p": {**back_bone_variants[-4], "dataset": ds_info, "run_idx": 3},
 
         "g_b": None,
         "g_ok": None,
 
-        "l_h": {**back_bone_variants[0], "dataset": ds, "run_idx": 3}  # <- just dbug
+        "l_h": {**back_bone_variants[0], "dataset": ds_info, "run_idx": 3}  # <- just dbug
     }
 
 

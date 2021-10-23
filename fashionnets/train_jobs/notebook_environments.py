@@ -1,8 +1,9 @@
 import json
 import os
+import shutil
 from pathlib import Path
 
-from fashionnets.util.io import json_load, download_extract_kaggle
+from fashionnets.util.io import json_load
 from fashionnets.util.remote import WebDav
 
 try:
@@ -41,13 +42,47 @@ class Environment:
     def load_kaggle(self):
         pass
 
-    def load_dependencies(self):
+    def x(self):
+
+        for op, src, dst in settings["environment"].dependencies["kaggle"]["cleanup_ops"]:
+            try:
+                if op == "rename":
+                    os.rename(src, dst)
+                if op == "mv":
+                    shutil.move(src, dst)
+                if op == "rm":
+                    os.rmdir(src)
+            except:
+                print("Exception", op, src, dst)
+                pass
+
+    def prepare(self):
+        for op, src, dst in self.dependencies["kaggle"]["preprocess"]:
+            try:
+                if op == "rename":
+                    os.rename(src, dst)
+                if op == "mv":
+                    shutil.move(src, dst)
+                if op == "rm":
+                    os.rmdir(src)
+            except:
+                print("Exception", op, src, dst)
+                pass
+
+    def load_dependencies(self, kaggle_downloader=None):
         if not self.download_dependencies:
             return
-        #kaggle_dependencies = self.dependencies.get("kaggle", [])
-        #[download_extract_kaggle(self.dataset_prefix + x, path="./", unzip=True) for x in kaggle_dependencies]
 
-        #^ doesnt work on google colab
+        if kaggle_downloader:
+            for ds_name in self.dependencies["kaggle"].values():
+                if type(ds_name) == list:
+                    continue
+                ds_full_name = "masterokay/" + ds_name.replace("_", "-")
+                print("Download:", ds_full_name)
+                kaggle_downloader(ds_full_name, f"./", unzip=True)
+
+            self.prepare()
+
 
     def build_webdav_settings(self, webdav_secrets):
         if not webdav_secrets["base_path"].endswith("/"):
