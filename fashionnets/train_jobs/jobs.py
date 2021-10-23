@@ -56,6 +56,7 @@ def job_list():
         "g_b":  {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 10},
         "g_ok": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 11},
 
+        "l_h": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 1337},
         #"l_h": {**back_bone_variants[0], "dataset": ds_info, "run_idx": 3}  # <- just dbug
     }
 
