@@ -19,7 +19,7 @@ notebooks = {
             "secrets": {
                 "kaggle": "/gdrive/MyDrive/results/kaggle.json"
             },
-            "checkpoint": "./", #"/gdrive/MyDrive/results/",
+            "checkpoint": "./checkpoint/", #"/gdrive/MyDrive/results/",
             "dataset_base_path": "/content/"
         }
     },
