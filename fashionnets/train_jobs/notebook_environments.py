@@ -42,20 +42,6 @@ class Environment:
     def load_kaggle(self):
         pass
 
-    def x(self):
-
-        for op, src, dst in settings["environment"].dependencies["kaggle"]["cleanup_ops"]:
-            try:
-                if op == "rename":
-                    os.rename(src, dst)
-                if op == "mv":
-                    shutil.move(src, dst)
-                if op == "rm":
-                    os.rmdir(src)
-            except:
-                print("Exception", op, src, dst)
-                pass
-
     def prepare(self):
         for op, src, dst in self.dependencies["kaggle"]["preprocess"]:
             try:
