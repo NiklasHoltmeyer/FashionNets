@@ -22,10 +22,10 @@ def job_list():
     back_bone_variants = [
         {"back_bone_name": "resnet50", "weights": "mobile_net", "is_triplet": True, **global_settings},
         {"back_bone_name": "resnet50", "weights": None, "is_triplet": True, **global_settings},
-        #        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": True, **global_settings},
+        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": True, **global_settings},
         {"back_bone_name": "resnet50", "weights": "mobile_net", "is_triplet": False, **global_settings},
         {"back_bone_name": "resnet50", "weights": None, "is_triplet": False, **global_settings},
-        #        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": False},
+        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": False},
     ]
 
     #    datasets = {
@@ -57,6 +57,13 @@ def job_list():
         "g_ok": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 11},
 
         "l_h": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 1337},
+
+        "g_i1": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
+        "g_i2": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
+        "g_i3": {**back_bone_variants[2], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
+        "g_i4": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
+        "g_i5": {**back_bone_variants[4], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
+        "g_i6": {**back_bone_variants[5], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
     }
 
 
