@@ -35,6 +35,7 @@ class WebDav:
         try:
             Path(path).unlink()
             callback()
+            print(f"Uploading: {path} done.")
         except Exception as e:
             if not ignore_exception:
                 raise e
