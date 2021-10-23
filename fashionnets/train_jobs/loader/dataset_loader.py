@@ -21,9 +21,9 @@ def deep_fashion_loader_info(variation):
                 "mkdir -p ./deep_fashion_256",
                 "mv ./train_256 ./deep_fashion_256",
                 "mv ./validation_256 ./deep_fashion_256",
-                "mv ./df_quad_3/train ./deep_fashion_256",
-                "mv ./df_quad_3/validation ./deep_fashion_256",
-                "rmdir ./df_quad_3"
+                f"mv ./{variation}/train ./deep_fashion_256",
+                f"mv ./{variation}/validation ./deep_fashion_256",
+                f"rmdir ./{variation}"
             ],
             "check_existence": lambda: all_paths_exist(["./deep_fashion_256"])
         }
