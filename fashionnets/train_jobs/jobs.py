@@ -49,14 +49,17 @@ def job_list():
         "name": "deep_fashion_256",
         "variation": "df_quad_3",
         "cleanup_ops": [
-            ("rename", "./df_quad_3", "./deep_fashion"),
-            ("mv", "./train_256/images", "./deep_fashion/train"),
-            ("mv", "./validation_256/images", "./deep_fashion/validation"),
+            ("rename", "./df_quad_3", "./deep_fashion_256"),
+            ("mv", "./train_256/images", "./deep_fashion/train_256"),
+            ("mv", "./validation_256/images", "./deep_fashion/validation_256"),
             ("rm", "./validation_256", None),
             ("rm", "./train_256", None),
-            ("mv", "./deep_fashion", "./deep_fashion_256")
+#            ("mv", "./deep_fashion", "./deep_fashion_256")
         ]  # src, dst
     }
+
+#    / content / deep_fashion_256 / train
+#    / content / deep_fashion_256 / validation
 
     return {
         "g_i": {**back_bone_variants[-1], "dataset": ds, "run_idx": 0},
