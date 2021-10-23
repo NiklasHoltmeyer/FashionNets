@@ -42,6 +42,9 @@ class WebDav:
     def move(self, src_local):
         f_name = Path(src_local).name
         dst_remote = self.base_path + f_name
+
+        self.client.mkdir(self.base_path)
+
         callback = lambda: WebDav.remove_local(src_local, lambda: print(f"moved {src_local} to {dst_remote}"))
         print(f"Uploading: {src_local}")
         self.upload(src_local, dst_remote, callback)
