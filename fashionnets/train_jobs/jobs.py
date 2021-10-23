@@ -45,15 +45,16 @@ def job_list():
 #    ]
 #    ds_info = loader_info("deep_fashion_256", "df_quad_3")
 
+#-> back_bone_variants[-2 / 0] funkt nicht
+
     return {
-        "g_i": {**back_bone_variants[-2], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 0},
-        "k_ok": {**back_bone_variants[-2], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 1},
-        "g_v": {**back_bone_variants[-2], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 2},
+        "g_i": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 6},
+        "k_ok": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 7},
+        "g_v": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 8},
 
-
-        "g_p": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 3},
-        "g_b":  {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 4},
-        "g_ok": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 5},
+        "g_p": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 9},
+        "g_b":  {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 10},
+        "g_ok": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 11},
 
         #"l_h": {**back_bone_variants[0], "dataset": ds_info, "run_idx": 3}  # <- just dbug
     }
