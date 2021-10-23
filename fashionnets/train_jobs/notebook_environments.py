@@ -43,7 +43,12 @@ class Environment:
         pass
 
     def prepare(self):
-        for op, src, dst in self.dependencies["kaggle"]["preprocess"]:
+        preprocess_settings = self.dependencies["kaggle"].get("preprocess", None)
+
+        if not preprocess_settings:
+            return
+
+        for op, src, dst in self.dependencies["kaggle"]["preprocess"]["operations"]:
             try:
                 if op == "rename":
                     os.rename(src, dst)
@@ -59,15 +64,23 @@ class Environment:
         if not self.download_dependencies:
             return
 
+        paths_exist = self.dependencies["kaggle"].get("preprocess", {}).get("check_existence", lambda: False)
+        if paths_exist():
+            print("All Paths already exist!")
+            return
+
         if kaggle_downloader:
             for ds_name in self.dependencies["kaggle"].values():
-                if type(ds_name) == list:
+                if type(ds_name) is not str:
                     continue
                 ds_full_name = "masterokay/" + ds_name.replace("_", "-")
                 print("Download:", ds_full_name)
                 kaggle_downloader(ds_full_name, f"./", unzip=True)
 
             self.prepare()
+
+            #preprocess
+            #operations
 
 
     def build_webdav_settings(self, webdav_secrets):
