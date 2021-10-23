@@ -3,7 +3,7 @@ from fashiondatasets.deepfashion2.DeepFashionQuadruplets import DeepFashionQuadr
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 
-from fashionnets.train_jobs.job_loader import _load_dataset_base_path
+from fashionnets.train_jobs.loader.job_loader import _load_dataset_base_path
 from fashionnets.util.io import all_paths_exist
 
 

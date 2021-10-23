@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from fashionnets.train_jobs.backbone_loader import *
-from fashionnets.train_jobs.dataset_loader import loader_info, load_dataset
-from fashionnets.train_jobs.job_loader import _load_checkpoint_path
-from fashionnets.train_jobs.notebook_environments import environment
+from fashionnets.train_jobs.loader.backbone_loader import *
+from fashionnets.train_jobs.loader.dataset_loader import loader_info, load_dataset
+from fashionnets.train_jobs.loader.job_loader import _load_checkpoint_path
+from fashionnets.train_jobs.notebook_environments.env_loader import env_by_name
 from fashionnets.util.io import json_dump
 
 
@@ -57,7 +57,7 @@ def job_list():
 
 
 def load_job_from_notebook_name(notebook_name):
-    env = environment(notebook_name)
+    env = env_by_name(notebook_name)
 
     # global_settings = global_settings(env.notebook)
     job_info = job_list().get(notebook_name, None)
