@@ -19,8 +19,8 @@ def get_checkpoint(train_job, logger):
         checkpoint = str(Path(cp_path, name)) + f"_cp-{init_epoch:04d}.ckpt"
 
         logger.debug("Resume Training:")
-        logger.debug(f" - Initial Epoch: " + init_epoch)
-        logger.debug(f" - Checkpoint:    " + checkpoint)
+        logger.debug(f" - Initial Epoch: {init_epoch}")
+        logger.debug(f" - Checkpoint:    {checkpoint}")
 
         return init_epoch, checkpoint
     else:
