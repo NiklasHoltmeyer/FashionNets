@@ -42,12 +42,17 @@ class Environment:
     def load_kaggle(self):
         pass
 
-    def prepare(self):
+    def prepare(self, skip_preprocess):
         preprocess_settings = self.dependencies["kaggle"].get("preprocess", None)
 
         if not preprocess_settings:
+            print("Preprocess not set")
             return
-        return
+
+        if skip_preprocess:
+            print("Skip Preprocess set")
+            return
+
         for op, src, dst in self.dependencies["kaggle"]["preprocess"]["operations"]:
             try:
                 if op == "rename":
@@ -60,11 +65,12 @@ class Environment:
                 print("Exception", op, src, dst)
                 pass
 
-    def load_dependencies(self, kaggle_downloader=None):
+    def load_dependencies(self, kaggle_downloader=None, skip_preprocess=False):
         if not self.download_dependencies:
             return
 
         paths_exist = self.dependencies["kaggle"].get("preprocess", {}).get("check_existence", lambda: False)
+
         if paths_exist():
             print("All Paths already exist!")
             return
@@ -77,7 +83,7 @@ class Environment:
                 print("Download:", ds_full_name)
                 kaggle_downloader(ds_full_name, f"./", unzip=True)
 
-            self.prepare()
+            self.prepare(skip_preprocess)
 
             #preprocess
             #operations
