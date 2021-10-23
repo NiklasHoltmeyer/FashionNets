@@ -12,7 +12,7 @@ def job_list():
         "input_shape": (144, 144),
         "alpha": 1.0,
         "beta": 0.5,
-        "epochs": 25,
+        "epochs": 20,
         "verbose": True,
         "nrows": None,
         "buffer_size": 32,
@@ -38,14 +38,12 @@ def job_list():
     #    }
 
     # ds_name = "own_256" <- "masterokay/own-sl-256"
-    ds_info_variants = [
-        loader_info("deep_fashion_256", "df_quad_3"), #3, A = User, P / N1 = Shop, N2 = User
-        loader_info("deep_fashion_256", "df_quad_2"), #2, A = User, P / N1 / N2 = Shop
-        loader_info("deep_fashion_256", "df_quad_1"), #1, A = User, P = Shop, N1 / N2 -> 50 / 50
-    ]
-    ds_info = loader_info("deep_fashion_256", "df_quad_3")
-#    / content / deep_fashion_256 / train
-#    / content / deep_fashion_256 / validation
+#    ds_info_variants = [
+#        loader_info("deep_fashion_256", "df_quad_3"), #3, A = User, P / N1 = Shop, N2 = User
+#        loader_info("deep_fashion_256", "df_quad_2"), #2, A = User, P / N1 / N2 = Shop
+#        loader_info("deep_fashion_256", "df_quad_1"), #1, A = User, P = Shop, N1 / N2 -> 50 / 50
+#    ]
+#    ds_info = loader_info("deep_fashion_256", "df_quad_3")
 
     return {
         "g_i": {**back_bone_variants[-2], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 0},
