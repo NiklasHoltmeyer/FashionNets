@@ -47,7 +47,7 @@ class Environment:
 
         if not preprocess_settings:
             return
-
+        return
         for op, src, dst in self.dependencies["kaggle"]["preprocess"]["operations"]:
             try:
                 if op == "rename":
