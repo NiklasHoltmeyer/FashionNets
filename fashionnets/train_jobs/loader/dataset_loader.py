@@ -25,7 +25,7 @@ def deep_fashion_loader_info(variation):
                 "mv ./df_quad_3/validation ./deep_fashion_256",
                 "rmdir ./df_quad_3"
             ],
-            "check_existence": lambda: all_paths_exist(["./deep_fashion_256", "./deep_fashion"])
+            "check_existence": lambda: all_paths_exist(["./deep_fashion_256"])
         }
     }
 
