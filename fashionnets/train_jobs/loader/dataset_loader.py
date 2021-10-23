@@ -13,6 +13,7 @@ def loader_info(name, variation):
     raise Exception("TODO")
 
 def deep_fashion_loader_info(variation):
+    variation_cmds = "df-quad-2".replace("-", "_")
     return {
         "name": "deep_fashion_256",
         "variation": variation,#"df_quad_3",
@@ -21,9 +22,9 @@ def deep_fashion_loader_info(variation):
                 "mkdir -p ./deep_fashion_256",
                 "mv ./train_256 ./deep_fashion_256",
                 "mv ./validation_256 ./deep_fashion_256",
-                f"mv ./{variation}/train ./deep_fashion_256",
-                f"mv ./{variation}/validation ./deep_fashion_256",
-                f"rmdir ./{variation}"
+                f"mv ./{variation_cmds}/train ./deep_fashion_256",
+                f"mv ./{variation_cmds}/validation ./deep_fashion_256",
+                f"rmdir ./{variation_cmds}"
             ],
             "check_existence": lambda: all_paths_exist(["./deep_fashion_256"])
         }
