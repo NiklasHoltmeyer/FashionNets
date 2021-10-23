@@ -72,7 +72,8 @@ def load_deepfashion(**settings):
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
-    datasets = DeepFashionQuadruplets(base_path=base_path, split_suffix="_256", format=settings["format"])\
+    datasets = DeepFashionQuadruplets(base_path=base_path, split_suffix="_256", format=settings["format"],
+                                      nrows=settings["nrows"])\
         .load_as_datasets(validate_paths=False)
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
