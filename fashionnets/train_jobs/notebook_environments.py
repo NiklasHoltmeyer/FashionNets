@@ -53,16 +53,11 @@ class Environment:
             print("Skip Preprocess set")
             return
 
-        for op, src, dst in self.dependencies["kaggle"]["preprocess"]["operations"]:
+        for cmd in self.dependencies["kaggle"]["preprocess"]["commands"]:
             try:
-                if op == "rename":
-                    os.rename(src, dst)
-                if op == "mv":
-                    shutil.move(src, dst)
-                if op == "rm":
-                    os.rmdir(src)
+                os.system(cmd)
             except:
-                print("Exception", op, src, dst)
+                print("Exception", cmd)
                 pass
 
     def load_dependencies(self, kaggle_downloader=None, skip_preprocess=False):
