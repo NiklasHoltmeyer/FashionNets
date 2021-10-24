@@ -17,6 +17,7 @@ def loader_info(name, variation):
 
 def own_loader_info(variation):
     print("Warning! " * 72)
+    print("Dataset Loader Implement own Loader")
     print("#TODO Implement")
     return {
         "name": "own_256",

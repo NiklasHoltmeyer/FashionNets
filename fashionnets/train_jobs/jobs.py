@@ -55,29 +55,20 @@ def job_list():
 #-> back_bone_variants[-2 / 0] funkt nicht
 
     return {
-#        "g_i": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 6},
-#        "k_ok": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 7},
-#        "g_v": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 8},
+        "g_i": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
+#        "k_ok": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 2},
+#        "g_v": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 3},
 
-#        "g_p": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 9},
-#        "g_b":  {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 10},
-#        "g_ok": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 11},
+#        "g_p": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 4},
+#        "g_b":  {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 5},
+#        "g_ok": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 6},
 
-#        "l_h": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 1337},
-
-#        "g_i1": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
-#        "g_i2": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
-#        "g_i3": {**back_bone_variants[2], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
-#        "g_i4": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
-#        "g_i5": {**back_bone_variants[4], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
-#        "g_i6": {**back_bone_variants[5], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1337},
-
-        "l_i1": {**back_bone_variants[0], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13370,
-                 **debugging_settings}, #    return
-        "l_i2": {**back_bone_variants[1], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13371,
-                 **debugging_settings},
-        "l_i3": {**back_bone_variants[2], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13372,
-                 **debugging_settings},
+#        "l_i1": {**back_bone_variants[0], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13370,
+#                 **debugging_settings}, #    return
+#        "l_i2": {**back_bone_variants[1], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13371,
+#                 **debugging_settings},
+#        "l_i3": {**back_bone_variants[2], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13372,
+#                 **debugging_settings},
     }
 
 
