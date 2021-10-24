@@ -30,9 +30,9 @@ def job_list():
         {"back_bone_name": "resnet50", "weights": "imagenet", "is_triplet": True, **global_settings},
         {"back_bone_name": "resnet50", "weights": None, "is_triplet": True, **global_settings},
         {"back_bone_name": "simplecnn", "weights": None, "is_triplet": True, **global_settings},
-#        {"back_bone_name": "resnet50", "weights": "imagenet", "is_triplet": False, **global_settings},
-#        {"back_bone_name": "resnet50", "weights": None, "is_triplet": False, **global_settings},
-#        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": False},
+        {"back_bone_name": "resnet50", "weights": "imagenet", "is_triplet": False, **global_settings},
+        {"back_bone_name": "resnet50", "weights": None, "is_triplet": False, **global_settings},
+        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": False},
     ]
 
     #    datasets = {
@@ -55,8 +55,8 @@ def job_list():
 #-> back_bone_variants[-2 / 0] funkt nicht
 
     return {
-        "g_i": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
-        "k_ok": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
+        "g_i": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
+        "k_ok": {**back_bone_variants[4], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
         "g_v": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 3},
 
         "g_p": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 4},
