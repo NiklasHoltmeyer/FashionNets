@@ -19,7 +19,7 @@ class GoogleColabEnvironment(Environment):
 
     def load_webdav(self):
         assert self.train_job_name, "Set Run Name via GoogleColabEnv::set_name first"
-        return json_load("/gdrive/MyDrive/results/webdav.json")
+        return json_load(notebooks["google"]["paths"]["secrets"]["webdav"])
 
     def load_kaggle(self):
         # Load Secrets

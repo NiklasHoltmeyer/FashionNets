@@ -2,10 +2,6 @@ import tensorflow as tf
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow.keras import Model
 from tensorflow.keras import metrics
-from tensorflow.keras import optimizers
-
-from fashionnets.models.embedding.resnet50 import ResNet50Builder
-from fashionnets.networks.SiameseNetwork import SiameseNetwork
 
 
 class SiameseModel(Model):

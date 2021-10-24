@@ -1,9 +1,7 @@
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.applications import resnet
+import tensorflow as tf
 from tensorflow.keras import Model
-from tensorflow.keras.regularizers import l2
-from tensorflow.python.ops import nn
+from tensorflow.keras.applications import resnet
+
 
 class ResNet50Builder:
     @staticmethod
@@ -12,27 +10,32 @@ class ResNet50Builder:
             weights=weights, input_shape=input_shape + (3,), include_top=False
         )
 
-        flatten = layers.Flatten()(back_bone.output)
-        dense1 = layers.Dense(512, activation="relu")(flatten)
-        dense1 = layers.BatchNormalization()(dense1)
-        dense2 = layers.Dense(256, activation="relu")(dense1)
-        dense2 = layers.BatchNormalization()(dense2)
+        x = tf.keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu')(back_bone.output)
+        x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        x = tf.keras.layers.Conv2D(filters=32, kernel_size=2, padding='same', activation='relu')(x)
+        x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
+        x = tf.keras.layers.Dropout(0.3)(x)
+        x = tf.keras.layers.Flatten()(x)
+        x = tf.keras.layers.Dense(embedding_dim, activation=None)(x)
+        x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=1))(x)
 
-        output = layers.Dense(embedding_dim, activation='relu',
-                               kernel_regularizer=l2(1e-3),
-                               kernel_initializer='he_uniform')(dense2)
+        embedding_model = Model(back_bone.input, x, name="Embedding")
 
-        l2_output = layers.Lambda(lambda x: nn.l2_normalize(x, axis=-1))(output)
+        if weights:
+            trainable = False
 
-        embedding = Model(back_bone.input, l2_output, name="Embedding")
+            for layer in back_bone.layers:
+                if layer.name == "conv5_block1_out":
+                    trainable = True
+                layer.trainable = trainable
 
-        trainable = False
-        for layer in back_bone.layers:
-            if layer.name == "conv5_block1_out":
-                trainable = True
-            layer.trainable = trainable
+            return embedding_model, resnet.preprocess_input
+        else:
+            return embedding_model, None
 
-        return embedding, resnet.preprocess_input
+
+
 
 if __name__ == "__main__":
-    ResNet50Builder.build((144,144))
+    ResNet50Builder.build((144, 144))

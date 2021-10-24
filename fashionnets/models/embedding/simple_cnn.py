@@ -1,25 +1,20 @@
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.regularizers import l2
-from tensorflow.python.ops import nn
+import tensorflow as tf
 
 
 class SimpleCNN:
     @staticmethod
     def build(input_shape, embedding_dim=256):
-        model = keras.models.Sequential()
-        model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(input_shape[0], input_shape[1], 3)))
-        model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-        model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-        model.add(layers.Flatten())
-        model.add(layers.Dense(64, activation='relu',
-                               kernel_regularizer=l2(1e-3),
-                               kernel_initializer='he_uniform'))
-        model.add(layers.Dense(embedding_dim, activation=None,
-                               kernel_regularizer=l2(1e-3),
-                               kernel_initializer='he_uniform'))
-        model.add(layers.Lambda(lambda x: nn.l2_normalize(x, axis=-1)))
-
-        return model
+        embedding_model = tf.keras.Sequential([
+            tf.keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu',
+                                   input_shape=(input_shape[0], input_shape[1], 3)),
+            tf.keras.layers.MaxPooling2D(pool_size=2),
+            tf.keras.layers.Dropout(0.3),
+            tf.keras.layers.Conv2D(filters=32, kernel_size=2, padding='same', activation='relu'),
+            tf.keras.layers.MaxPooling2D(pool_size=2),
+            tf.keras.layers.Dropout(0.3),
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(embedding_dim, activation=None),  # No activation on final dense layer
+            tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))  # L2 normalize embeddings
+        ])
+        preprocessing = None #DS is already normalized!
+        return embedding_model, preprocessing

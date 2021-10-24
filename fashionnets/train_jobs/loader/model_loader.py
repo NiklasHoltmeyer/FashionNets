@@ -28,38 +28,36 @@ def get_checkpoint(train_job, logger):
     return init_epoch, None
 
 
-def load_siamese_model(train_job, input_shape, keep_n=1, optimizer=None, verbose=False, result_uploader=None):
+def load_siamese_model_from_train_job(**train_job):
     logger = defaultLogger("Load_Siamese_Model")
-    logger.disabled = not verbose
+    logger.disabled = not train_job["verbose"]
 
+    optimizer = train_job.get("optimizer", None)
     if not optimizer:
-        optimizer = keras.optimizers.Adam(1e-3)
+        optimizer = keras.optimizers.Adam(1e-4)
         logger.debug("Default Optimizer: Adam(LR 1e-3)")
     else:
-        logger.debug("Using non Default Optimizer")
+        logger.debug(f"Using non Default Optimizer: {train_job['optimizer']}")
 
-    parm_list = ["back_bone", "triplets", "input_shape", "alpha", "beta", "verbose", "channels"]
-    kwargs = {k: train_job[k] for k in parm_list if train_job.get(k, None)}
-    kwargs["triplets"] = kwargs.get("triplets", train_job["triplets"])
-    logger.debug(f"Loading Siamese Network: {kwargs}")
-    siamese_network = SiameseNetwork.build(**kwargs)
+    siamese_network = SiameseNetwork.build(**train_job)
 
     siamese_model = SiameseModel(siamese_network)
     siamese_model.compile(optimizer=optimizer)
-    siamese_model.fake_predict(input_shape, train_job["is_triplet"])
+    siamese_model.fake_predict(train_job["input_shape"], train_job["is_triplet"])
 
     cp_path, run_name = train_job["path"]["checkpoint"], train_job["run"]["name"]
 
     logger.debug(f"Checkpoint: {cp_path}")
     logger.debug(f"Run Name: {run_name}")
+    result_uploader = train_job["environment"].webdav
 
-    _callbacks = callbacks(cp_path, run_name, monitor='val_loss', keep_n=keep_n,
-                           verbose=verbose, result_uploader=result_uploader)
+    _callbacks = callbacks(cp_path, run_name, monitor='val_loss', keep_n=train_job.get("keep_n", 1),
+                           verbose=train_job["verbose"], result_uploader=result_uploader)
 
     logger.debug(f"Callbacks: {_callbacks}")
 
     init_epoch, _checkpoint = get_checkpoint(train_job, logger)
-    if _checkpoint:
+    if _checkpoint and train_job["load_weights"]:
         logger.debug("Loading Weights!")
         siamese_model.load_weights(_checkpoint)
 

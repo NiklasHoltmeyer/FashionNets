@@ -1,4 +1,5 @@
 import tensorflow as tf
+import tensorflow_addons as tfa
 from tensorflow.keras import layers
 
 
@@ -19,6 +20,7 @@ class TripletLoss(layers.Layer):
         return tf.reduce_sum(loss, axis=0)
 
 
+# TripletSemiHardLoss
 # Quadrup Loss = AP-AN + alpha_1 + AP-NN + alpha_2
 
 class QuadrupletLoss(layers.Layer):

@@ -2,12 +2,11 @@ from tensorflow.keras import Model
 from tensorflow.keras import layers
 
 from fashionnets.metrics.loss_layers import TripletLoss, QuadrupletLoss
-from fashionnets.models.embedding.resnet50 import ResNet50Builder
 
 
 class SiameseNetwork:
     @staticmethod
-    def build(back_bone, triplets, input_shape, alpha=1.0, beta=0.5, channels=3, verbose=False):
+    def build(back_bone, triplets, input_shape, alpha, beta, preprocess_input=None, verbose=False, channels=3, **kwargs):
         if verbose:
             print(f"triplets={triplets}, alpha={alpha}, beta={beta}")
         anchor_input = layers.Input(name="anchor", shape=input_shape + (channels,))
@@ -25,16 +24,13 @@ class SiameseNetwork:
 
         input_layers = [anchor_input, positive_input, *negative_inputs]
 
-        encodings = [back_bone(i) for i in input_layers]
+        if preprocess_input:
+            encodings = [back_bone(preprocess_input(i)) for i in input_layers]
+        else:
+            encodings = [back_bone(i) for i in input_layers]
+
         output_layers = loss_layer(*encodings)
 
         return Model(
             inputs=input_layers, outputs=output_layers
         )
-
-
-if __name__ == "__main__":
-    target_shape = (144, 144)
-
-    embedding, preprocess_input = ResNet50Builder.build(target_shape)
-    SiameseNetwork.build(embedding, triplets=True, input_shape=target_shape)

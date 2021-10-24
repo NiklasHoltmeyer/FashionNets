@@ -10,13 +10,23 @@ from fashionnets.util.io import all_paths_exist
 def loader_info(name, variation):
     if "deep_fashion" in name:
         return deep_fashion_loader_info(variation)
+    if "own" in name:
+        return own_loader_info(variation)
     raise Exception("TODO")
+
+
+def own_loader_info(variation):
+    print("Warning! " * 72)
+    print("#TODO Implement")
+    return {
+        "name": "own_256",
+    }
 
 def deep_fashion_loader_info(variation):
     variation_cmds = variation.replace("-", "_")
     return {
         "name": "deep_fashion_256",
-        "variation": variation,#"df_quad_3",
+        "variation": variation,  # "df_quad_3",
         "preprocess": {
             "commands": [
                 "mkdir -p ./deep_fashion_256",
@@ -30,9 +40,10 @@ def deep_fashion_loader_info(variation):
         }
     }
 
-def load_dataset(**settings):
+
+def load_dataset_loader(**settings):
     ds_name = settings["dataset"]["name"]
-    if ds_name== "own":
+    if ds_name == "own" or ds_name == "own_256":
         return load_own_dataset(**settings)
     if ds_name == "deep_fashion_256":
         return load_deepfashion(**settings)
@@ -41,16 +52,17 @@ def load_dataset(**settings):
 
 def _fill_ds_settings(**settings):
     return {
-            "map_full_paths": settings.get("map_full_paths", True),
-            "validate_paths": settings.get("validate_paths", False),
-            "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
-            "nrows": settings.get("nrows", None),
-            "target_shape": settings.get("target_shape", (144, 144)),
-            "batch_size": settings.get("batch_size", 32),
-            "buffer_size": settings.get("buffer_size", 1024),
-            "train_split": settings.get("train_split", 0.8),
-            "preprocess_input": settings.get("preprocess_input", None)
-        }
+        "map_full_paths": settings.get("map_full_paths", True),
+        "validate_paths": settings.get("validate_paths", False),
+        "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
+        "nrows": settings.get("nrows", None),
+        "target_shape": settings.get("target_shape", (144, 144)),
+        "batch_size": settings.get("batch_size", 32),
+        "buffer_size": settings.get("buffer_size", 1024),
+        "train_split": settings.get("train_split", 0.8),
+        "preprocess_input": settings.get("preprocess_input", None)
+    }
+
 
 def _print_ds_settings(verbose, **ds_settings):
     if verbose:
@@ -68,46 +80,48 @@ def _print_ds_settings(verbose, **ds_settings):
         print("}")
         print("*" * len(header_str))
 
+
 def load_deepfashion(**settings):
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
+
     datasets = DeepFashionQuadruplets(base_path=base_path, split_suffix="_256", format=settings["format"],
-                                      nrows=settings["nrows"])\
+                                      nrows=settings["nrows"]) \
         .load_as_datasets(validate_paths=False)
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
-    settings["_dataset"] = settings.pop("dataset") #<- otherwise kwargs conflict 2x ds
+    settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
     train_ds, val_ds = prepare_ds(train_ds, **settings), prepare_ds(val_ds, **settings)
 
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
-    return{
+    return {
         "train": train_ds,
         "val": val_ds,
         "shape": ds_settings.get("target_shape"),
         "n_items": {
-            "total": n_val+n_train,
+            "total": n_val + n_train,
             "validation": n_val,
             "train": n_train
         }
     }
 
+
 def load_own_dataset(**settings):
     ds_settings = _fill_ds_settings(**settings)
-    _print_ds_settings(settings.get("verbose", False), ds_settings)
-
+    _print_ds_settings(settings.get("verbose", False), **ds_settings)
 
     base_path = _load_dataset_base_path(**settings)
-    train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**{"base_path":base_path, **ds_settings})
+    train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**{"base_path": base_path, **ds_settings})
     return {
         "train": train_dataset,
         "val": val_dataset,
         "shape": ds_settings.get("target_shape"),
         "n_items": {
-            "total": n_val+n_train,
+            "total": n_val + n_train,
             "validation": n_val,
             "train": n_train
         }
@@ -117,6 +131,7 @@ def load_own_dataset(**settings):
 def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, **settings):
     split = train_split
     settings["format"] = format
+    settings["batch_size"] = batch_size
 
     quad = Quadruplets(base_path, **settings)
 
@@ -124,14 +139,13 @@ def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, *
     dataset = dataset.shuffle(buffer_size)
 
     n_total_items = len(quad)
-    n_train_items = round(split * n_total_items) #  // batch_size
+    n_train_items = round(split * n_total_items)  # // batch_size
     n_val_items = n_total_items - n_train_items
 
     train_dataset = dataset.take(n_train_items)
-    train_dataset = prepare_ds(train_dataset)
-
     val_dataset = dataset.skip(n_train_items)
-    val_dataset = prepare_ds(val_dataset)
+
+    train_dataset, val_dataset = prepare_ds(train_dataset, **settings), prepare_ds(val_dataset, **settings)
 
     return train_dataset, val_dataset, n_train_items, n_val_items
 
@@ -140,9 +154,11 @@ def prepare_ds(dataset, batch_size, **settings):
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
-def _load_image_preprocessor(format, target_shape, preprocess_input=None, **kwargs):
+
+def _load_image_preprocessor(format, target_shape, preprocess_img=None, **kwargs):
     is_triplet = "triplet" in format
-    prep_image = preprocess_image(target_shape, preprocess_img=preprocess_input)
+    preprocess_img = None
+    prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img)
 
     if is_triplet:
         return lambda a, p, n: (prep_image(a), prep_image(p), prep_image(n))

@@ -17,9 +17,10 @@ notebooks = {
     "google": {
         "paths": {
             "secrets": {
-                "kaggle": "/gdrive/MyDrive/results/kaggle.json"
+                "kaggle": "/gdrive/MyDrive/results/kaggle.json",
+                "webdav": "/gdrive/MyDrive/results/webdav.json"
             },
-            "checkpoint": "/gdrive/MyDrive/results/",
+            "checkpoint": "./results/",
             "dataset_base_path": "/content/"
         }
     },
