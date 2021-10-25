@@ -5,7 +5,7 @@ from fashionnets.train_jobs.loader.dataset_loader import loader_info, load_datas
 from fashionnets.train_jobs.loader.job_loader import _load_checkpoint_path
 from fashionnets.train_jobs.notebook_environments.env_loader import env_by_name
 from fashionnets.util.io import json_dump
-
+from tensorflow import keras
 
 def job_list():
     global_settings = {
@@ -16,23 +16,24 @@ def job_list():
         "verbose": False,
         "nrows": None,
         "buffer_size": 32,
-        "batch_size": 32
+        "batch_size": 32,
+        "optimizer": keras.optimizers.Adam(5e-03)
     }
 
-    debugging_settings = {
-        "nrows": 20,
-        "verbose": True,
-        "batch_size": 1,
-        "epochs": 5
-    }
+#    debugging_settings = {
+#        "nrows": 20,
+#        "verbose": True,
+#        "batch_size": 1,
+#        "epochs": 5
+#    }
 
     back_bone_variants = [
-        {"back_bone_name": "resnet50", "weights": "imagenet", "is_triplet": True, **global_settings},
-        {"back_bone_name": "resnet50", "weights": None, "is_triplet": True, **global_settings},
-        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": True, **global_settings},
         {"back_bone_name": "resnet50", "weights": "imagenet", "is_triplet": False, **global_settings},
         {"back_bone_name": "resnet50", "weights": None, "is_triplet": False, **global_settings},
-        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": False},
+        {"back_bone_name": "resnet50", "weights": "imagenet", "is_triplet": True, **global_settings},
+        {"back_bone_name": "resnet50", "weights": None, "is_triplet": True, **global_settings},
+#        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": True, **global_settings},
+#        {"back_bone_name": "simplecnn", "weights": None, "is_triplet": False},
     ]
 
     #    datasets = {
@@ -53,15 +54,15 @@ def job_list():
 #    ds_info = loader_info("deep_fashion_256", "df_quad_3")
 
 #-> back_bone_variants[-2 / 0] funkt nicht
-
+## G_ok geht in qf_quad2 über!
     return {
-        "g_i": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
-        "k_ok": {**back_bone_variants[4], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
-        "g_v": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 3},
+        "g_i": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
+        "k_ok": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
+        "g_v": {**back_bone_variants[2], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 3},
 
-        "g_p": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 4},
-#        "g_b":  {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 5},
-#        "g_ok": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_1"), "run_idx": 6},
+        "g_p": {**back_bone_variants[3], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 4},
+        "g_b":  {**back_bone_variants[4], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 5},
+        "g_ok": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 6},
 
 #        "l_i1": {**back_bone_variants[0], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13370,
 #                 **debugging_settings}, #    return
@@ -83,7 +84,7 @@ def load_job_info_from_notebook_name(notebook_name):
     assert job_info, "Job = None"
 
     job_settings = load_backbone_info(**job_info, environment=env)
-
+    job_settings["learning_rate"] = f"{job_settings['optimizer'].lr.numpy():.2e}"
     return job_settings
 
 
