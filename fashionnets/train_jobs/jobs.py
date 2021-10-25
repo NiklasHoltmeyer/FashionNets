@@ -120,7 +120,7 @@ def load_backbone_info(back_bone_name, is_triplet, weights, input_shape, alpha, 
 
     local_settings = {
         "alpha": alpha, "beta": beta,
-        f"{TRIPLET_KEY}s": is_triplet, f"is_{TRIPLET_KEY}s": is_triplet,
+        f"{TRIPLET_KEY}s": is_triplet, f"is_{TRIPLET_KEY}": is_triplet,
         "input_shape": input_shape,
         "back_bone": back_bone,
         "preprocess_input": preprocess_input
@@ -151,6 +151,15 @@ def load_job_f_settings(**settings):
 
     return train_settings
 
+def string_serializer(obj):
+    if type(obj) in [list, tuple]:
+        return list(map(string_serializer, obj))
+    if type(obj) == dict:
+        copy = {}
+        for k, v in obj.items():
+            copy[k] = string_serializer(v)
+        return copy
+    return str(obj)
 
 def dump_settings(job_settings):
     cp_path = job_settings["path"]["checkpoint"]
@@ -158,16 +167,7 @@ def dump_settings(job_settings):
     cp_path.mkdir(parents=True, exist_ok=True)
     path = cp_path / "settings.json"
 
-    settings = dict(job_settings)
-
-    settings["preprocess_input"] = str(settings["preprocess_input"])
-    settings["back_bone"] = str(settings["back_bone"])
-
-    settings["run"]["dataset"]["train"] = str(
-        settings["run"]["dataset"]["train"])  # <- JSON tries to Serialize the Data
-    settings["run"]["dataset"]["val"] = str(settings["run"]["dataset"]["val"])
-    settings["environment"] = str(settings["environment"])
-    settings["optimizer"] = str(settings["optimizer"])
+    settings = string_serializer(job_settings)
 
     if job_settings.get("verbose", False):
         print(f"Dumbing {path}")

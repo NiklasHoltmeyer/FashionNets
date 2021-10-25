@@ -13,3 +13,5 @@ train_ds, val_ds = datasets["train"], datasets["val"]
 
 result_uploader = settings["environment"].webdav
 ##
+siamese_model, init_epoch, _callbacks = load_siamese_model_from_train_job(**train_job, load_weights=False)
+history_1 = siamese_model.fit(train_ds, epochs=10)
