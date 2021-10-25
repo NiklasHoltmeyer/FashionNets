@@ -30,7 +30,7 @@ class EarlyStoppingBasedOnHistory(keras.callbacks.Callback):
 
         best_epoch = values.index(min(values))
 
-        if epoch < self.patience: # Epoch starts at 0. so it trains atleast for patience epochs
+        if epoch < self.patience:  # Epoch starts at 0. so it trains atleast for patience epochs
             return False, best_epoch
 
         return (best_epoch + self.patience) < epoch, best_epoch

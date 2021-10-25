@@ -12,7 +12,6 @@ csv_sep = ";"
 
 def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_weights_only=False, keep_n=2,
               remove_after_zip=True, verbose=False, result_uploader=None):
-    # save_callback = CustomSaveModel(checkpoint_path, name) if not save_weights_only else CustomSaveWeights(checkpoint_path, name)
     history_cp_path = Path(checkpoint_path, "history.csv")
 
     if verbose:

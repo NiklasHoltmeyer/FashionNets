@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from fashiondatasets.consts import TRIPLET_KEY, QUADRUPLET_KEY
 from fashionnets.train_jobs.loader.backbone_loader import *
 from fashionnets.train_jobs.loader.dataset_loader import loader_info, load_dataset_loader
 from fashionnets.train_jobs.loader.job_loader import _load_checkpoint_path
@@ -56,7 +55,7 @@ def job_list():
     #    ds_info = loader_info("deep_fashion_256", "df_quad_3")
 
     # -> back_bone_variants[-2 / 0] funkt nicht
-    ## g_b geht in qf_quad2 über!
+    # g_b geht in qf_quad2 über!
     return {
         "g_i": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
         "k_ok": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 1},
@@ -66,14 +65,12 @@ def job_list():
         "g_b": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 5},
         "g_ok": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 6},
 
-        "l_i1": {**back_bone_variants[0], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13370,
+        "l_i1": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 13370,
                  **debugging_settings},  # return
-        "l_i2": {**back_bone_variants[0], "dataset": loader_info("deep_fashion_256", "df_quad_2"), "run_idx": 13370,
+        "l_i2": {**back_bone_variants[1], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 13370,
                  **debugging_settings},
-        #        "l_i2": {**back_bone_variants[1], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13371,
-        #                 **debugging_settings},
-        #        "l_i3": {**back_bone_variants[2], "dataset": loader_info("own", "df_quad_3"), "run_idx": 13372,
-        #                 **debugging_settings},
+        "l_i3": {**back_bone_variants[2], "dataset": loader_info("deep_fashion_256", "df_quad_3"), "run_idx": 13372,
+                **debugging_settings},
     }
 
 
@@ -120,12 +117,12 @@ def load_backbone_info(back_bone_name, is_triplet, weights, input_shape, alpha, 
 
     local_settings = {
         "alpha": alpha, "beta": beta,
-        f"{TRIPLET_KEY}s": is_triplet, f"is_{TRIPLET_KEY}": is_triplet,
+        f"triplets": is_triplet, f"is_triplet": is_triplet,
         "input_shape": input_shape,
         "back_bone": back_bone,
         "preprocess_input": preprocess_input
     }
-    _format = TRIPLET_KEY if is_triplet else QUADRUPLET_KEY
+    _format = format_name(is_triplet)
     assert environment, "ENV must be Set!"
 
     environment.train_job_name = run_name
@@ -136,12 +133,15 @@ def load_backbone_info(back_bone_name, is_triplet, weights, input_shape, alpha, 
 
     return {**local_settings, **settings}
 
+def format_name(is_triplet):
+    return "triplet" if is_triplet else "quadruplet"
+
 
 def load_job_f_settings(**settings):
     additional_settings = {
         "name": settings["environment"].train_job_name,
         "target_shape": settings["input_shape"],
-        "format": TRIPLET_KEY if settings["is_triplet"] else QUADRUPLET_KEY
+        "format": "triplet" if settings["is_triplet"] else "quadruplet"
     }
 
     job_settings = load_train_job(**additional_settings, **settings)
@@ -150,6 +150,7 @@ def load_job_f_settings(**settings):
     dump_settings(train_settings)
 
     return train_settings
+
 
 def string_serializer(obj):
     if type(obj) in [list, tuple]:
@@ -160,6 +161,7 @@ def string_serializer(obj):
             copy[k] = string_serializer(v)
         return copy
     return str(obj)
+
 
 def dump_settings(job_settings):
     cp_path = job_settings["path"]["checkpoint"]

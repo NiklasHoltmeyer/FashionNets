@@ -33,6 +33,7 @@ def download_extract_kaggle(ds_name, path="./", unzip=True):
     except:
         print("Could not find kaggle.json. Make sure it's located in /root/.kaggle. Or use the environment method.")
 
+
 def all_paths_exist(lst):
     path_exist = lambda p: Path(p).exists()
     return all(map(path_exist, lst))

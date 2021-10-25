@@ -65,9 +65,8 @@ class Environment:
 
             self.prepare(skip_preprocess)
 
-            #preprocess
-            #operations
-
+            # preprocess
+            # operations
 
     def build_webdav_settings(self, webdav_secrets):
         if not webdav_secrets["base_path"].endswith("/"):

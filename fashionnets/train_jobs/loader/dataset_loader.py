@@ -1,5 +1,5 @@
 import tensorflow as tf
-from fashiondatasets.consts import TRIPLET_KEY
+from fashiondatasets.consts import "triplet"
 from fashiondatasets.deepfashion2.DeepFashionQuadruplets import DeepFashionQuadruplets
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
@@ -23,6 +23,7 @@ def own_loader_info(variation):
     return {
         "name": "own_256",
     }
+
 
 def deep_fashion_loader_info(variation):
     variation_cmds = variation.replace("-", "_")
@@ -56,7 +57,7 @@ def _fill_ds_settings(**settings):
     return {
         "map_full_paths": settings.get("map_full_paths", True),
         "validate_paths": settings.get("validate_paths", False),
-        "format": settings.get("format", TRIPLET_KEY),  # "quadruplet", # triplet
+        "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
         "nrows": settings.get("nrows", None),
         "target_shape": settings.get("target_shape", (144, 144)),
         "batch_size": settings.get("batch_size", 32),
@@ -150,6 +151,7 @@ def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, *
     train_dataset, val_dataset = prepare_ds(train_dataset, **settings), prepare_ds(val_dataset, **settings)
 
     return train_dataset, val_dataset, n_train_items, n_val_items
+
 
 def prepare_ds(dataset, batch_size, **settings):
     return dataset.map(_load_image_preprocessor(**settings)) \

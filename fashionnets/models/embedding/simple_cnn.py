@@ -16,5 +16,5 @@ class SimpleCNN:
             tf.keras.layers.Dense(embedding_dim, activation=None),  # No activation on final dense layer
             tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))  # L2 normalize embeddings
         ])
-        preprocessing = None #DS is already normalized!
+        preprocessing = None  # DS is already normalized!
         return embedding_model, preprocessing

@@ -35,7 +35,5 @@ class ResNet50Builder:
             return embedding_model, None
 
 
-
-
 if __name__ == "__main__":
     ResNet50Builder.build((144, 144))

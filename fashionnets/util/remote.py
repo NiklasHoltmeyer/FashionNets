@@ -2,6 +2,7 @@ from pathlib import Path
 
 from webdav3.client import Client
 
+
 class WebDav:
     def __init__(self, base_path, **webdav_options):
         """

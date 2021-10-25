@@ -5,9 +5,9 @@ from fashionnets.train_jobs.jobs import load_train_job, load_job_f_settings, loa
 
 settings = load_job_info_from_notebook_name(job_worker_name)
 ##
-#@title Prepare Dataset
+# @title Prepare Dataset
 train_job = load_job_f_settings(**settings)
-#train_job = {**additional_settings, **settings, **train_job}
+# train_job = {**additional_settings, **settings, **train_job}
 datasets = train_job["run"]["dataset"]
 train_ds, val_ds = datasets["train"], datasets["val"]
 
