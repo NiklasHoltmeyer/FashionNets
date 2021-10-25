@@ -1,3 +1,4 @@
+from fashiondatasets.consts import TRIPLET_KEY
 from tensorflow.keras import Model
 from tensorflow.keras import layers
 
@@ -8,7 +9,7 @@ class SiameseNetwork:
     @staticmethod
     def build(back_bone, triplets, input_shape, alpha, beta, preprocess_input=None, verbose=False, channels=3, **kwargs):
         if verbose:
-            print(f"triplets={triplets}, alpha={alpha}, beta={beta}")
+            print(f"{TRIPLET_KEY}s={triplets}, alpha={alpha}, beta={beta}")
         anchor_input = layers.Input(name="anchor", shape=input_shape + (channels,))
         positive_input = layers.Input(name="positive", shape=input_shape + (channels,))
 

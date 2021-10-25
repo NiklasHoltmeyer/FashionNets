@@ -1,4 +1,5 @@
 import tensorflow as tf
+from fashiondatasets.consts import TRIPLET_KEY
 from fashiondatasets.deepfashion2.DeepFashionQuadruplets import DeepFashionQuadruplets
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
@@ -55,7 +56,7 @@ def _fill_ds_settings(**settings):
     return {
         "map_full_paths": settings.get("map_full_paths", True),
         "validate_paths": settings.get("validate_paths", False),
-        "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
+        "format": settings.get("format", TRIPLET_KEY),  # "quadruplet", # triplet
         "nrows": settings.get("nrows", None),
         "target_shape": settings.get("target_shape", (144, 144)),
         "batch_size": settings.get("batch_size", 32),
@@ -86,7 +87,6 @@ def load_deepfashion(**settings):
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
-
     datasets = DeepFashionQuadruplets(base_path=base_path, split_suffix="_256", format=settings["format"],
                                       nrows=settings["nrows"]) \
         .load_as_datasets(validate_paths=False)
@@ -95,6 +95,7 @@ def load_deepfashion(**settings):
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
+
     train_ds, val_ds = prepare_ds(train_ds, **settings), prepare_ds(val_ds, **settings)
 
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
@@ -156,9 +157,7 @@ def prepare_ds(dataset, batch_size, **settings):
         .prefetch(tf.data.AUTOTUNE)
 
 
-def _load_image_preprocessor(format, target_shape, preprocess_img=None, **kwargs):
-    is_triplet = "triplet" in format
-    preprocess_img = None
+def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None, **kwargs):
     prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img)
 
     if is_triplet:

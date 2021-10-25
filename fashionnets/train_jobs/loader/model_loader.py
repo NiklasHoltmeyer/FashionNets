@@ -34,8 +34,9 @@ def load_siamese_model_from_train_job(**train_job):
 
     optimizer = train_job.get("optimizer", None)
     if not optimizer:
-        optimizer = keras.optimizers.Adam(1e-4)
-        logger.debug("Default Optimizer: Adam(LR 1e-3)")
+        lr = train_job.get("learning_rate", 5e-3)
+        optimizer = keras.optimizers.Adam(lr)
+        logger.debug(f"Default Optimizer: Adam(LR {lr})")
     else:
         logger.debug(f"Using non Default Optimizer: {train_job['optimizer']}")
 
