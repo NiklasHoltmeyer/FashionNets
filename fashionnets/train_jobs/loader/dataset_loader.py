@@ -159,9 +159,9 @@ def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, *
     return train_dataset, val_dataset, n_train_items, n_val_items
 
 
-def prepare_ds(dataset, batch_size, **settings):
+def prepare_ds(dataset, batch_size, is_triplet, **settings):
     target_shape = settings["input_shape"]
-    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=settings["is_triplet"])) \
+    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet)) \
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 

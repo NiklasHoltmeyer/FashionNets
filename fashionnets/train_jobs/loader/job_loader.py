@@ -8,6 +8,7 @@ from fashionnets.train_jobs.loader.dataset_loader import load_dataset_loader
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 from fashionnets.util.io import json_dump, string_serializer
 
+
 def prepare_environment(notebook_name, debugging=False, **settings):
     environment = EnvironmentBuilder.by_runtime_notebook_name(notebook_name)
     environment.load_kaggle()
@@ -16,6 +17,7 @@ def prepare_environment(notebook_name, debugging=False, **settings):
     environment.dependencies["kaggle"] = training_job_cfg["dataset"]
 
     return environment, training_job_cfg
+
 
 def load_job_settings(environment, training_job_cfg, kaggle_downloader):
     if kaggle_downloader:
@@ -32,7 +34,7 @@ def add_back_bone_to_train_job(environment, **settings):
     back_bone_weights = settings["back_bone"]["info"]["weights"]
     back_bone_is_triplet = settings["back_bone"]["info"]["is_triplet"]
     settings["format"] = format_name(back_bone_is_triplet)
-    settings["is_triplet"] = format_is_triplet(back_bone_is_triplet)
+    settings["is_triplet"] = back_bone_is_triplet
 
     input_shape = settings["input_shape"]
 
@@ -89,6 +91,7 @@ def dump_settings(job_settings):
         print(f"Dumbing {path}")
     json_dump(path, settings)
 
+
 def history_to_csv_string(history, _print=True, decimal_separator=None, **job_settings):
     name = job_settings["run_name"]
     lr = job_settings["learning_rate"]
@@ -98,10 +101,10 @@ def history_to_csv_string(history, _print=True, decimal_separator=None, **job_se
     for metric, values in history.history.items():
         if decimal_separator:
             values = [str(x).replace(".", decimal_separator) for x in values]
-        else:
-            values = [str(x) for x in values]
 
         values = [metric, name, is_trip, lr, ds] + values
+        values = [str(x) for x in values]
+
         csv = ";".join(values)
         rows.append(csv)
         if print:
