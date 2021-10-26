@@ -46,13 +46,13 @@ def job_list(debugging):
         "l_i2": {"run_idx": 1188, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
         "l_i3": {"run_idx": 1199, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
         ## weiter
-        "g_i2": {"run_idx": 21, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # ImgNet False V2
+        "g_i2": {"run_idx": 21, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # ImgNet False V2  # Done
         "k_ok2": {"run_idx": 22, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # None   False V2  #Done
         "g_v2": {"run_idx": 11, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # ImgNet True V1
         "g_p2": {"run_idx": 12, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # None   True V1
 
-        "k_ok3": {"run_idx": 13, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # ImgNet False V1  #<- auf kaggle
-        "g_i3": {"run_idx": 14, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # None   False V1
+        "k_ok3": {"run_idx": 13, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # ImgNet False V1  #<- auf kaggle
+        "g_i3": {"run_idx": 14, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # None   False V1
 
     }
 
