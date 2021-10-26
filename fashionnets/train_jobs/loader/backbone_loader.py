@@ -28,3 +28,6 @@ def back_bone_configuration_name(back_bone, is_triplet, weights):
 
 def format_name(is_triplet):
     return "triplet" if is_triplet else "quadruplet"
+
+def format_is_triplet(format):
+    return format == "triplet"

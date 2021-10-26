@@ -3,7 +3,7 @@ from pathlib import Path
 from fashionnets.train_jobs.environment.Environment_Builder import EnvironmentBuilder
 from fashionnets.train_jobs.job_list import job_list
 from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet, load_backbone_info_simple_cnn, \
-    format_name
+    format_name, format_is_triplet
 from fashionnets.train_jobs.loader.dataset_loader import load_dataset_loader
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 from fashionnets.util.io import json_dump, string_serializer
@@ -32,7 +32,7 @@ def add_back_bone_to_train_job(environment, **settings):
     back_bone_weights = settings["back_bone"]["info"]["weights"]
     back_bone_is_triplet = settings["back_bone"]["info"]["is_triplet"]
     settings["format"] = format_name(back_bone_is_triplet)
-    settings["is_triplet"] = format_name(back_bone_is_triplet)
+    settings["is_triplet"] = format_is_triplet(back_bone_is_triplet)
 
     input_shape = settings["input_shape"]
 
