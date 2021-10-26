@@ -19,12 +19,20 @@ def prepare_environment(notebook_name, debugging=False, **settings):
     return environment, training_job_cfg
 
 
-def load_job_settings(environment, training_job_cfg, kaggle_downloader):
+def load_job_settings(environment, training_job_cfg, kaggle_downloader, ignore_exception=False):
     if kaggle_downloader:
         environment.load_dependencies(kaggle_downloader=kaggle_downloader)
 
     job_settings = add_back_bone_to_train_job(environment=environment, **training_job_cfg)
-    job = load_train_job(**job_settings)
+    try:
+        job = load_train_job(**job_settings)
+    except Exception as e:
+        job = {}
+        if not ignore_exception:
+            raise e
+        else:
+            print("Exception:")
+            print(e)
 
     return {**job_settings, **job}
 
