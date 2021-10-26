@@ -55,7 +55,3 @@ class ResNet50Builder:
 ##            layer.trainable = trainable
 
 ##        return embedding, resnet.preprocess_input
-
-
-if __name__ == "__main__":
-    ResNet50Builder.build((144, 144))

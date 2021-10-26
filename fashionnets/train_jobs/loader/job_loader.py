@@ -57,6 +57,7 @@ def add_back_bone_to_train_job(environment, **settings):
                                                                                       back_bone_name=back_bone_name,
                                                                                       is_triplet=back_bone_is_triplet,
                                                                                       weights=back_bone_weights)
+        assert preprocess_input_layer
     elif "simplecnn" == back_bone_name:
         assert not back_bone_weights
         run_name, embedding_model, preprocess_input_layer = load_backbone_info_simple_cnn(input_shape=input_shape,
@@ -64,6 +65,7 @@ def add_back_bone_to_train_job(environment, **settings):
                                                                                           is_triplet=back_bone_is_triplet)
     settings["back_bone"]["embedding_model"] = embedding_model
     settings["back_bone"]["preprocess_input_layer"] = preprocess_input_layer
+    print(settings["back_bone"]["preprocess_input_layer"])
 
     run_name = f"{settings['run_idx']}_{run_name}"
     settings["run_name"] = run_name

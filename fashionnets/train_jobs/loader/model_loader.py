@@ -31,7 +31,7 @@ def sanity_check_job_settings(**train_job):
     optimizer = train_job["optimizer"]
     assert f"{optimizer.lr.numpy():.2e}" == train_job["learning_rate"]
 
-def load_siamese_model_from_train_job(**train_job):
+def load_siamese_model_from_train_job(force_preprocess_layer=False, **train_job):
     logger = defaultLogger("Load_Siamese_Model")
     logger.disabled = not train_job["verbose"]
 
@@ -41,6 +41,9 @@ def load_siamese_model_from_train_job(**train_job):
 
     back_bone_model = train_job["back_bone"]["embedding_model"]
     back_bone_preprocess_input_layer = train_job["back_bone"]["preprocess_input_layer"]
+
+    if force_preprocess_layer:
+        assert back_bone_preprocess_input_layer is not None
 
     siamese_network = SiameseNetwork.build(back_bone=back_bone_model,
                                            is_triplet=train_job["is_triplet"],
