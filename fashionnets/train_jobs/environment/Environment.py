@@ -1,6 +1,6 @@
 import os
 
-from fashionnets.train_jobs.notebook_environments.consts import kaggle
+from fashionnets.train_jobs.environment.Environment_Consts import kaggle
 from fashionnets.util.remote import WebDav
 
 """Helper Classes to Init Training-Environment (Setting up Secrets, Defining Env Based Settings ...)

@@ -17,22 +17,44 @@ class ResNet50Builder:
         x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
         x = tf.keras.layers.Dropout(0.3)(x)
         x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.layers.Dense(embedding_dim, activation=None)(x)
-        x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=1))(x)
+        x = tf.keras.layers.Dense(embedding_dim)(x)
+        #x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=1))(x)
 
-        embedding_model = Model(back_bone.input, x, name="Embedding")
+        embedding = Model(back_bone.input, x, name="Embedding")
 
-        if weights:
-            trainable = False
+        #if weights:
+        trainable = False
 
-            for layer in back_bone.layers:
-                if layer.name == "conv5_block1_out":
-                    trainable = True
-                layer.trainable = trainable
+        for layer in back_bone.layers:
+            if layer.name == "conv5_block1_out":
+                trainable = True
+            layer.trainable = trainable
 
-            return embedding_model, resnet.preprocess_input
-        else:
-            return embedding_model, None
+        return embedding, resnet.preprocess_input
+
+##    @staticmethod
+##    def build2(target_shape):
+        weights=None #"imagenet"
+##        base_cnn = resnet.ResNet50(
+##            weights=weights, input_shape=target_shape + (3,), include_top=False
+##        )
+
+##        flatten = tf.keras.layers.Flatten()(base_cnn.output)
+##        dense1 = tf.keras.layers.Dense(512, activation="relu")(flatten)
+##        dense1 = tf.keras.layers.BatchNormalization()(dense1)
+##        dense2 = tf.keras.layers.Dense(256, activation="relu")(dense1)
+##        dense2 = tf.keras.layers.BatchNormalization()(dense2)
+##        output = tf.keras.layers.Dense(256)(dense2)
+
+##        embedding = Model(base_cnn.input, output, name="Embedding")
+
+##        trainable = False
+##        for layer in base_cnn.layers:
+##            if layer.name == "conv5_block1_out":
+##                trainable = True
+##            layer.trainable = trainable
+
+##        return embedding, resnet.preprocess_input
 
 
 if __name__ == "__main__":

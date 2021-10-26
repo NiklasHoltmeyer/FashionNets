@@ -2,8 +2,8 @@ import json
 import os
 from pathlib import Path
 
-from fashionnets.train_jobs.notebook_environments.Environment import Environment
-from fashionnets.train_jobs.notebook_environments.consts import kaggle, notebooks
+from fashionnets.train_jobs.environment.Environment import Environment
+from fashionnets.train_jobs.environment.Environment_Consts import kaggle, notebooks
 from fashionnets.util.io import json_load
 
 try:

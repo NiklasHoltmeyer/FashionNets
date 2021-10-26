@@ -2,8 +2,8 @@ import json
 import os
 from pathlib import Path
 
-from fashionnets.train_jobs.notebook_environments.Environment import Environment
-from fashionnets.train_jobs.notebook_environments.consts import notebooks
+from fashionnets.train_jobs.environment.Environment import Environment
+from fashionnets.train_jobs.environment.Environment_Consts import notebooks
 
 try:
     # Imports that only work withing Kaggle

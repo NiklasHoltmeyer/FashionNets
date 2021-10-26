@@ -38,6 +38,7 @@ class SiameseModel(Model):
     def fake_predict(self, input_shape, is_triplet):
         """
         Force Init Layers (-> Model cant be Saved by Training without Init. Layers)
+        :param is_triplet:
         :param input_shape:
         :return:
         """

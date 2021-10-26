@@ -1,15 +1,15 @@
 from pathlib import Path
 
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
-from tensorflow import keras
 
 from fashionnets.callbacks.callbacks import callbacks
 from fashionnets.models.SiameseModel import SiameseModel
 from fashionnets.networks.SiameseNetwork import SiameseNetwork
+from fashionnets.train_jobs.loader.job_loader import dump_settings
 from fashionnets.util.csv import HistoryCSVHelper
 
 
-def get_checkpoint(train_job, logger):
+def retrieve_checkpoint_info(train_job, logger):
     cp_path, name = train_job["path"]["checkpoint"], train_job["run"]["name"]
 
     last_epoch = HistoryCSVHelper.last_epoch_from_train_job(train_job)
@@ -27,20 +27,29 @@ def get_checkpoint(train_job, logger):
         logger.debug(f"No Checkpoints found in: {cp_path}")
     return init_epoch, None
 
+def sanity_check_job_settings(**train_job):
+    optimizer = train_job["optimizer"]
+    assert f"{optimizer.lr.numpy():.2e}" == train_job["learning_rate"]
 
 def load_siamese_model_from_train_job(**train_job):
     logger = defaultLogger("Load_Siamese_Model")
     logger.disabled = not train_job["verbose"]
 
-    optimizer = train_job.get("optimizer", None)
-    if not optimizer:
-        lr = train_job.get("learning_rate", 5e-3)
-        optimizer = keras.optimizers.Adam(lr)
-        logger.debug(f"Default Optimizer: Adam(LR {lr})")
-    else:
-        logger.debug(f"Using non Default Optimizer: {train_job['optimizer']}")
+    sanity_check_job_settings(**train_job)
 
-    siamese_network = SiameseNetwork.build(**train_job)
+    optimizer = train_job["optimizer"]
+
+    back_bone_model = train_job["back_bone"]["embedding_model"]
+    back_bone_preprocess_input_layer = train_job["back_bone"]["preprocess_input_layer"]
+
+    siamese_network = SiameseNetwork.build(back_bone=back_bone_model,
+                                           is_triplet=train_job["is_triplet"],
+                                           input_shape=train_job["input_shape"],
+                                           alpha=train_job["alpha"],
+                                           beta=train_job["beta"],
+                                           preprocess_input=back_bone_preprocess_input_layer,
+                                           verbose=train_job["verbose"],
+                                           channels=3)
 
     siamese_model = SiameseModel(siamese_network)
     siamese_model.compile(optimizer=optimizer)
@@ -57,9 +66,11 @@ def load_siamese_model_from_train_job(**train_job):
 
     logger.debug(f"Callbacks: {_callbacks}")
 
-    init_epoch, _checkpoint = get_checkpoint(train_job, logger)
+    init_epoch, _checkpoint = retrieve_checkpoint_info(train_job, logger)
     if _checkpoint and train_job["load_weights"]:
         logger.debug("Loading Weights!")
         siamese_model.load_weights(_checkpoint)
+
+    dump_settings(train_job)
 
     return siamese_model, init_epoch, _callbacks

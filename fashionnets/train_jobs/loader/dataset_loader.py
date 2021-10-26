@@ -1,10 +1,9 @@
 import tensorflow as tf
-from fashiondatasets.consts import "triplet"
 from fashiondatasets.deepfashion2.DeepFashionQuadruplets import DeepFashionQuadruplets
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 
-from fashionnets.train_jobs.loader.job_loader import _load_dataset_base_path
+from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path
 from fashionnets.util.io import all_paths_exist
 
 
@@ -54,14 +53,18 @@ def load_dataset_loader(**settings):
 
 
 def _fill_ds_settings(**settings):
+    keys = ["format", "nrows", "target_shape", "batch_size", "buffer_size"]
+    missing_keys = list(filter(lambda k: k not in settings.keys(), keys))
+    assert len(missing_keys) == 0, f"Missing Keys: {missing_keys}"
+
     return {
         "map_full_paths": settings.get("map_full_paths", True),
         "validate_paths": settings.get("validate_paths", False),
-        "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
-        "nrows": settings.get("nrows", None),
-        "target_shape": settings.get("target_shape", (144, 144)),
-        "batch_size": settings.get("batch_size", 32),
-        "buffer_size": settings.get("buffer_size", 1024),
+#        "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
+#        "nrows": settings.get("nrows", None),
+#        "target_shape": settings.get("target_shape", (144, 144)),
+#        "batch_size": settings.get("batch_size", 32),
+#        "buffer_size": settings.get("buffer_size", 1024),
         "train_split": settings.get("train_split", 0.8),
         "preprocess_input": settings.get("preprocess_input", None)
     }
@@ -85,6 +88,8 @@ def _print_ds_settings(verbose, **ds_settings):
 
 
 def load_deepfashion(**settings):
+    print("Load own DeepFashion", settings["batch_size"], "Batch Size")
+
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
@@ -132,6 +137,7 @@ def load_own_dataset(**settings):
 
 
 def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, **settings):
+    print("Load own DS", batch_size, "Batch Size")
     split = train_split
     settings["format"] = format
     settings["batch_size"] = batch_size
@@ -154,13 +160,15 @@ def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, *
 
 
 def prepare_ds(dataset, batch_size, **settings):
-    return dataset.map(_load_image_preprocessor(**settings)) \
+    target_shape = settings["input_shape"]
+    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=settings["is_triplet"])) \
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
 
-def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None, **kwargs):
+def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None):
     prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img)
+    assert not preprocess_img, "None of the two Datasets needs further Preprocessing!"
 
     if is_triplet:
         return lambda a, p, n: (prep_image(a), prep_image(p), prep_image(n))

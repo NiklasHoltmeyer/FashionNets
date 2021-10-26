@@ -1,7 +1,6 @@
 job_worker_name = "l_i2"
 
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job
-from fashionnets.train_jobs.jobs import load_train_job, load_job_f_settings, load_job_info_from_notebook_name
 
 settings = load_job_info_from_notebook_name(job_worker_name)
 ##
