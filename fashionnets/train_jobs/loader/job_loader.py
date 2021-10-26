@@ -9,11 +9,13 @@ from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 from fashionnets.util.io import json_dump, string_serializer
 
 
-def load_job_settings(notebook_name, debugging, **settings):
+def load_job_settings(notebook_name, debugging, kaggle_downloader, **settings):
     env = EnvironmentBuilder.by_runtime_notebook_name(notebook_name)
 
     training_job_cfg = {**job_list(debugging)[notebook_name], **settings}
     env.dependencies["kaggle"] = training_job_cfg["dataset"]
+    if kaggle_downloader:
+        env.load_dependencies(kaggle_downloader=kaggle_downloader)
 
     job_settings = add_back_bone_to_train_job(environment=env, **training_job_cfg)
     job = load_train_job(**job_settings)

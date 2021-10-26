@@ -15,3 +15,4 @@ history = siamese_model.fit(train_ds,
                             )
 
 history_csv = history_to_csv_string(history, decimal_separator=",", **job_settings)
+
