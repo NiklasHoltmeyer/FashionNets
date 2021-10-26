@@ -50,7 +50,7 @@ def job_list(debugging):
         "g_p2": {"run_idx": 12, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # None   True V1
 
         "k_ok3": {"run_idx": 13, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # ImgNet False V1  #<- auf kaggle
-        "g_ok2": {"run_idx": 14, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # None   False V1
+        "g_i3": {"run_idx": 14, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # None   False V1
 
     }
 
