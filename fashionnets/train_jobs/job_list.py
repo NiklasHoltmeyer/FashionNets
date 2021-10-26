@@ -5,7 +5,7 @@ from fashionnets.train_jobs.settings.default_settings import base_settings, back
 def job_list(debugging):
     base_cfg = base_settings(debugging)
     # back_bone_cfg =
-    deep_fash_cfg = lambda variation: loader_info("deep_fashion_256", "variation")
+    deep_fash_cfg = lambda variation: loader_info("deep_fashion_256", variation)
 
     back_bone_by_notebook = {
         "g_i": back_bone_settings("resnet50", weights="imagenet", is_triplet=False),
