@@ -28,7 +28,6 @@ def load_job_settings(environment, training_job_cfg, kaggle_downloader):
 
 
 def add_back_bone_to_train_job(environment, **settings):
-    print(settings.keys())
     back_bone_name = settings["back_bone"]["info"]["back_bone_name"]
     back_bone_weights = settings["back_bone"]["info"]["weights"]
     back_bone_is_triplet = settings["back_bone"]["info"]["is_triplet"]

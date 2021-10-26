@@ -34,7 +34,7 @@ class ResNet50Builder:
 
 ##    @staticmethod
 ##    def build2(target_shape):
-        weights=None #"imagenet"
+##        weights=None #"imagenet"
 ##        base_cnn = resnet.ResNet50(
 ##            weights=weights, input_shape=target_shape + (3,), include_top=False
 ##        )
