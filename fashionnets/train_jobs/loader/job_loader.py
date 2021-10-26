@@ -14,6 +14,7 @@ def load_job_settings(notebook_name, debugging, kaggle_downloader, **settings):
 
     training_job_cfg = {**job_list(debugging)[notebook_name], **settings}
     env.dependencies["kaggle"] = training_job_cfg["dataset"]
+
     if kaggle_downloader:
         env.load_dependencies(kaggle_downloader=kaggle_downloader)
 

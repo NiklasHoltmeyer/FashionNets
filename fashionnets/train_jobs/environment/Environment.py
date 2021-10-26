@@ -1,5 +1,7 @@
 import os
 
+from kaggle.rest import ApiException
+
 from fashionnets.train_jobs.environment.Environment_Consts import kaggle
 from fashionnets.util.remote import WebDav
 
@@ -61,7 +63,12 @@ class Environment:
                     continue
                 ds_full_name = kaggle["datasets"]["prefix"] + ds_name.replace("_", "-")
                 print("Download:", ds_full_name)
-                kaggle_downloader(ds_full_name, f"./", unzip=True)
+                try:
+                    kaggle_downloader(ds_full_name, f"./", unzip=True)
+                except ApiException as e:
+                    print("Exception", str(e))
+                    print("ds_full_name", ds_full_name)
+
 
             self.prepare(skip_preprocess)
 
