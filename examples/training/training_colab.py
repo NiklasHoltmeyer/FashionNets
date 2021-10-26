@@ -1,16 +1,14 @@
+from fashionnets.train_jobs.loader.job_loader import prepare_environment, load_job_settings, history_to_csv_string
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job
+import kaggle
 
 job_worker_name = "l_i1"
 # !pip install -q git+https://github.com/NiklasHoltmeyer/FashionNets.git
-from fashionnets.train_jobs.loader.job_loader import prepare_environment, history_to_csv_string
-
-from fashionnets.train_jobs.loader.job_loader import prepare_environment, load_job_settings
-import kaggle
 
 environment, training_job_cfg = prepare_environment(job_worker_name, debugging=False)
 
 #kaggle.api.authenticate()
-kaggle_downloader = None#kaggle.api.dataset_download_files  # <- doesnt work from withing the library. maybe a permissions issue
+kaggle_downloader = kaggle.api.dataset_download_files  # <- doesnt work from withing the library. maybe a permissions issue
 
 train_job = load_job_settings(environment=environment, training_job_cfg=training_job_cfg,
                                  kaggle_downloader=kaggle_downloader)
