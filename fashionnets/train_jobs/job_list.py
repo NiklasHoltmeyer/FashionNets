@@ -33,7 +33,7 @@ def job_list(debugging):
 
     train_jobs = {
         "g_i": {"run_idx": 31, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # ImgNet False V3
-        "k_ok": {"run_idx": 32, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # None   False V3
+        "k_ok": {"run_idx": 32, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # None   False V3    # Done
         "g_v": {"run_idx": 33, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # ImgNet True V3
         "g_p": {"run_idx": 34, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # None   True V3
 
