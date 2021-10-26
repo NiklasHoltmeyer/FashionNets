@@ -23,12 +23,13 @@ def job_list(debugging):
     }
 
     train_jobs = {
-        "g_i": {"run_idx": 1, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-        "k_ok": {"run_idx": 2, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-        "g_v": {"run_idx": 3, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-        "g_p": {"run_idx": 4, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-        "g_b": {"run_idx": 5, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-        "g_ok": {"run_idx": 6, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
+        "g_i": {"run_idx": 31, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
+        "k_ok": {"run_idx": 32, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
+        "g_v": {"run_idx": 33, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
+        "g_p": {"run_idx": 34, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
+
+        "g_b": {"run_idx": 25, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},
+        "g_ok": {"run_idx": 26, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},
 
         "l_i1": {"run_idx": 1177, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
         "l_i2": {"run_idx": 1188, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
