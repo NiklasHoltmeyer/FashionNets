@@ -23,8 +23,10 @@ def job_list(debugging):
         "k_ok2": back_bone_settings("resnet50", weights=None, is_triplet=False),  # None   False V2
         "g_v2": back_bone_settings("resnet50", weights="imagenet", is_triplet=True),  # ImgNet True V1
         "g_p2": back_bone_settings("resnet50", weights=None, is_triplet=True),  # None   True V1
-        "g_b2": back_bone_settings("resnet50", weights="imagenet", is_triplet=False),  # ImgNet False V1
-        "g_ok2": back_bone_settings("resnet50", weights=None, is_triplet=False),  # None   False V1
+
+        "k_ok3": back_bone_settings("resnet50", weights="imagenet", is_triplet=False),  # ImgNet False V1
+        "g_i3": back_bone_settings("resnet50", weights=None, is_triplet=False),  # None   False V1
+
 
         "l_i1": back_bone_settings("resnet50", weights=None, is_triplet=True),
         "l_i2": back_bone_settings("resnet50", weights="imagenet", is_triplet=True),
