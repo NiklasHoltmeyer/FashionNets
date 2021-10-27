@@ -9,7 +9,7 @@ def base_settings(debugging):
         "beta": 0.5,
         "epochs": 20,
         "verbose": False,
-        "nrows": 6000,
+        "nrows": None,
         "buffer_size": 32,
         "batch_size": 32,
         "optimizer": optimizer,

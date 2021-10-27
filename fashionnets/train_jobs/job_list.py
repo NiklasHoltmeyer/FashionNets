@@ -9,51 +9,35 @@ def job_list(debugging):
     # back_bone_cfg =
     deep_fash_cfg = lambda variation: loader_info("deep_fashion_256", variation)
 
+    triplet_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=True)
+    triplet_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=True)
+
+    quad_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=False)
+    quad_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=False)
+
+    ds = deep_fash_cfg("df_quad_2")
+
     back_bone_by_notebook = {
-        "g_i": back_bone_settings("resnet50", weights="imagenet", is_triplet=False),
-        "k_ok": back_bone_settings("resnet50", weights=None, is_triplet=False),
+        "k_ok": {**quad_no_weights},
+        "g_i":  {**quad_w_weights},
 
-        "g_v": back_bone_settings("resnet50", weights="imagenet", is_triplet=True),
-        "g_p": back_bone_settings("resnet50", weights=None, is_triplet=True),
+        "g_ok": {**triplet_w_weights},
+        "g_b":  {**triplet_no_weights},
 
-        "k_ok4": back_bone_settings("resnet50", weights="imagenet", is_triplet=True),
-        "g_ok": back_bone_settings("resnet50", weights=None, is_triplet=True),
+        "g_p_resume_gok": {**triplet_w_weights},
+        "g_v_remose_gb": {**triplet_no_weights},
 
-        "g_i2": back_bone_settings("resnet50", weights="imagenet", is_triplet=False),  # ImgNet False V2
-        "k_ok2": back_bone_settings("resnet50", weights=None, is_triplet=False),  # None   False V2
-        "g_i4": back_bone_settings("resnet50", weights="imagenet", is_triplet=True),  # ImgNet True V1
-        "g_p2": back_bone_settings("resnet50", weights=None, is_triplet=True),  # None   True V1
-
-        "k_ok3": back_bone_settings("resnet50", weights="imagenet", is_triplet=False),  # ImgNet False V1
-        "g_i3": back_bone_settings("resnet50", weights=None, is_triplet=False),  # None   False V1
-
-
-        "l_i1": back_bone_settings("resnet50", weights=None, is_triplet=True),
-        "l_i2": back_bone_settings("resnet50", weights="imagenet", is_triplet=True),
-        "l_i3": back_bone_settings("simplecnn", weights=None, is_triplet=True),
     }
 
     train_jobs = {
-#        "g_i": {"run_idx": 31, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # ImgNet False V3     # Done
-#        "k_ok": {"run_idx": 32, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # None   False V3    # Done
-#        "g_v": {"run_idx": 33, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # ImgNet True V3      # Done
-#        "g_p": {"run_idx": 34, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},  # None   True V3      #Done
+        "k_ok":             {"run_idx": 1,  **base_cfg, "dataset": ds},
+        "g_i":              {"run_idx": 2,  **base_cfg, "dataset": ds},
 
-        "k_ok4": {"run_idx": 25, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # ImgNet True V2
-#        "g_ok": {"run_idx": 26, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # None   True V2    # Done
+        "g_ok":             {"run_idx": 31, **base_cfg, "dataset": ds},
+        "g_b":              {"run_idx": 41, **base_cfg, "dataset": ds},
 
-#Done        "l_i1": {"run_idx": 1177, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-#Done        "l_i2": {"run_idx": 1188, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-#Done        "l_i3": {"run_idx": 1199, **base_cfg, "dataset": deep_fash_cfg("df_quad_3")},
-        ## weiter
-#        "g_i2": {"run_idx": 21, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # ImgNet False V2  # Done
-#        "k_ok2": {"run_idx": 22, **base_cfg, "dataset": deep_fash_cfg("df_quad_2")},  # None   False V2  #Done
-#        "g_i4": {"run_idx": 11, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # ImgNet True V1
-        "g_p2": {"run_idx": 12, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # None   True V1 #Done
-#
-#        "k_ok3": {"run_idx": 13, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # ImgNet False V1  #<- auf kaggle
-#        "g_i3": {"run_idx": 14, **base_cfg, "dataset": deep_fash_cfg("df_quad_1")},  # None   False V1 # Done
-
+        "g_p_resume_gok":   {"run_idx": 32, **base_cfg, "dataset": ds},
+        "g_v_remose_gb":    {"run_idx": 42, **base_cfg, "dataset": ds},
     }
 
     for k in train_jobs.keys():
