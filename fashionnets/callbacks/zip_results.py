@@ -39,13 +39,13 @@ class ZipResults(keras.callbacks.Callback):
             print(e)
 
     def delete_already_zipped_results(self, folder_path):
-        history_path = Path(folder_path, "history.csv")
-        history = read_file(history_path) if history_path.exists() else None
+#        history_path = Path(folder_path, "history.csv")
+#        history = read_file(history_path) if history_path.exists() else None
         if not DeleteOldModel.delete_path(folder_path):
             print("Couldnt Remove:", folder_path)
-        if history:
-            history_path.parent.mkdir(parents=True, exist_ok=True)
-            write_file(history_path, history)
+#        if history:
+#            history_path.parent.mkdir(parents=True, exist_ok=True)
+#            write_file(history_path, history)
 
     @staticmethod
     def list_subfolders(path):
