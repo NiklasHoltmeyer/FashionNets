@@ -3,6 +3,7 @@ from pathlib import Path
 import tensorflow as tf
 from tensorflow import keras
 
+from fashionnets.callbacks.custom_history_dump import CustomHistoryDump
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
 from fashionnets.callbacks.early_stopping_based_on_history_csv import EarlyStoppingBasedOnHistory
 from fashionnets.callbacks.zip_results import ZipResults
@@ -26,8 +27,8 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         DeleteOldModel(checkpoint_path=checkpoint_path, name=name, keep_n=keep_n,
                        save_format=save_format, save_weights_only=save_weights_only),
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip, result_uploader=result_uploader),
+        CustomHistoryDump(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol=".")
     ]
-
 
 def model_checkpoint(checkpoint_path, name, monitor='val_accuracy', save_weights_only=False, verbose=False):
     model_cp_latest_path = Path(checkpoint_path, name + "_")  # .h5
