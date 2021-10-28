@@ -35,4 +35,4 @@ def download_results():
 
 while True:
     download_results()
-    time.sleep(60 * 30)
+    time.sleep(60 * 15)
