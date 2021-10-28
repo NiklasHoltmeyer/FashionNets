@@ -21,7 +21,7 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
     return [  # history_path, monitor="loss", patience=3, sep=","
         keras.callbacks.EarlyStopping(monitor='loss', patience=3),
         tf.keras.callbacks.CSVLogger(history_cp_path, append=True, separator=csv_sep),
-        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
+#        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
         model_checkpoint(checkpoint_path, name, monitor, save_weights_only=save_weights_only, verbose=verbose),
         DeleteOldModel(checkpoint_path=checkpoint_path, name=name, keep_n=keep_n,
                        save_format=save_format, save_weights_only=save_weights_only),
