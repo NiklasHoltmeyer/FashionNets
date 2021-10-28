@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fashionnets.train_jobs.environment.Environment_Builder import EnvironmentBuilder
-from fashionnets.train_jobs.job_list import job_list
+from fashionnets.train_jobs.job_list import job_list, job_config_by_notebook_name
 from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet, load_backbone_info_simple_cnn, \
     format_name
 from fashionnets.train_jobs.loader.dataset_loader import load_dataset_loader
@@ -13,7 +13,7 @@ def prepare_environment(notebook_name, debugging=False, **settings):
     environment = EnvironmentBuilder.by_runtime_notebook_name(notebook_name)
     environment.load_kaggle()
 
-    training_job_cfg = {**job_list(debugging)[notebook_name], **settings}
+    training_job_cfg = {**job_config_by_notebook_name(notebook_name, debugging), **settings}
     environment.dependencies["kaggle"] = training_job_cfg["dataset"]
 
     return environment, training_job_cfg

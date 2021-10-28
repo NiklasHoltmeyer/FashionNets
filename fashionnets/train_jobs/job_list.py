@@ -4,8 +4,16 @@ from fashionnets.train_jobs.loader.dataset_loader import loader_info
 from fashionnets.train_jobs.settings.default_settings import base_settings, back_bone_settings
 
 
+def job_config_by_notebook_name(notebook_name, debugging):
+    x = notebook_name.split("_")[1:]
+    job_id = "_".join(x)  # g_b1_12 => b1_12
+    return job_list(debugging)[job_id]
+
 def job_list(debugging):
-    base_cfg = base_settings(debugging)
+    base_cfg1e4 = base_settings(debugging, 1e-4)
+    base_cfg5e3 = base_settings(debugging, 5e-3)
+    base_cfg1e3 = base_settings(debugging, 1e-3)
+
     # back_bone_cfg =
     deep_fash_cfg = lambda variation: loader_info("deep_fashion_256", variation)
 
@@ -18,28 +26,38 @@ def job_list(debugging):
     ds = deep_fash_cfg("df_quad_2")
 
     back_bone_by_notebook = {
-        "k_1": {**quad_no_weights},
-        "g_i":  {**quad_w_weights},
+        "b1": {**quad_no_weights},
+        "b2": {**quad_w_weights},
 
-        "g_1": {**triplet_w_weights},
-        "g_2":  {**triplet_no_weights},
-
-        "l_1337": {**triplet_no_weights},
+        "b3": {**triplet_w_weights},
+        "b4": {**triplet_no_weights},
     }
 
     train_jobs = {
-        "k_1":             {"run_idx": 1,  **base_cfg, "dataset": ds},
-        "g_i":              {"run_idx": 2,  **base_cfg, "dataset": ds},
+        "b1_11": {"run_idx": 11, **base_cfg1e4, "dataset": ds},
+        "b2_12": {"run_idx": 12, **base_cfg1e4, "dataset": ds},
+        "b3_13": {"run_idx": 13, **base_cfg1e4, "dataset": ds},
+        "b4_14": {"run_idx": 14, **base_cfg1e4, "dataset": ds},
 
-        "g_1":             {"run_idx": 3, **base_cfg, "dataset": ds},
-        "g_2":              {"run_idx": 4, **base_cfg, "dataset": ds},
+        ###
+        "b1_21": {"run_idx": 21, **base_cfg5e3, "dataset": ds},
+        "b2_22": {"run_idx": 22, **base_cfg5e3, "dataset": ds},
+        "b3_23": {"run_idx": 23, **base_cfg5e3, "dataset": ds},
+        "b4_24": {"run_idx": 24, **base_cfg5e3, "dataset": ds},
 
-        "l_1337": {"run_idx": 1337, **base_cfg, "dataset": ds}
+        ##
+        "b1_31": {"run_idx": 31, **base_cfg1e3, "dataset": ds},
+        "b2_32": {"run_idx": 32, **base_cfg1e3, "dataset": ds},
+        "b3_33": {"run_idx": 33, **base_cfg1e3, "dataset": ds},
+        "b4_34": {"run_idx": 34, **base_cfg1e3, "dataset": ds},
     }
 
     for k in train_jobs.keys():
+        back_bone_key = k.split("_")[0]
+        back_bone_info = back_bone_by_notebook[back_bone_key]
+
         train_jobs[k]["back_bone"] = {
-            "info": back_bone_by_notebook[k], "embedding_model": None, "preprocess_input_layer": None
+                "info": back_bone_info, "embedding_model": None, "preprocess_input_layer": None
         }
 
     return train_jobs
@@ -59,6 +77,5 @@ def validate_job_list():
 
     jobs_distinct = distinct(jobs)
     assert len(jobs) != jobs_distinct, "At least one duplicate Job!"
-
 
 validate_job_list()

@@ -1,8 +1,8 @@
 from tensorflow import keras
 
 
-def base_settings(debugging):
-    optimizer = keras.optimizers.Adam(1e-4)
+def base_settings(debugging, learning_rate=1e-4):
+    optimizer = keras.optimizers.Adam(learning_rate)
     base = {
         "input_shape": (224, 224),  # (144, 144),
         "alpha": 1.0,
