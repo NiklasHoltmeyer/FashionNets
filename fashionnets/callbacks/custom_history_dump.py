@@ -21,10 +21,13 @@ class CustomHistoryDump(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         try:
             self.dumb_history(epoch, logs)
-        except:
-            pass
+        except Exception as e:
+            raise e
 
     def dumb_history(self, epoch, logs=None):
+        if epoch < 1:
+            return
+
         logs = logs or defaultdict(lambda: [])
 
         file_name = f"history_{epoch:04d}.csv"
@@ -38,19 +41,12 @@ class CustomHistoryDump(keras.callbacks.Callback):
         map_change_decimal_symbol = lambda lst: list(map(replace_dec, lst))
         metric_history_changed_decimal = {k: map_change_decimal_symbol(v) for k, v in metric_history.items()}
 
-        history_csv_data = copy.deepcopy({"epoch": epochs, **metric_history_changed_decimal})
-        history_csv_data["epoch"].append(epoch)
+        history_csv_data = {"epoch": epochs + [epoch], **metric_history_changed_decimal}
 
         ## add current run
         for k, v in logs.items():
             history_csv_data[k].append(replace_dec(v))
 
-
         df = pd.DataFrame(history_csv_data)
         df.to_csv(csv, index=False, sep=";", decimal=self.decimal_symbol)
-
-        print("Epoch", epoch)
-        print(logs)
-        print("*")
-        print(logs.keys())
 
