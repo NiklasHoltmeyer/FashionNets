@@ -18,26 +18,23 @@ def job_list(debugging):
     ds = deep_fash_cfg("df_quad_2")
 
     back_bone_by_notebook = {
-        "k_ok": {**quad_no_weights},
+        "k_1": {**quad_no_weights},
         "g_i":  {**quad_w_weights},
 
-        "g_ok": {**triplet_w_weights},
-        "g_b":  {**triplet_no_weights},
+        "g_1": {**triplet_w_weights},
+        "g_2":  {**triplet_no_weights},
 
-        "g_p_resume_gok": {**triplet_w_weights},
-        "g_v_remose_gb": {**triplet_no_weights},
-
+        "l_1337": {**triplet_no_weights},
     }
 
     train_jobs = {
-        "k_ok":             {"run_idx": 1,  **base_cfg, "dataset": ds},
+        "k_1":             {"run_idx": 1,  **base_cfg, "dataset": ds},
         "g_i":              {"run_idx": 2,  **base_cfg, "dataset": ds},
 
-        "g_ok":             {"run_idx": 31, **base_cfg, "dataset": ds},
-        "g_b":              {"run_idx": 41, **base_cfg, "dataset": ds},
+        "g_1":             {"run_idx": 3, **base_cfg, "dataset": ds},
+        "g_2":              {"run_idx": 4, **base_cfg, "dataset": ds},
 
-        "g_p_resume_gok":   {"run_idx": 32, **base_cfg, "dataset": ds},
-        "g_v_remose_gb":    {"run_idx": 42, **base_cfg, "dataset": ds},
+        "l_1337": {"run_idx": 1337, **base_cfg, "dataset": ds}
     }
 
     for k in train_jobs.keys():

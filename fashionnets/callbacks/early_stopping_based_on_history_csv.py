@@ -1,36 +1,56 @@
 from tensorflow import keras
+
 from fashionnets.util.csv import HistoryCSVHelper
 
 
 class EarlyStoppingBasedOnHistory(keras.callbacks.Callback):
-    def __init__(self, history_path, monitor="loss", patience=3, sep=","):
+    def __init__(self, history_path, monitor="loss", patience=3, sep=",", lower_is_better=True):
         super(EarlyStoppingBasedOnHistory, self).__init__()
         self.history_path = history_path
         self.sep = sep
         self.patience = patience
         self.monitor = monitor
 
-    def on_epoch_begin(self, epoch, logs=None):
-        history = HistoryCSVHelper.history_csv_to_dict(self.history_path, drop_columns=["epoch"], sep=self.sep)
+        self.comparative_operator = min if lower_is_better else max
 
-        if len(history) < 1:
+    def on_epoch_begin(self, epoch, logs=None):
+        history = HistoryCSVHelper.history_csv_to_dict(self.history_path, sep=self.sep)  # drop_columns=["epoch"]
+
+        if len(history) < 1 or epoch < self.patience:
             return
 
-        for metric, values in history.items():
-            stop, best_ep = self.early_stopping(values, epoch)
-            if stop:
-                print(f"Best {metric} Results at {best_ep}")
-                if metric == self.monitor:
-                    print(f"Stop Training. {metric} has not improved in {epoch - best_ep} Epochs!")
-                    self.model.stop_training = True
+        ep_values = zip(history["epoch"], history[self.monitor])
+        best_epoch, best_value = self.comparative_operator(ep_values, key=lambda d: d[1])
 
-    def early_stopping(self, values, epoch):
-        if len(values) < 1:
-            return False, -1
+        early_stopping = (best_epoch + self.patience) < epoch
+        if early_stopping:
+            print(f"Best {self.monitor} Results at {best_epoch}.")
+            print(f"Stop Training. {self.monitor} has not improved in {epoch - best_epoch} Epochs!")
+            self.model.stop_training = True
 
-        best_epoch = values.index(min(values))
+#        if len(history) < 1:
+#            return
 
-        if epoch < self.patience:  # Epoch starts at 0. so it trains atleast for patience epochs
-            return False, best_epoch
+#        for metric, values in history.items():
+#            stop, best_ep = self.early_stopping(values, epoch)
+#            if stop:
+#                print(f"Best {metric} Results at {best_ep}")
+#                if metric == self.monitor:
+#                    print(f"Stop Training. {metric} has not improved in {epoch - best_ep} Epochs!")
+#                    self.model.stop_training = True
 
-        return (best_epoch + self.patience) < epoch, best_epoch
+#    def early_stopping(self, values, epoch):
+#        if len(values) < 1:
+#            return False, -1
+
+#        best_epoch = values.index(min(values))
+
+#        if epoch < self.patience:  # Epoch starts at 0. so it trains atleast for patience epochs
+#            return False, best_epoch
+
+#        return (best_epoch + self.patience) < epoch, best_epoch
+
+if __name__ == "__main__":
+    path = r"F:\workspace\FashNets\1337_resnet50_None_triplet\history.csv"
+    csv_sep = ";"
+    EarlyStoppingBasedOnHistory(path, monitor='loss', patience=3, sep=csv_sep).on_epoch_begin(9, None)

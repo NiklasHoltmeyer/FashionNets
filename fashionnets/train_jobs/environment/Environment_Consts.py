@@ -21,7 +21,8 @@ notebooks = {
                 "webdav": "/gdrive/MyDrive/results/webdav.json"
             },
             "checkpoint": "./results/",
-            "dataset_base_path": "/content/"
+            "dataset_base_path": "/content/",
+            "tmp": "./tmp"
         }
     },
     "kaggle": {
@@ -31,7 +32,8 @@ notebooks = {
         },
         "paths": {
             "checkpoint": "./",
-            "dataset_base_path": "/kaggle/working/"
+            "dataset_base_path": "/kaggle/working/",
+            "tmp": "./tmp"
         }
     },
     "local": {
@@ -40,7 +42,8 @@ notebooks = {
                 "webdav": r"F:\workspace\webdav.json"
             },
             "checkpoint": r"F:\workspace\FashNets\\",
-            "dataset_base_path": "F:\\workspace\\datasets\\"
+            "dataset_base_path": "F:\\workspace\\datasets\\",
+            "tmp": "./tmp"
         }
     }
 }

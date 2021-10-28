@@ -50,3 +50,6 @@ class SiameseModel(Model):
     @property
     def metrics(self):
         return [self.loss_tracker]
+
+    def custom_test(self):
+        print("TEST")
