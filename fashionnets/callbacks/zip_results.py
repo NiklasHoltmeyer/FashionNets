@@ -54,3 +54,8 @@ class ZipResults(keras.callbacks.Callback):
     @staticmethod
     def zip_subfolders(path):
         return list(map(ZipResults.zip_results, ZipResults.list_subfolders(path)))
+
+if __name__ == "__main__":
+    zip_r = ZipResults(checkpoint_path=r"F:\workspace\FashNets\1337_resnet50_None_triplet",
+                         remove_after_zip=True)
+    zip_r.on_epoch_end(None, None)

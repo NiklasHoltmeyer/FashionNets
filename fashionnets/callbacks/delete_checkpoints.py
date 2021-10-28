@@ -45,6 +45,9 @@ class DeleteOldModel(keras.callbacks.Callback):
 
     @staticmethod
     def delete_path(path):
+        blacklist = [".csv", ".json"]
+        if any(filter(lambda bl: path.endswith(bl), blacklist)):
+            return True
         try:
             path.unlink()
             return True
@@ -99,7 +102,8 @@ class DeleteOldModel(keras.callbacks.Callback):
 
 
 if __name__ == "__main__":
-    dom = DeleteOldModel(checkpoint_path="F:\workspace\FashNets\simplecnn_none", keep_n=1, name="simplecnn_none")
+    dom = DeleteOldModel(checkpoint_path=r"F:\workspace\FashNets\1337_resnet50_None_triplet",
+                         keep_n=1, name="1337_resnet50_None_triplet")
     dom.on_epoch_end(None, None)
 
 #    def on_epoch_end(self, epoch, logs=None):

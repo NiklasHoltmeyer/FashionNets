@@ -22,7 +22,7 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         keras.callbacks.EarlyStopping(monitor='loss', patience=3),
         tf.keras.callbacks.CSVLogger(history_cp_path, append=True, separator=csv_sep),
         EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
-        *model_checkpoint(checkpoint_path, name, monitor, save_weights_only=save_weights_only, verbose=verbose),
+        model_checkpoint(checkpoint_path, name, monitor, save_weights_only=save_weights_only, verbose=verbose),
         DeleteOldModel(checkpoint_path=checkpoint_path, name=name, keep_n=keep_n,
                        save_format=save_format, save_weights_only=save_weights_only),
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip, result_uploader=result_uploader),
@@ -30,20 +30,10 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
 
 
 def model_checkpoint(checkpoint_path, name, monitor='val_accuracy', save_weights_only=False, verbose=False):
-    model_cp_path = Path(checkpoint_path, f"{name}_best_")  # .h5
     model_cp_latest_path = Path(checkpoint_path, name + "_")  # .h5
 
-    model_cp_path.parent.mkdir(parents=True, exist_ok=True)
+    model_cp_latest_path.parent.mkdir(parents=True, exist_ok=True)
 
-    model_cp_path = str(model_cp_path.resolve()) + "cp-{epoch:04d}.ckpt"
     model_cp_latest_path = str(model_cp_latest_path.resolve()) + "cp-{epoch:04d}.ckpt"
 
-    if verbose:
-        print("model_cp_path", model_cp_path)
-
-    return [
-        keras.callbacks.ModelCheckpoint(model_cp_path, save_best_only=True, monitor=monitor,
-                                        save_weights_only=save_weights_only),
-        keras.callbacks.ModelCheckpoint(model_cp_latest_path, monitor=monitor,
-                                        save_weights_only=save_weights_only),
-    ]
+    return keras.callbacks.ModelCheckpoint(model_cp_latest_path, monitor=monitor)
