@@ -83,14 +83,14 @@ class Environment:
 
         self.webdav = WebDav(**webdav_secrets)
 
-    def init(self):
+    def init(self, skip_dependencies=False):
         self.load_kaggle()
         import kaggle
         kaggle.api.authenticate()
         secrets = self.load_webdav()
         self.build_webdav_settings(secrets)
-
-        self.load_dependencies()
+        if not skip_dependencies:
+            self.load_dependencies()
 
     def __str__(self):
         return self.notebook

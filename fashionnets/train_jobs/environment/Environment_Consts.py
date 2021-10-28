@@ -43,7 +43,8 @@ notebooks = {
             },
             "checkpoint": r"F:\workspace\FashNets\\",
             "dataset_base_path": "F:\\workspace\\datasets\\",
-            "tmp": "./tmp"
+            "tmp": "./tmp",
+            "results_download_path": r"D:\masterarbeit_runs"
         }
     }
 }
