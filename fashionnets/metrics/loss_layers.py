@@ -16,7 +16,8 @@ class TripletLoss(layers.Layer):
         loss = ap_distance - an_distance + self.alpha
         loss = tf.maximum(loss, 0.0)
 
-        return tf.reduce_sum(loss, axis=0)
+        return loss
+        #return tf.reduce_sum(loss, axis=0)
 
 
 # TripletSemiHardLoss
@@ -36,4 +37,9 @@ class QuadrupletLoss(layers.Layer):
         loss = tf.maximum(ap_distance - an_distance + self.alpha, 0.0) + \
                tf.maximum(ap_distance - nn_distance - self.beta, 0.0)
 
-        return tf.reduce_sum(loss, axis=0)
+        return loss
+        #return tf.reduce_sum(loss, axis=0)
+
+
+
+

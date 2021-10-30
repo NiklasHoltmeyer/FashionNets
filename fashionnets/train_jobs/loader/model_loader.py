@@ -46,7 +46,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, **train_job)
     if force_preprocess_layer:
         assert back_bone_preprocess_input_layer is not None
 
-    siamese_network = SiameseNetwork.build(back_bone=back_bone_model,
+    siamese_network = SiameseNetwork(back_bone=back_bone_model,
                                            is_triplet=train_job["is_triplet"],
                                            input_shape=train_job["input_shape"],
                                            alpha=train_job["alpha"],
@@ -84,7 +84,7 @@ def load_backbone(checkpoint_path, input_shape, verbose, weights_path):
     logger.disabled = not verbose
 
     run_name, back_bone, preprocess_input = load_backbone_info_resnet(input_shape, "resnet50", True, None)
-    siamese_network = SiameseNetwork.build(back_bone=back_bone,
+    siamese_network = SiameseNetwork(back_bone=back_bone,
                                            is_triplet=True,
                                            input_shape=input_shape,
                                            alpha=1.0,

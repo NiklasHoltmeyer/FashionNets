@@ -8,7 +8,7 @@ from tensorflow.keras import metrics
 
 class SiameseModel(Model):
     # https://keras.io/examples/vision/siamese_network/
-    def __init__(self, siamese_network, back_bone):
+    def __init__(self, siamese_network, back_bone, is_triplet=True):
         super(SiameseModel, self).__init__()
         self.siamese_network = siamese_network
         self.loss_tracker = metrics.Mean(name="loss")
@@ -19,10 +19,11 @@ class SiameseModel(Model):
         return self.siamese_network(inputs)
 
     def train_step(self, data):
-        data_hard = self.build_hard_triplets(data)
+        #data_hard = self.build_hard_triplets(data)
 
         with tf.GradientTape() as tape:
-            loss = self.siamese_network(data_hard)
+            loss = self.siamese_network(data)
+            #loss = self.siamese_network.loss_layer(*embeddings)
 
         gradients = tape.gradient(loss, self.siamese_network.trainable_weights)
 
@@ -39,12 +40,6 @@ class SiameseModel(Model):
         self.loss_tracker.update_state(loss)
 
         return {"loss": self.loss_tracker.result()}
-
-    def build_hard_triplets(self, data):
-        a, p, n = data
-        print("x")
-        return (a, p, n)
-
 
     def fake_predict(self, input_shape, is_triplet):
         """
