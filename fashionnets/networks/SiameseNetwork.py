@@ -52,7 +52,7 @@ class SiameseNetwork(tf.keras.Model):
         full_model = Model(
             inputs=self.input_layer, outputs=output_layers
         )
-        embedding_model = Model(inputs=self.input_layer[0], outputs=self.encoding_layers)
+        embedding_model = Model(inputs=self.input_layer, outputs=self.encoding_layers)
 
         input_layer = layers.Input(name="input_image", shape=self._input_shape + (self.channels,))
         encoding = self.back_bone(self.preprocess_input(input_layer))
@@ -82,5 +82,5 @@ class SiameseNetwork(tf.keras.Model):
         :param image: As Matrix
         :return: Feature-Vector
         """
-        return self.feature_extractor
+        return self.feature_extractor(image)
 
