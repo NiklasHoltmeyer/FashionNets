@@ -19,7 +19,7 @@ class SiameseNetwork(tf.keras.Model):
         self.channels = channels
 
         self.input_layer, self.encoding_layers, self.loss_layer = self.build_layers()
-        self.full_model, self.embedding_model = self.combine()
+        self.full_model, self.embedding_model, self.feature_extractor = self.combine()
 
     def build_layers(self):
         if self.verbose:
@@ -52,14 +52,35 @@ class SiameseNetwork(tf.keras.Model):
         full_model = Model(
             inputs=self.input_layer, outputs=output_layers
         )
-        embedding_model = Model(inputs=self.input_layer, outputs=self.encoding_layers)
+        embedding_model = Model(inputs=self.input_layer[0], outputs=self.encoding_layers)
 
-        return full_model, embedding_model
+        input_layer = layers.Input(name="input_image", shape=self._input_shape + (self.channels,))
+        encoding = self.back_bone(self.preprocess_input(input_layer))
+        feature_extractor = Model(inputs=[input_layer], outputs=encoding)
+
+        return full_model, embedding_model, feature_extractor
 
     def call(self, inputs):
+        """
+        Calculate Quad/Trip Loss
+        :param inputs:
+        :return:
+        """
         return self.full_model(inputs)
 
     def embed(self, inputs):
+        """
+        Feature Vectors for N Input Images (Triplet -> N=3)
+        :param inputs:
+        :return:
+        """
         return self.embedding_model(inputs)
 #        return self.input_layer(inputs)
+
+    def extract_features(self, image):
+        """
+        :param image: As Matrix
+        :return: Feature-Vector
+        """
+        return self.feature_extractor
 
