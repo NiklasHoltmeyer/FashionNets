@@ -37,7 +37,7 @@ class DeleteOldModel(keras.callbacks.Callback):
         for files_to_del in [best_cps, train_cp]:
             for ep, paths in files_to_del:
                 for path in paths:
-                    path = Path(path)
+                    path = str(Path(path).resolve())
                     if DeleteOldModel.delete_path(path):
                         print(f"Removing CP (EP={ep}): ./{path.name}")
                     else:

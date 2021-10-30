@@ -1,9 +1,8 @@
-import copy
 from collections import defaultdict
 from pathlib import Path
 
-from tensorflow import keras
 import pandas as pd
+from tensorflow import keras
 
 
 class CustomHistoryDump(keras.callbacks.Callback):

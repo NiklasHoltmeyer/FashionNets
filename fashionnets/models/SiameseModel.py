@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import tensorflow as tf
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow.keras import Model
@@ -6,11 +8,12 @@ from tensorflow.keras import metrics
 
 class SiameseModel(Model):
     # https://keras.io/examples/vision/siamese_network/
-    def __init__(self, siamese_network):
+    def __init__(self, siamese_network, back_bone):
         super(SiameseModel, self).__init__()
         self.siamese_network = siamese_network
         self.loss_tracker = metrics.Mean(name="loss")
         self.logger = defaultLogger(name="Siamese_Modell")
+        self.back_bone = back_bone
 
     def call(self, inputs):
         return self.siamese_network(inputs)
@@ -51,5 +54,9 @@ class SiameseModel(Model):
     def metrics(self):
         return [self.loss_tracker]
 
-    def custom_test(self):
-        print("TEST")
+    def save_backbone(self, model_cp_path, epoch):
+        backbone_cp_path = Path(model_cp_path, f"backbone-{epoch+1:04d}.ckpt")  # .h5
+        backbone_cp_path.parent.mkdir(parents=True, exist_ok=True)
+
+        self.back_bone.save(backbone_cp_path)
+
