@@ -19,9 +19,9 @@ def base_settings(debugging, learning_rate=1e-4):
     base["target_shape"] = base["input_shape"]
 
     debug_cfg = {
-        "nrows": 20,
+        "nrows": 16,
         "verbose": True,
-        "batch_size": 1,
+        "batch_size": 4,
         "epochs": 20
     }
 
