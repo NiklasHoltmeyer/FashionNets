@@ -46,9 +46,9 @@ def deep_fashion_loader_info(variation):
 def load_dataset_loader(**settings):
     ds_name = settings["dataset"]["name"]
     if ds_name == "own" or ds_name == "own_256":
-        return load_own_dataset(**settings)
+        return lambda: load_own_dataset(**settings)
     if ds_name == "deep_fashion_256":
-        return load_deepfashion(**settings)
+        return lambda: load_deepfashion(**settings)
     raise Exception(f'Unknown Dataset {ds_name}')
 
 
