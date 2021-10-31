@@ -21,16 +21,18 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         print(f"keep_n={keep_n},remove_after_zip={remove_after_zip}, verbose={verbose}")
 
     return [  # history_path, monitor="loss", patience=3, sep=","
+        tf.keras.callbacks.LambdaCallback(on_train_begin=lambda logs: history_cp_path.parent.mkdir(exist_ok=True)),
         keras.callbacks.EarlyStopping(monitor='loss', patience=3),
         tf.keras.callbacks.CSVLogger(history_cp_path, append=True, separator=csv_sep),
-#        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
+        #        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
         model_checkpoint(checkpoint_path, name, monitor, save_weights_only=save_weights_only, verbose=verbose),
-#        DeleteOldModel(checkpoint_path=checkpoint_path, name=name, keep_n=keep_n,
-#                       save_format=save_format, save_weights_only=save_weights_only),
+        #        DeleteOldModel(checkpoint_path=checkpoint_path, name=name, keep_n=keep_n,
+        #                       save_format=save_format, save_weights_only=save_weights_only),
         CustomHistoryDump(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
         SaveEmbeddingModel(model_cp_path=checkpoint_path),
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip, result_uploader=result_uploader),
     ]
+
 
 def model_checkpoint(checkpoint_path, name, monitor='val_accuracy', save_weights_only=False, verbose=False):
     model_cp_latest_path = Path(checkpoint_path, name + "_")  # .h5
