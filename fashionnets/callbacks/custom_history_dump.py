@@ -43,9 +43,12 @@ class CustomHistoryDump(keras.callbacks.Callback):
         history_csv_data = {"epoch": epochs + [epoch], **metric_history_changed_decimal}
 
         ## add current run
-        for k, v in logs.items():
-            history_csv_data[k].append(replace_dec(v))
+        try:
+            for k, v in logs.items():
+                history_csv_data[k].append(replace_dec(v))
 
-        df = pd.DataFrame(history_csv_data)
-        df.to_csv(csv, index=False, sep=";", decimal=self.decimal_symbol)
+            df = pd.DataFrame(history_csv_data)
+            df.to_csv(csv, index=False, sep=";", decimal=self.decimal_symbol)
+        except:
+            pass
 
