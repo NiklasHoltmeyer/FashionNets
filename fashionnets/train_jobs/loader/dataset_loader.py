@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import tensorflow as tf
 from fashiondatasets.deepfashion2.DeepFashionQuadruplets import DeepFashionQuadruplets
+from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_pairs_generator import DeepFashionPairsGenerator
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 
@@ -174,3 +177,21 @@ def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None):
         return lambda a, p, n: (prep_image(a), prep_image(p), prep_image(n))
     else:
         return lambda a, p, n1, n2: (prep_image(a), prep_image(p), prep_image(n1), prep_image(n2))
+
+
+def build_dataset_hard_pairs_deep_fashion(model, job_settings):
+    if Path("./deep_fashion_256/train/quadruplets.csv").exists():
+        Path("./deep_fashion_256/train/quadruplets.csv").unlink()
+    embedding_model = model.siamese_network.feature_extractor
+
+    generator = DeepFashionPairsGenerator(r"./deep_fashion_256",
+                                          embedding_model,
+                                          split_suffix="_256",
+                                          number_possibilites=256)
+
+    apnn = generator.build_anchor_positive_negative1_negative2("train")
+    DeepFashionPairsGenerator.save_pairs_to_csv(generator.base_path, "train", apnn)
+
+    return load_dataset_loader(**job_settings)()
+
+
