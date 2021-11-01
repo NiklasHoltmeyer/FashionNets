@@ -7,6 +7,7 @@ from fashionnets.callbacks.custom_history_dump import CustomHistoryDump
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
 from fashionnets.callbacks.early_stopping_based_on_history_csv import EarlyStoppingBasedOnHistory
 from fashionnets.callbacks.save_embedding_model import SaveEmbeddingModel
+from fashionnets.callbacks.upload_results import UploadResults
 from fashionnets.callbacks.zip_results import ZipResults
 
 csv_sep = ";"
@@ -30,7 +31,8 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         #                       save_format=save_format, save_weights_only=save_weights_only),
         CustomHistoryDump(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
         SaveEmbeddingModel(model_cp_path=checkpoint_path),
-        ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip, result_uploader=result_uploader),
+        ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip),
+        UploadResults(checkpoint_path=checkpoint_path, result_uploader=result_uploader)
     ]
 
 
