@@ -70,6 +70,8 @@ class Evaluate:
         top_k = {}
 
         for k_ in [1, 5, 10, 15, 20, 25, 30, 50, 100]:
+            if self.k < k_:
+                continue
             hits = 0
             for gallery_retrieved, query_id in zip(most_similar, self.dataset["query"]["ids"]):
                 if query_id in gallery_retrieved[:k_]:
