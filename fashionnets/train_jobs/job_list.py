@@ -35,9 +35,9 @@ def job_list(debugging):
 
     train_jobs = {
 #        "b1_11": {"run_idx": 11, **base_cfg1e4, "dataset": ds}, #done
-        "b2_12": {"run_idx": 12, **base_cfg1e4, "dataset": ds}, #läuft <- gut, aber wegen zu lange gekickt
+        "b2_12": {"run_idx": 12, **base_cfg1e4, "dataset": ds}, #
         "b3_13": {"run_idx": 13, **base_cfg1e4, "dataset": ds}, #läuft
-        "b4_14": {"run_idx": 14, **base_cfg1e4, "dataset": ds}, #läuft
+        "b4_14": {"run_idx": 14, **base_cfg1e4, "dataset": ds}, #
 
         ###
         "b1_21": {"run_idx": 21, **base_cfg5e3, "dataset": ds}, #gecanceld nach 3 eps (1.0)
@@ -47,9 +47,9 @@ def job_list(debugging):
 
         ##
 #        "b1_31": {"run_idx": 31, **base_cfg1e3, "dataset": ds}, #done
-        "b2_32": {"run_idx": 32, **base_cfg1e3, "dataset": ds}, # gecanceld nach 9ep (1.0)
-        "b3_33": {"run_idx": 33, **base_cfg1e3, "dataset": ds}, #läuft
-        "b4_34": {"run_idx": 34, **base_cfg1e3, "dataset": ds}, # pausiert, pennen
+#        "b2_32": {"run_idx": 32, **base_cfg1e3, "dataset": ds}, # gecanceld nach 9ep (1.0)
+        "b3_33": {"run_idx": 33, **base_cfg1e3, "dataset": ds}, #
+        "b4_34": {"run_idx": 34, **base_cfg1e3, "dataset": ds}, # Läuft
     }
 
     for k in train_jobs.keys():

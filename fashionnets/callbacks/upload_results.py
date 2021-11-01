@@ -23,4 +23,7 @@ class UploadResults(keras.callbacks.Callback):
         for old_ep in range(max(epoch - 2, 0)):
             zip_name_old = self.checkpoint_path + f"{old_ep:04d}.zip"
             if Path(zip_name_old).exists():
-                self.result_uploader.move(zip_name_old, _async=False)  # <- Retry uploading old Zips
+                try:
+                    self.result_uploader.move(zip_name_old, _async=False)  # <- Retry uploading old Zips
+                except:
+                    print(f"Uploading: {zip_name_old} failed!")
