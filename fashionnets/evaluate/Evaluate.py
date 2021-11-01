@@ -16,7 +16,7 @@ class Evaluate:
     def __init__(self, dataset, model,
                  input_shape=(224, 224),
                  batch_size=32,
-                 k=20):
+                 k=100):
         """
 
         :param dataset: fashiondatasets.deepfashion2.DeepFashionCBIR like Dataset
@@ -66,15 +66,18 @@ class Evaluate:
 
         most_similar = self.retrieve_most_similar()
 
-        hits = 0
-        for gallery_retrieved, query_id in zip(most_similar, self.dataset["query"]["ids"]):
-            if query_id in gallery_retrieved:
-                hits += 1
-        top_k = hits / len(self.dataset["query"]["ids"])
 
-        return {
-            "top_k": top_k
-        }
+        top_k = {}
+
+        for k_ in [1, 5, 10, 15, 20, 25, 30, 50, 100]:
+            hits = 0
+            for gallery_retrieved, query_id in zip(most_similar, self.dataset["query"]["ids"]):
+                if query_id in gallery_retrieved[:k_]:
+                    hits += 1
+            top_k = hits / len(self.dataset["query"]["ids"])
+            top_k[str(k_)] = top_k
+
+        return top_k
 
     @staticmethod
     def paths_to_dataset(paths, input_shape, batch_size):
