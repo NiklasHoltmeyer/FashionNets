@@ -76,6 +76,8 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, **train_job)
 
         if not _checkpoint:
             init_epoch, _checkpoint = retrieve_checkpoint_info(train_job, logger)
+    else:
+        _checkpoint, init_epoch = None, 0
 
     if train_job.get("load_weights", True) and _checkpoint:
         logger.debug("Loading Weights!")
