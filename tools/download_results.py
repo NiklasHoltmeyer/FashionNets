@@ -36,3 +36,6 @@ def download_results():
 while True:
     download_results()
     time.sleep(60 * 15)
+
+# TODO: maybe only Download Latest N-1 and not all N-Zips
+# therefore the Backups dont have to be uploaded again to resume training

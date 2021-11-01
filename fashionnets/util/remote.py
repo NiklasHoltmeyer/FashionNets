@@ -22,14 +22,31 @@ class WebDav:
     def login(self):
         return Client(self.webdav_options)
 
-    def upload(self, src_local, dst_remote, callback):
+    def upload(self, src_local, dst_remote, callback, _async=True):
         kwargs = {
             'remote_path': dst_remote,
             'local_path': src_local,
             'callback': callback
         }
 
-        self.client.upload_async(**kwargs)
+        if _async:
+            self.client.upload_async(**kwargs)
+        else:
+            self.client.upload_sync(**kwargs)
+
+    def download(self, src_remote, dst_local, callback, _async=False):
+        kwargs = {
+            'remote_path': src_remote,
+            'local_path': dst_local,
+            'callback': callback
+        }
+
+        if _async:
+            self.client.download_async(**kwargs)
+        else:
+            self.client.download_sync(**kwargs)
+
+        return dst_local
 
     @staticmethod
     def remove_local(path, callback=None, ignore_exception=True):
@@ -41,7 +58,7 @@ class WebDav:
             if not ignore_exception:
                 raise e
 
-    def move(self, src_local):
+    def move(self, src_local, _async=True):
         f_name = Path(src_local).name
         dst_remote = self.base_path + f_name
 
@@ -49,4 +66,20 @@ class WebDav:
 
         callback = lambda: WebDav.remove_local(src_local, lambda: print(f"moved {src_local} to {dst_remote}"))
         print(f"Uploading: {src_local}")
-        self.upload(src_local, dst_remote, callback)
+        self.upload(src_local, dst_remote, callback, _async)
+
+    def list(self, path, _filter=None):
+        if not self.client.check(path):
+            return []
+
+        files = self.client.list(path)
+
+        if _filter:
+            files = list(filter(_filter, files))
+
+        return files
+
+    def __str__(self):
+        return f"fashionnets.util.remote.WebDav{{base_path = {self.base_path}}}"
+
+

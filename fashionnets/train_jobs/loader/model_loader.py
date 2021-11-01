@@ -6,6 +6,7 @@ from fashionnets.callbacks.callbacks import callbacks
 from fashionnets.models.SiameseModel import SiameseModel
 from fashionnets.networks.SiameseNetwork import SiameseNetwork
 from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet
+from fashionnets.train_jobs.loader.checkpoint_loader import download_checkpoint
 from fashionnets.train_jobs.loader.job_loader import dump_settings
 from fashionnets.util.csv import HistoryCSVHelper
 
@@ -70,9 +71,14 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, **train_job)
 
     logger.debug(f"Callbacks: {_callbacks}")
 
+    if train_job["load_weights"]:
+        download_checkpoint(train_job["environment"])
+
     init_epoch, _checkpoint = retrieve_checkpoint_info(train_job, logger)
+
     if _checkpoint and train_job["load_weights"]:
         logger.debug("Loading Weights!")
+
         siamese_model.load_weights(_checkpoint)
 
     dump_settings(train_job)
