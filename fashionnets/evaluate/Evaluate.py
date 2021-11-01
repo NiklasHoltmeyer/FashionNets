@@ -77,7 +77,11 @@ class Evaluate:
                 if query_id in gallery_retrieved[:k_]:
                     hits += 1
             top_k = hits / len(self.dataset["query"]["ids"])
-            result[str(k_)] = top_k
+            result[str(k_)] = {
+                "hits":  hits,
+                "total": len(self.dataset["query"]["ids"]),
+                "accuracy": top_k
+            }
 
         return result
 
