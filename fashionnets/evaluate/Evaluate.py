@@ -67,7 +67,7 @@ class Evaluate:
         most_similar = self.retrieve_most_similar()
 
 
-        top_k = {}
+        result = {}
 
         for k_ in [1, 5, 10, 15, 20, 25, 30, 50, 100]:
             if self.k < k_:
@@ -77,9 +77,9 @@ class Evaluate:
                 if query_id in gallery_retrieved[:k_]:
                     hits += 1
             top_k = hits / len(self.dataset["query"]["ids"])
-            top_k[str(k_)] = top_k
+            result[str(k_)] = top_k
 
-        return top_k
+        return result
 
     @staticmethod
     def paths_to_dataset(paths, input_shape, batch_size):
