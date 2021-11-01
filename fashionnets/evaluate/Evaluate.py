@@ -69,7 +69,7 @@ class Evaluate:
 
         result = {}
 
-        for k_ in [1, 5, 10, 15, 20, 25, 30, 50, 100]:
+        for k_ in [100, 50, 30, 25, 20, 15, 10, 5, 1]:
             if self.k < k_:
                 continue
             hits = 0
