@@ -4,19 +4,35 @@ import zipfile
 
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
+import tensorflow as tf
 
+def remote_checkpoint(env):
+    checkpoint_path = download_checkpoint(env)
+    latest_cp = tf.train.latest_checkpoint(checkpoint_path)
+
+    if not latest_cp:
+        return None, 0
+
+    init_epoch = int(latest_cp.split("_cp-")[-1].replace(".ckpt", ""))
+
+    return latest_cp, init_epoch
 
 def download_checkpoint(env):
+    if not env.webdav:
+        env.init()
     remote = env.webdav
+
     remote_base_path = remote.base_path.replace("//", "/")
 
-    latest_zip = get_latest_zip_path(remote, remote_base_path)
+    return r"F:\workspace\FashNets\11_resnet50_None_quadruplet"
 
-    if not latest_zip:
-        return
+#    latest_zip = get_latest_zip_path(remote, remote_base_path)
 
-    zip_path = download_zip(env, latest_zip)
-    return extract_zip(zip_path, env)
+#    if not latest_zip:
+#        return
+
+#    zip_path = download_zip(env, latest_zip)
+#    return extract_zip(zip_path, env)
 
 
 def extract_zip(zip_path, env):
@@ -28,6 +44,7 @@ def extract_zip(zip_path, env):
     backup_files_local = os.listdir(checkpoint_path)
     unnecessary_files = filter(lambda d: "backbone" in d, backup_files_local)
     unnecessary_files = list(unnecessary_files)
+    unnecessary_files.append(zip_path)
     list(map(lambda d: DeleteOldModel.delete_path(str(Path(checkpoint_path, d).resolve())), unnecessary_files))
 
     return checkpoint_path
