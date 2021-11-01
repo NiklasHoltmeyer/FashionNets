@@ -24,15 +24,13 @@ def download_checkpoint(env):
 
     remote_base_path = remote.base_path.replace("//", "/")
 
-    return r"F:\workspace\FashNets\11_resnet50_None_quadruplet"
+    latest_zip = get_latest_zip_path(remote, remote_base_path)
 
-#    latest_zip = get_latest_zip_path(remote, remote_base_path)
+    if not latest_zip:
+        return
 
-#    if not latest_zip:
-#        return
-
-#    zip_path = download_zip(env, latest_zip)
-#    return extract_zip(zip_path, env)
+    zip_path = download_zip(env, latest_zip)
+    return extract_zip(zip_path, env)
 
 
 def extract_zip(zip_path, env):
