@@ -22,13 +22,13 @@ class ResNet50Builder:
 
         embedding = Model(back_bone.input, x, name="Embedding")
 
-        #if weights:
-        trainable = False
+#        #if weights:
+#        trainable = False
 
-        for layer in back_bone.layers:
-            if layer.name == "conv5_block1_out":
-                trainable = True
-            layer.trainable = trainable
+#        for layer in back_bone.layers:
+#            if layer.name == "conv5_block1_out":
+#                trainable = True
+#            layer.trainable = trainable
 
         return embedding, resnet.preprocess_input
 

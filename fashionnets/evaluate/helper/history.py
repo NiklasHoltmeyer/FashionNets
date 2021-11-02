@@ -1,5 +1,7 @@
 import os
 import zipfile
+from pathlib import Path
+
 import pandas as pd
 from fashionscrapper.utils.list import flatten, distinct
 from tqdm.auto import tqdm
@@ -97,12 +99,19 @@ class HistoryHelper:
             if 'train_aggregated.csv' in files:
                 yield (os.path.join(root, 'train_aggregated.csv'))
 
+    def walk_embeddings(self):
+        for root, dirs, files in os.walk(self.base_path):
+            for file in files:
+                if file.endswith(".json"):
+                    full_path = Path(root, file)
+                    epoch = file.replace(".json", "").split("_")[-1]
+                    yield full_path, epoch
+
     def create_move_jobs(self):
         for root, directory, full_path in self.walk_backbones():
             dst = "./" + root.split('\\')[-2] + "/" + directory
             src = full_path
             print(f"rclone copy '{src}' '{dst}'")
-
 
 def read_history(path):
     with zipfile.ZipFile(path, 'r') as archive:
