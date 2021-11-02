@@ -72,8 +72,8 @@ class Evaluate:
             Dump Dataset. Calculate Embeddings Remote. Re-run Evaluations local
         """
         for key in ["gallery", "query"]:
-            self.dataset[key]["encodings"] = list(
-                map(lambda tensor: tensor.numpy().tolist(), self.dataset[key]["encodings"]))
+            self.dataset[key]["embeddings"] = list(
+                map(lambda tensor: tensor.numpy().tolist(), self.dataset[key]["embeddings"]))
             self.dataset[key].pop("paths")
 
         json_dump(path, self.dataset)
