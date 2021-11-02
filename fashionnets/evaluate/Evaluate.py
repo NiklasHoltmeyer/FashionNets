@@ -11,6 +11,8 @@ from scipy.spatial import distance as distance_metric
 from tqdm.auto import tqdm
 from tensorflow import keras
 
+from fashionnets.util.io import json_dump
+
 
 class Evaluate:
     def __init__(self, dataset, model,
@@ -18,7 +20,7 @@ class Evaluate:
                  batch_size=32,
                  k=100):
         """
-
+        Evaluate Backbone Top-K Accuracy
         :param dataset: fashiondatasets.deepfashion2.DeepFashionCBIR like Dataset
         :param model: Tensorflow Model or String of Checkpoint
         :param input_shape: Input Shape of Model. ResNet-50 Default is (224, 224)
@@ -34,14 +36,26 @@ class Evaluate:
         else:
             self.model = model
 
-    def encode_gallery(self):
-        gallery_images = Evaluate.paths_to_dataset(self.dataset["gallery"]["paths"], self.input_shape, self.batch_size)
+    def embed(self, key, var=0):
+        images = Evaluate.paths_to_dataset(self.dataset[key]["paths"], self.input_shape, self.batch_size)
 
-        encodings = []
-        for batch in tqdm(gallery_images, desc="Encode Gallery"):
-            encodings.extend(self.model(batch))
+        if var == 0:
+            encodings = []
+            for batch in tqdm(images, desc=f"Encode {key}"):
+                encodings.extend(self.model(batch))
+            return encodings
 
-        return encodings
+        if var == 1:
+            encodings = []
+            for batch in tqdm(images, desc=f"Encode {key}"):
+                encodings.extend(self.model.predict(batch))
+            return encodings
+
+        if var == 2:
+            return self.model(images)
+
+        if var == 3:
+            return self.model.predict(images)
 
     def retrieve_most_similar(self):
         query_images = Evaluate.paths_to_dataset(self.dataset["query"]["paths"], self.input_shape, self.batch_size)
@@ -60,12 +74,23 @@ class Evaluate:
                 most_similar_ids.append(most_sim_ids)
         return most_similar_ids
 
+    def embed_dataset(self, var=0):
+        for key in ["gallery", "query"]:
+            if "encodings" not in self.dataset[key].keys():
+                self.dataset[key]["encodings"] = self.embed(key, var=var)
+
+    def dump_embeddings(self, path):
+        """
+            Dump Dataset. Calculate Embeddings Remote. Re-run Evaluations local
+        """
+        json_dump(path, self.dataset)
+
     def calculate(self):
-        self.dataset["gallery"]["encodings"] = self.encode_gallery()
+        if "encodings" not in self.dataset["gallery"].keys():
+            self.dataset["gallery"]["encodings"] = self.embed("gallery")
         assert len(self.dataset["gallery"]["paths"]) == len(self.dataset["gallery"]["encodings"])
 
         most_similar = self.retrieve_most_similar()
-
 
         result = {}
 
@@ -78,7 +103,7 @@ class Evaluate:
                     hits += 1
             top_k = hits / len(self.dataset["query"]["ids"])
             result[str(k_)] = {
-                "hits":  hits,
+                "hits": hits,
                 "total": len(self.dataset["query"]["ids"]),
                 "accuracy": top_k
             }
