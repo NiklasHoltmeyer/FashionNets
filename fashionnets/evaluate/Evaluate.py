@@ -64,7 +64,7 @@ class Evaluate:
             Dump Dataset. Calculate Embeddings Remote. Re-run Evaluations local
         """
         for key in ["gallery", "query"]:
-            if type(self.dataset["gallery"]["embeddings"][0]) != list:
+            if type(self.dataset[key]["embeddings"][0]) != list:
                 self.dataset[key]["embeddings"] = list(
                     map(lambda tensor: tensor.numpy().tolist(), self.dataset[key]["embeddings"]))
             if "paths" in self.dataset[key].keys():
