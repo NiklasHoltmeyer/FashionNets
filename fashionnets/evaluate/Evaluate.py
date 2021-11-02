@@ -1,17 +1,9 @@
-from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job, load_backbone
-from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet
-from collections import defaultdict
 import tensorflow as tf
-from fashiondatasets.deepfashion2.DeepFashionCBIR import DeepFashionCBIR
 from fashiondatasets.own.helper.mappings import preprocess_image
-from fashiondatasets.own.helper.mappings import preprocess_image
-import numpy as np
-from scipy.spatial import distance as distance_metric
-
-from tqdm.auto import tqdm
-from tensorflow import keras
-
 from fashionnets.util.io import json_dump
+from scipy.spatial import distance as distance_metric
+from tensorflow import keras
+from tqdm.auto import tqdm
 
 
 class Evaluate:
@@ -72,9 +64,11 @@ class Evaluate:
             Dump Dataset. Calculate Embeddings Remote. Re-run Evaluations local
         """
         for key in ["gallery", "query"]:
-            self.dataset[key]["embeddings"] = list(
-                map(lambda tensor: tensor.numpy().tolist(), self.dataset[key]["embeddings"]))
-            self.dataset[key].pop("paths")
+            if type(self.dataset["gallery"]["embeddings"][0]) != list:
+                self.dataset[key]["embeddings"] = list(
+                    map(lambda tensor: tensor.numpy().tolist(), self.dataset[key]["embeddings"]))
+            if "paths" in self.dataset[key].keys():
+                self.dataset[key].pop("paths")
 
         json_dump(path, self.dataset)
 
