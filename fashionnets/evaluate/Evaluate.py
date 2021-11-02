@@ -36,26 +36,14 @@ class Evaluate:
         else:
             self.model = model
 
-    def embed(self, key, var=0):
+    def embed(self, key):
         images = Evaluate.paths_to_dataset(self.dataset[key]["paths"], self.input_shape, self.batch_size)
 
-        if var == 0:
-            encodings = []
-            for batch in tqdm(images, desc=f"Encode {key}"):
-                encodings.extend(self.model(batch))
-            return encodings
+        embeddings = []
 
-        if var == 1:
-            encodings = []
-            for batch in tqdm(images, desc=f"Encode {key}"):
-                encodings.extend(self.model.predict(batch))
-            return encodings
-
-        if var == 2:
-            return self.model(images)
-
-        if var == 3:
-            return self.model.predict(images)
+        for batch in tqdm(images, desc=f"Embed {key}"):
+            embeddings.extend(self.model(batch))
+        return embeddings
 
     def retrieve_most_similar(self):
         query_images = Evaluate.paths_to_dataset(self.dataset["query"]["paths"], self.input_shape, self.batch_size)
@@ -63,32 +51,37 @@ class Evaluate:
         most_similar_ids = []
         for batch in tqdm(query_images, desc="Retriev Most Similar"):
             query_embeddings = self.model.predict(batch)
-            distances = distance_metric.cdist(query_embeddings, self.dataset["gallery"]["encodings"], "cosine")
+            distances = distance_metric.cdist(query_embeddings, self.dataset["gallery"]["embeddings"], "cosine")
 
             for distance in distances:
                 distance = 1 - distance
-                idx_dist = list(zip(range(len(self.dataset["gallery"]["encodings"])), distance))
+                idx_dist = list(zip(range(len(self.dataset["gallery"]["embeddings"])), distance))
                 idx_dist = sorted(idx_dist, key=lambda d: d[1], reverse=True)[:self.k]
                 most_sim_idxs = list(map(lambda d: d[0], idx_dist))
                 most_sim_ids = list(map(lambda idx: self.dataset["gallery"]["ids"][idx], most_sim_idxs))
                 most_similar_ids.append(most_sim_ids)
         return most_similar_ids
 
-    def embed_dataset(self, var=0):
+    def embed_dataset(self):
         for key in ["gallery", "query"]:
-            if "encodings" not in self.dataset[key].keys():
-                self.dataset[key]["encodings"] = self.embed(key, var=var)
+            if "embeddings" not in self.dataset[key].keys():
+                self.dataset[key]["embeddings"] = self.embed(key)
 
     def dump_embeddings(self, path):
         """
             Dump Dataset. Calculate Embeddings Remote. Re-run Evaluations local
         """
+        for key in ["gallery", "query"]:
+            self.dataset[key]["encodings"] = list(
+                map(lambda tensor: tensor.numpy().tolist(), self.dataset[key]["encodings"]))
+            self.dataset[key].pop("paths")
+
         json_dump(path, self.dataset)
 
     def calculate(self):
-        if "encodings" not in self.dataset["gallery"].keys():
-            self.dataset["gallery"]["encodings"] = self.embed("gallery")
-        assert len(self.dataset["gallery"]["paths"]) == len(self.dataset["gallery"]["encodings"])
+        if "embeddings" not in self.dataset["gallery"].keys():
+            self.dataset["gallery"]["embeddings"] = self.embed("gallery")
+        assert len(self.dataset["gallery"]["paths"]) == len(self.dataset["gallery"]["embeddings"])
 
         most_similar = self.retrieve_most_similar()
 
@@ -109,6 +102,12 @@ class Evaluate:
             }
 
         return result
+
+    def validate_embeddings(self):
+        assert (len(self.dataset["gallery"]["embeddings"])) == (len(self.dataset["gallery"]["ids"]))
+        assert (len(self.dataset["query"]["embeddings"])) == (len(self.dataset["query"]["ids"]))
+
+
 
     @staticmethod
     def paths_to_dataset(paths, input_shape, batch_size):
