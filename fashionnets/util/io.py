@@ -38,9 +38,10 @@ def all_paths_exist(lst):
     path_exist = lambda p: Path(p).exists()
     return all(map(path_exist, lst))
 
+
 def string_serializer(obj):
     """
-    Helper Function to Serialze Objects. Keeps List / Dict Structure, but will Convert everything else to String.
+    Helper Function to Serialize Objects. Keeps List / Dict Structure, but will Convert everything else to String.
     """
     if type(obj) in [list, tuple]:
         return list(map(string_serializer, obj))

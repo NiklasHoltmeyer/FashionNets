@@ -41,7 +41,7 @@ class Evaluate:
         query_images = Evaluate.paths_to_dataset(self.dataset["query"]["paths"], self.input_shape, self.batch_size)
 
         most_similar_ids = []
-        for batch in tqdm(query_images, desc="Retriev Most Similar"):
+        for batch in tqdm(query_images, desc="Retrieve Most Similar"):
             query_embeddings = self.model.predict(batch)
             distances = distance_metric.cdist(query_embeddings, self.dataset["gallery"]["embeddings"], "cosine")
 
@@ -100,8 +100,6 @@ class Evaluate:
     def validate_embeddings(self):
         assert (len(self.dataset["gallery"]["embeddings"])) == (len(self.dataset["gallery"]["ids"]))
         assert (len(self.dataset["query"]["embeddings"])) == (len(self.dataset["query"]["ids"]))
-
-
 
     @staticmethod
     def paths_to_dataset(paths, input_shape, batch_size):

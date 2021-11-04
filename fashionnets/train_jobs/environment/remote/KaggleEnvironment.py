@@ -7,6 +7,7 @@ from fashionnets.train_jobs.environment.Environment_Consts import notebooks
 
 try:
     # Imports that only work withing Kaggle
+    # noinspection PyUnresolvedReferences
     from kaggle_secrets import UserSecretsClient
 except:
     pass

@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 
@@ -8,6 +7,7 @@ from fashionnets.util.io import json_load
 
 try:
     # Imports that only work withing Google Colab
+    # noinspection PyPackageRequirements
     from google.colab import drive
 except:
     pass
@@ -36,6 +36,7 @@ class GoogleColabEnvironment(Environment):
         if Path(gdrive_kaggle_path).exists():
             json_path = gdrive_kaggle_path
         else:
+            # noinspection PyPackageRequirements
             from google.colab import files
             print("Please upload Kaggle.json")
             files.upload()

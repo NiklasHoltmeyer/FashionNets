@@ -6,13 +6,14 @@ from tensorflow.keras import Model
 from tensorflow.keras import metrics
 
 
+# noinspection PyAbstractClass,PyMethodOverriding
 class SiameseModel(Model):
     # https://keras.io/examples/vision/siamese_network/
-    def __init__(self, siamese_network, back_bone, is_triplet=True):
+    def __init__(self, siamese_network, back_bone):
         super(SiameseModel, self).__init__()
         self.siamese_network = siamese_network
         self.loss_tracker = metrics.Mean(name="loss")
-        self.logger = defaultLogger(name="Siamese_Modell")
+        self.logger = defaultLogger(name="Siamese_Model")
         self.back_bone = back_bone
 
     def call(self, inputs):

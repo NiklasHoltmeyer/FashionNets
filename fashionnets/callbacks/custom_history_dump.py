@@ -7,7 +7,7 @@ from tensorflow import keras
 
 class CustomHistoryDump(keras.callbacks.Callback):
     """
-    Its just like CSV-Logger. But with Custom Seperator und Save Strategy.
+    Its just like CSV-Logger. But with Custom Separator und Save Strategy.
     Some how the normal CSV-Logger does not Append on Google Colab.
     """
 
@@ -42,7 +42,8 @@ class CustomHistoryDump(keras.callbacks.Callback):
 
         history_csv_data = {"epoch": epochs + [epoch], **metric_history_changed_decimal}
 
-        ## add current run
+        # add current run
+
         try:
             for k, v in logs.items():
                 history_csv_data[k].append(replace_dec(v))
@@ -51,4 +52,3 @@ class CustomHistoryDump(keras.callbacks.Callback):
             df.to_csv(csv, index=False, sep=";", decimal=self.decimal_symbol)
         except:
             pass
-

@@ -6,6 +6,7 @@ from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 import tensorflow as tf
 
+
 def remote_checkpoint(env):
     checkpoint_path = download_checkpoint(env)
     latest_cp = tf.train.latest_checkpoint(checkpoint_path)
@@ -16,6 +17,7 @@ def remote_checkpoint(env):
     init_epoch = int(latest_cp.split("_cp-")[-1].replace(".ckpt", ""))
 
     return latest_cp, init_epoch
+
 
 def download_checkpoint(env):
     if not env.webdav:

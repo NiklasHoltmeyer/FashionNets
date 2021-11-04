@@ -12,8 +12,8 @@ for folder in os.listdir(results_download_path):
     header = None
     lines = []
 
-    for zip in os.listdir(full_path):
-        full_zip = Path(full_path, zip)
+    for zip_file in os.listdir(full_path):
+        full_zip = Path(full_path, zip_file)
         unzipped_file = zipfile.ZipFile(full_zip, "r")
         history = unzipped_file.read("history.csv").decode("utf-8")
         history_lines = str(history).split("\n")
@@ -27,5 +27,5 @@ for folder in os.listdir(results_download_path):
     print(lines)
     break
 
-#unzipped_file = zipfile.ZipFile("sample.zip", "r")
-#a_file = unzipped_file.read("test.txt")
+# unzipped_file = zipfile.ZipFile("sample.zip", "r")
+# a_file = unzipped_file.read("test.txt")

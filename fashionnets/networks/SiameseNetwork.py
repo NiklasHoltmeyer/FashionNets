@@ -1,10 +1,12 @@
-from fashionnets.metrics.distance_layers import TripletDistance, QuadrupletDistance
+from tensorflow.keras import Model
+import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras import layers
 
 from fashionnets.metrics.loss_layers import TripletLoss, QuadrupletLoss
-import tensorflow as tf
 
+
+# noinspection PyAbstractClass,PyMethodOverriding
 class SiameseNetwork(tf.keras.Model):
     def __init__(self, back_bone, is_triplet, input_shape, alpha, beta,
               preprocess_input=None, verbose=False, channels=3):

@@ -7,11 +7,12 @@ job_worker_name = "l_i1"
 
 environment, training_job_cfg = prepare_environment(job_worker_name, debugging=False)
 
-#kaggle.api.authenticate()
-kaggle_downloader = kaggle.api.dataset_download_files  # <- doesnt work from withing the library. maybe a permissions issue
+# kaggle.api.authenticate()
+kaggle_downloader = kaggle.api.dataset_download_files  # <- doesnt work from withing the library. maybe a permissions
+# issue
 
 train_job = load_job_settings(environment=environment, training_job_cfg=training_job_cfg,
-                                 kaggle_downloader=kaggle_downloader)
+                              kaggle_downloader=kaggle_downloader)
 
 datasets = train_job["run"]["dataset"]
 train_ds, val_ds = datasets["train"], datasets["val"]
@@ -24,10 +25,10 @@ val_ds = val_ds.take(1)
 siamese_model, init_epoch, callbacks = load_siamese_model_from_train_job(**train_job)
 
 history = siamese_model.fit(train_ds,
-                            epochs=1,  #job_settings["epochs"]
-                            validation_data=train_ds #val_ds
-                            #callbacks=callbacks,
-                            #initial_epoch=init_epoch
+                            epochs=1,  # job_settings["epochs"]
+                            validation_data=train_ds  # val_ds
+                            # callbacks=callbacks,
+                            # initial_epoch=init_epoch
                             )
 
 history_csv = history_to_csv_string(history, decimal_separator=",", **train_job)

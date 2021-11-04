@@ -3,7 +3,7 @@ from tensorflow import keras
 
 class SaveEmbeddingModel(keras.callbacks.Callback):
     """
-    Its just like CSV-Logger. But with Custom Seperator und Save Strategy.
+    Its just like CSV-Logger. But with Custom Separator und Save Strategy.
     Some how the normal CSV-Logger does not Append on Google Colab.
     """
 

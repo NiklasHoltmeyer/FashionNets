@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fashionnets.train_jobs.environment.Environment_Builder import EnvironmentBuilder
-from fashionnets.train_jobs.job_list import job_list, job_config_by_notebook_name
+from fashionnets.train_jobs.job_list import job_config_by_notebook_name
 from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet, load_backbone_info_simple_cnn, \
     format_name
 from fashionnets.train_jobs.loader.dataset_loader import load_dataset_loader
@@ -60,6 +60,7 @@ def add_back_bone_to_train_job(environment, **settings):
         assert preprocess_input_layer
     elif "simplecnn" == back_bone_name:
         assert not back_bone_weights
+        # noinspection PyArgumentList
         run_name, embedding_model, preprocess_input_layer = load_backbone_info_simple_cnn(input_shape=input_shape,
                                                                                           back_bone=back_bone_name,
                                                                                           is_triplet=back_bone_is_triplet)

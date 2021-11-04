@@ -32,26 +32,3 @@ class ResNet50Builder:
 
         return embedding, resnet.preprocess_input
 
-##    @staticmethod
-##    def build2(target_shape):
-##        weights=None #"imagenet"
-##        base_cnn = resnet.ResNet50(
-##            weights=weights, input_shape=target_shape + (3,), include_top=False
-##        )
-
-##        flatten = tf.keras.layers.Flatten()(base_cnn.output)
-##        dense1 = tf.keras.layers.Dense(512, activation="relu")(flatten)
-##        dense1 = tf.keras.layers.BatchNormalization()(dense1)
-##        dense2 = tf.keras.layers.Dense(256, activation="relu")(dense1)
-##        dense2 = tf.keras.layers.BatchNormalization()(dense2)
-##        output = tf.keras.layers.Dense(256)(dense2)
-
-##        embedding = Model(base_cnn.input, output, name="Embedding")
-
-##        trainable = False
-##        for layer in base_cnn.layers:
-##            if layer.name == "conv5_block1_out":
-##                trainable = True
-##            layer.trainable = trainable
-
-##        return embedding, resnet.preprocess_input

@@ -1,8 +1,10 @@
 from pathlib import Path
 
 import tensorflow as tf
-from fashiondatasets.deepfashion2.DeepFashionQuadruplets import DeepFashionQuadruplets
-from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_pairs_generator import DeepFashionPairsGenerator
+from fashiondatasets.deepfashion1.DeepFashion1 import DeepFashion1Dataset
+from fashiondatasets.deepfashion1.helper.deep_fashion_1_pairs_generator import DeepFashion1PairsGenerator
+from fashiondatasets.deepfashion2.DeepFashion2Quadruplets import DeepFashion2Quadruplets
+from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_2_pairs_generator import DeepFashion2PairsGenerator
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 
@@ -11,8 +13,10 @@ from fashionnets.util.io import all_paths_exist
 
 
 def loader_info(name, variation):
-    if "deep_fashion" in name:
-        return deep_fashion_loader_info(variation)
+    if "deep_fashion_2" in name:
+        return deep_fashion_2_loader_info(variation)
+    if "deep_fashion_12" in name:
+        return deep_fashion_1_loader_info()
     if "own" in name:
         return own_loader_info(variation)
     raise Exception("TODO")
@@ -27,8 +31,8 @@ def own_loader_info(variation):
     }
 
 
-def deep_fashion_loader_info(variation):
-    variation_cmds = variation.replace("-", "_")
+def deep_fashion_2_loader_info(variation):
+    variation_commands = variation.replace("-", "_")
     return {
         "name": "deep_fashion_256",
         "variation": variation,  # "df_quad_3",
@@ -37,11 +41,33 @@ def deep_fashion_loader_info(variation):
                 "mkdir -p ./deep_fashion_256",
                 "mv ./train_256 ./deep_fashion_256",
                 "mv ./validation_256 ./deep_fashion_256",
-                f"mv ./{variation_cmds}/train ./deep_fashion_256",
-                f"mv ./{variation_cmds}/validation ./deep_fashion_256",
-                f"rmdir ./{variation_cmds}"
+                f"mv ./{variation_commands}/train ./deep_fashion_256",
+                f"mv ./{variation_commands}/validation ./deep_fashion_256",
+                f"rmdir ./{variation_commands}"
             ],
             "check_existence": lambda: all_paths_exist(["./deep_fashion_256"])
+        }
+    }
+
+
+def deep_fashion_1_loader_info():
+    return {
+        "name": "deepfashion1_images",
+        "variation": "deepfashion1_info",  # "df_quad_3",
+        "preprocess": {
+            "commands": [
+                "mkdir -p ./deep_fashion_1_256",
+                "mv splits.json ./deep_fashion_1_256",
+                "mv val.csv ./deep_fashion_1_256",
+                "mv cat_idx_by_name.json ./deep_fashion_1_256",
+                "mv ids_by_cat_idx.json ./deep_fashion_1_256",
+                "mv test.csv ./deep_fashion_1_256",
+                "mv cat_name_by_idxs.json ./deep_fashion_1_256",
+                "mv train.csv ./deep_fashion_1_256",
+                "mv README.txt ./deep_fashion_1_256",
+                "mv img_256 ./deep_fashion_1_256"
+            ],
+            "check_existence": lambda: all_paths_exist(["./deep_fashion_1_256"])
         }
     }
 
@@ -50,8 +76,10 @@ def load_dataset_loader(**settings):
     ds_name = settings["dataset"]["name"]
     if ds_name == "own" or ds_name == "own_256":
         return lambda: load_own_dataset(**settings)
-    if ds_name == "deep_fashion_256":
-        return lambda: load_deepfashion(**settings)
+    if ds_name == "deep_fashion_2_256":
+        return lambda: load_deepfashion_2(**settings)
+    if ds_name == "deep_fashion_1_256":
+        return lambda: load_deepfashion_1(**settings)
     raise Exception(f'Unknown Dataset {ds_name}')
 
 
@@ -63,11 +91,11 @@ def _fill_ds_settings(**settings):
     return {
         "map_full_paths": settings.get("map_full_paths", True),
         "validate_paths": settings.get("validate_paths", False),
-#        "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
-#        "nrows": settings.get("nrows", None),
-#        "target_shape": settings.get("target_shape", (144, 144)),
-#        "batch_size": settings.get("batch_size", 32),
-#        "buffer_size": settings.get("buffer_size", 1024),
+        #        "format": settings.get("format", "triplet"),  # "quadruplet", # triplet
+        #        "nrows": settings.get("nrows", None),
+        #        "target_shape": settings.get("target_shape", (144, 144)),
+        #        "batch_size": settings.get("batch_size", 32),
+        #        "buffer_size": settings.get("buffer_size", 1024),
         "train_split": settings.get("train_split", 0.8),
         "preprocess_input": settings.get("preprocess_input", None)
     }
@@ -90,14 +118,14 @@ def _print_ds_settings(verbose, **ds_settings):
         print("*" * len(header_str))
 
 
-def load_deepfashion(**settings):
+def load_deepfashion_2(**settings):
     print("Load own DeepFashion", settings["batch_size"], "Batch Size")
 
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
-    datasets = DeepFashionQuadruplets(base_path=base_path, split_suffix="_256", format=settings["format"],
-                                      nrows=settings["nrows"]) \
+    datasets = DeepFashion2Quadruplets(base_path=base_path, split_suffix="_256", format=settings["format"],
+                                       nrows=settings["nrows"]) \
         .load_as_datasets(validate_paths=False)
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
@@ -110,6 +138,40 @@ def load_deepfashion(**settings):
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
     return {
+        "type": "deepfashion_2",
+        "train": train_ds,
+        "val": val_ds,
+        "shape": ds_settings.get("target_shape"),
+        "n_items": {
+            "total": n_val + n_train,
+            "validation": n_val,
+            "train": n_train
+        }
+    }
+
+
+def load_deepfashion_1(force_train_recreate=False, **settings):
+    print("Load own DeepFashion", settings["batch_size"], "Batch Size")
+
+    ds_settings = _fill_ds_settings(**settings)
+    _print_ds_settings(settings.get("verbose", False), **ds_settings)
+    base_path = _load_dataset_base_path(**settings)
+
+    ds_loader = DeepFashion1Dataset(base_path=base_path, split_suffix="_256", model=None, nrows=settings["nrows"])
+    datasets = ds_loader.load(is_triplet=settings["is_triplet"], force_train_recreate=force_train_recreate)
+
+    train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
+
+    train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
+
+    settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
+
+    train_ds, val_ds = prepare_ds(train_ds, **settings), prepare_ds(val_ds, **settings)
+
+    n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
+
+    return {
+        "type": "deepfashion_1",
         "train": train_ds,
         "val": val_ds,
         "shape": ds_settings.get("target_shape"),
@@ -179,19 +241,29 @@ def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None):
         return lambda a, p, n1, n2: (prep_image(a), prep_image(p), prep_image(n1), prep_image(n2))
 
 
-def build_dataset_hard_pairs_deep_fashion(model, job_settings):
+def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     if Path("./deep_fashion_256/train/quadruplets.csv").exists():
         Path("./deep_fashion_256/train/quadruplets.csv").unlink()
     embedding_model = model.siamese_network.feature_extractor
 
-    generator = DeepFashionPairsGenerator(r"./deep_fashion_256",
-                                          embedding_model,
-                                          split_suffix="_256",
-                                          number_possibilites=256)
+    generator = DeepFashion2PairsGenerator(r"./deep_fashion_256",
+                                           embedding_model,
+                                           split_suffix="_256",
+                                           number_possibilites=256)
 
     apnn = generator.build_anchor_positive_negative1_negative2("train")
-    DeepFashionPairsGenerator.save_pairs_to_csv(generator.base_path, "train", apnn)
+    DeepFashion2PairsGenerator.save_pairs_to_csv(generator.base_path, "train", apnn)
 
     return load_dataset_loader(**job_settings)()
 
+def build_dataset_hard_pairs_deep_fashion_1(model, job_settings):
+    if Path("./deep_fashion_1_256/train.csv").exists():
+        Path("./deep_fashion_1_256/train.csv").unlink()
+
+    embedding_model = model.siamese_network.feature_extractor
+
+    ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256", split_suffix="_256", model=embedding_model)
+    ds_loader.load_split("train", is_triplet=False, force=True)
+
+    return load_dataset_loader(**job_settings)()
 

@@ -1,12 +1,6 @@
-import os
-import shutil
 from pathlib import Path
 
-from numba.core.typing.builtins import Zip
 from tensorflow import keras
-
-from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
-from fashionnets.util.io import read_file, write_file
 
 
 class UploadResults(keras.callbacks.Callback):

@@ -28,8 +28,8 @@ def download_results():
 
         target_folder = Path(results_download_path, result_folder).resolve()
 
-        for zip in zips_full_remote_path:
-            cmd = f'rclone move "hi:/{zip}" "{target_folder}" -P'
+        for remote_zip in zips_full_remote_path:
+            cmd = f'rclone move "hi:/{remote_zip}" "{target_folder}" -P'
             print(os.system(cmd))
 
 
