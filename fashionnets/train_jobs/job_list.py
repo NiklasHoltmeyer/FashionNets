@@ -1,5 +1,5 @@
 from fashionscrapper.utils.list import distinct
-
+from fashionnets.models.embedding.resnet50 import ResNet50Builder
 from fashionnets.train_jobs.loader.dataset_loader import loader_info
 from fashionnets.train_jobs.settings.default_settings import base_settings, back_bone_settings
 
@@ -15,58 +15,64 @@ def job_list(debugging):
     base_cfg1e3 = base_settings(debugging, 1e-3)
 
     # back_bone_cfg =
-    deep_fash_cfg = lambda variation: loader_info("deep_fashion_1_256", variation)
-
     triplet_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=True)
-    triplet_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=True)
+#    triplet_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=True)
 
     quad_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=False)
-    quad_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=False)
+#    quad_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=False)
 
-    ds = deep_fash_cfg("df_quad_2")
+    ds = loader_info("deep_fashion_1_256")
 
     back_bone_by_notebook = {
-        "b1": {**quad_no_weights},
-        "b2": {**quad_w_weights},
+#        "b1": {**quad_no_weights},
+        "q": {**quad_w_weights},
 
-        "b3": {**triplet_w_weights},
-        "b4": {**triplet_no_weights},
+        "t": {**triplet_w_weights},
+#        "b4": {**triplet_no_weights},
+    }
+
+    freeze_layers = {
+        "non_conv5_block1_out": ResNet50Builder.freeze_non_conv5_block1_out,
+        "first_100": lambda model: ResNet50Builder.freeze_first_n_layers(model, 100),
+        "none": None
     }
 
     train_jobs = {
-#        "b1_11": {"run_idx": 11, **base_cfg1e4, "dataset": ds}, #done
-#        "b2_12": {"run_idx": 12, **base_cfg1e4, "dataset": ds}, #
-#        "b3_13": {"run_idx": 13, **base_cfg1e4, "dataset": ds}, #läuft
-#        "b4_14": {"run_idx": 14, **base_cfg1e4, "dataset": ds}, #
+        #first 100
+        "q_11_f100": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
+        "t_12_f100": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
 
-        ###
-#        "b1_21": {"run_idx": 21, **base_cfg5e3, "dataset": ds}, #gecanceld nach 3 eps (1.0)
-#        "b2_22": {"run_idx": 22, **base_cfg5e3, "dataset": ds}, #läuft
-#        "b3_23": {"run_idx": 23, **base_cfg5e3, "dataset": ds}, #läuft
-#        "b4_24": {"run_idx": 24, **base_cfg5e3, "dataset": ds}, #Done
+        "q_21_f100": {"run_idx": 121, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
+        "t_22_f100": {"run_idx": 122, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
 
-        ##
-#        "b1_31": {"run_idx": 31, **base_cfg1e3, "dataset": ds}, #done
-#        "b2_32": {"run_idx": 32, **base_cfg1e3, "dataset": ds}, # gecanceld nach 9ep (1.0)
-#        "b3_33": {"run_idx": 33, **base_cfg1e3, "dataset": ds}, #
-#        "b4_34": {"run_idx": 34, **base_cfg1e3, "dataset": ds}, # Läuft
+        "q_31_f100": {"run_idx": 131, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
+        "t_32_f100": {"run_idx": 132, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
 
-        "b1_111": {"run_idx": 11, **base_cfg1e4, "dataset": ds}, #done
-        "b2_112": {"run_idx": 12, **base_cfg1e4, "dataset": ds}, #
-        "b3_113": {"run_idx": 13, **base_cfg1e4, "dataset": ds}, #läuft
-        "b4_114": {"run_idx": 14, **base_cfg1e4, "dataset": ds}, #
+        #non conv5
+        "q_11_conv5": {"run_idx": 211, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
+        "t_12_conv5": {"run_idx": 212, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
 
-        ###
-        "b1_121": {"run_idx": 21, **base_cfg5e3, "dataset": ds}, #gecanceld nach 3 eps (1.0)
-        "b2_122": {"run_idx": 22, **base_cfg5e3, "dataset": ds}, #läuft
-        "b3_123": {"run_idx": 23, **base_cfg5e3, "dataset": ds}, #läuft
-        "b4_124": {"run_idx": 24, **base_cfg5e3, "dataset": ds}, #Done
+        "q_21_conv5": {"run_idx": 221, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
+        "t_22_conv5": {"run_idx": 222, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
 
-        ##
-        "b1_131": {"run_idx": 31, **base_cfg1e3, "dataset": ds}, #done
-        "b2_132": {"run_idx": 32, **base_cfg1e3, "dataset": ds}, # gecanceld nach 9ep (1.0)
-        "b3_133": {"run_idx": 33, **base_cfg1e3, "dataset": ds}, #
-        "b4_134": {"run_idx": 34, **base_cfg1e3, "dataset": ds}, # Läuft
+        "q_31_conv5": {"run_idx": 231, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
+        "t_32_conv5": {"run_idx": 232, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
+
+        # None
+        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds,
+                        "freeze_layers": freeze_layers["none"]},
+        "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds,
+                         "freeze_layers": freeze_layers["none"]},
+
+        "q_21_none": {"run_idx": 321, **base_cfg5e3, "dataset": ds,
+                        "freeze_layers": freeze_layers["none"]},
+        "t_22_none": {"run_idx": 322, **base_cfg5e3, "dataset": ds,
+                         "freeze_layers": freeze_layers["none"]},
+
+        "q_31_none": {"run_idx": 331, **base_cfg1e3, "dataset": ds,
+                        "freeze_layers": freeze_layers["none"]},
+        "t_32_none": {"run_idx": 332, **base_cfg1e3, "dataset": ds,
+                         "freeze_layers": freeze_layers["none"]},
     }
 
     for k in train_jobs.keys():

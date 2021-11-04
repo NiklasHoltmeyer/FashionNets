@@ -2,7 +2,6 @@ from pathlib import Path
 
 import tensorflow as tf
 from fashiondatasets.deepfashion1.DeepFashion1 import DeepFashion1Dataset
-from fashiondatasets.deepfashion1.helper.deep_fashion_1_pairs_generator import DeepFashion1PairsGenerator
 from fashiondatasets.deepfashion2.DeepFashion2Quadruplets import DeepFashion2Quadruplets
 from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_2_pairs_generator import DeepFashion2PairsGenerator
 from fashiondatasets.own.Quadruplets import Quadruplets
@@ -12,7 +11,7 @@ from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path
 from fashionnets.util.io import all_paths_exist
 
 
-def loader_info(name, variation):
+def loader_info(name, variation=""):
     if "deep_fashion_2" in name:
         return deep_fashion_2_loader_info(variation)
     if "deep_fashion_1" in name:
@@ -78,7 +77,7 @@ def load_dataset_loader(**settings):
         return lambda: load_own_dataset(**settings)
     if ds_name == "deep_fashion_2_256":
         return lambda: load_deepfashion_2(**settings)
-    if "deepfashion1" in ds_name:
+    if "deep_fashion_1_256" in ds_name:
         return lambda: load_deepfashion_1(**settings)
     raise Exception(f'Unknown Dataset {ds_name}')
 
@@ -158,7 +157,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     base_path = _load_dataset_base_path(**settings)
 
     ds_loader = DeepFashion1Dataset(base_path=base_path, image_suffix="_256", model=None, nrows=settings["nrows"])
-    datasets = ds_loader.load(is_triplet=settings["is_triplet"], force_train_recreate=force_train_recreate)
+    datasets = ds_loader.load(splits=["train", "val"],is_triplet=settings["is_triplet"], force_train_recreate=force_train_recreate)
 
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 

@@ -32,3 +32,26 @@ class ResNet50Builder:
 
         return embedding, resnet.preprocess_input
 
+    @staticmethod
+    def freeze_non_conv5_block1_out(model):
+        print(f"Freeze non Conv5_Block1_Out Layers!")
+
+        trainable = False
+        for layer in model.layers:
+            if layer.name == "conv5_block1_out":
+                trainable = True
+            layer.trainable = trainable
+
+        for layer in model.layers[-8:]:
+            layer.trainable = True
+
+        return model
+
+    @staticmethod
+    def freeze_first_n_layers(model, n):
+        print(f"Freeze first {n} Layers!")
+        for l_idx, layer in enumerate(model.layers):
+            layer.trainable = l_idx > n
+        return model
+
+

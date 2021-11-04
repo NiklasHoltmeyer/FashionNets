@@ -86,6 +86,13 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, **train_job)
 
         siamese_model.load_weights(_checkpoint)
 
+    freeze_layers = train_job.get("freeze_layers", None)
+
+    if freeze_layers:
+        siamese_model.siamese_network.back_bone = freeze_layers(siamese_model.siamese_network.back_bone)
+    else:
+        print("No layers frozen!")
+
     dump_settings(train_job)
 
     return siamese_model, init_epoch, _callbacks
