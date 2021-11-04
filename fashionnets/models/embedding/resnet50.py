@@ -5,15 +5,15 @@ from tensorflow.keras.applications import resnet
 
 class ResNet50Builder:
     @staticmethod
-    def build(input_shape, embedding_dim=256, weights="imagenet"):
+    def build(input_shape, embedding_dim=2048, weights="imagenet"):
         back_bone = resnet.ResNet50(
             weights=weights, input_shape=input_shape + (3,), include_top=False
         )
 
-        x = tf.keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu')(back_bone.output)
+        x = tf.keras.layers.Conv2D(filters=128, kernel_size=2, padding='same', activation='relu')(back_bone.output)
         x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
         x = tf.keras.layers.Dropout(0.3)(x)
-        x = tf.keras.layers.Conv2D(filters=32, kernel_size=2, padding='same', activation='relu')(x)
+        x = tf.keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu')(x)
         x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
         x = tf.keras.layers.Dropout(0.3)(x)
         x = tf.keras.layers.Flatten()(x)
