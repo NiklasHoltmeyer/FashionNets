@@ -10,8 +10,8 @@ def base_settings(debugging, learning_rate=1e-4):
         "epochs": 20,
         "verbose": False,
         "nrows": None,
-        "buffer_size": 64,
-        "batch_size": 64,
+        "buffer_size": 32,
+        "batch_size": 32,
         "optimizer": optimizer,
         "learning_rate": f"{optimizer.lr.numpy():.2e}"
     }
