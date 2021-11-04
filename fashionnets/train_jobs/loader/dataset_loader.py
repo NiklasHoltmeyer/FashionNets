@@ -15,11 +15,11 @@ from fashionnets.util.io import all_paths_exist
 def loader_info(name, variation):
     if "deep_fashion_2" in name:
         return deep_fashion_2_loader_info(variation)
-    if "deep_fashion_12" in name:
+    if "deep_fashion_1" in name:
         return deep_fashion_1_loader_info()
     if "own" in name:
         return own_loader_info(variation)
-    raise Exception("TODO")
+    raise Exception(f"Unknown Loader Information {name} {variation}")
 
 
 def own_loader_info(variation):
@@ -52,7 +52,7 @@ def deep_fashion_2_loader_info(variation):
 
 def deep_fashion_1_loader_info():
     return {
-        "name": "deepfashion1_images",
+        "name": "deep_fashion_1_256",
         "variation": "deepfashion1_info",  # "df_quad_3",
         "preprocess": {
             "commands": [
@@ -78,7 +78,7 @@ def load_dataset_loader(**settings):
         return lambda: load_own_dataset(**settings)
     if ds_name == "deep_fashion_2_256":
         return lambda: load_deepfashion_2(**settings)
-    if ds_name == "deep_fashion_1_256":
+    if "deepfashion1" in ds_name:
         return lambda: load_deepfashion_1(**settings)
     raise Exception(f'Unknown Dataset {ds_name}')
 
@@ -157,7 +157,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
 
-    ds_loader = DeepFashion1Dataset(base_path=base_path, split_suffix="_256", model=None, nrows=settings["nrows"])
+    ds_loader = DeepFashion1Dataset(base_path=base_path, image_suffix="_256", model=None, nrows=settings["nrows"])
     datasets = ds_loader.load(is_triplet=settings["is_triplet"], force_train_recreate=force_train_recreate)
 
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]

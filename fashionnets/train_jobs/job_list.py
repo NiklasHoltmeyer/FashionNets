@@ -15,7 +15,7 @@ def job_list(debugging):
     base_cfg1e3 = base_settings(debugging, 1e-3)
 
     # back_bone_cfg =
-    deep_fash_cfg = lambda variation: loader_info("deep_fashion_2_256", variation)
+    deep_fash_cfg = lambda variation: loader_info("deep_fashion_1_256", variation)
 
     triplet_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=True)
     triplet_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=True)

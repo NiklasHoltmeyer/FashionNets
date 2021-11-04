@@ -1,4 +1,4 @@
-notebook_name = "l_b1_11"
+notebook_name = "l_b1_111"
 from fashionnets.train_jobs.loader.job_loader import load_job_settings, history_to_csv_string, prepare_environment
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job
 from fashionnets.train_jobs.loader.job_loader import add_back_bone_to_train_job
@@ -12,6 +12,12 @@ datasets = train_job["run"]["dataset"]()
 train_ds, val_ds = datasets["train"], datasets["val"]
 #result_uploader = train_job["environment"].webdav
 train_job["environment"].webdav = None
+
+for a in train_ds:
+    print(a)
+    break
+print(train_ds)
+exit(0)
 
 siamese_model, init_epoch, _callbacks = load_siamese_model_from_train_job(**train_job,
                                                                           load_weights=True,
