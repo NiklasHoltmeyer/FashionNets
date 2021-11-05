@@ -64,7 +64,9 @@ def deep_fashion_1_loader_info():
                 "mv cat_name_by_idxs.json ./deep_fashion_1_256",
                 "mv train.csv ./deep_fashion_1_256",
                 "mv README.txt ./deep_fashion_1_256",
-                "mv img_256 ./deep_fashion_1_256"
+                "mv img_256 ./deep_fashion_1_256",
+                "mv ./deepfashion1-info/* ./deep_fashion_1_256",
+                "rm -rf ./deepfashion1-info"
             ],
             "check_existence": lambda: all_paths_exist(["./deep_fashion_1_256"])
         }
