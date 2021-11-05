@@ -157,7 +157,13 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     base_path = _load_dataset_base_path(**settings)
 
     ds_loader = DeepFashion1Dataset(base_path=base_path, image_suffix="_256", model=None, nrows=settings["nrows"])
-    datasets = ds_loader.load(splits=["train", "val"],is_triplet=settings["is_triplet"], force_train_recreate=force_train_recreate)
+
+    if settings["nrows"]:
+        force_train_recreate = False
+
+    datasets = ds_loader.load(splits=["train", "val"],
+                              is_triplet=settings["is_triplet"],
+                              force_train_recreate=force_train_recreate)
 
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 

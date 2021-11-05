@@ -21,7 +21,7 @@ def job_list(debugging):
     quad_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=False)
 #    quad_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=False)
 
-    ds = loader_info("deep_fashion_1_256")
+    ds = loader_info("deep_fashion_1")
 
     back_bone_by_notebook = {
 #        "b1": {**quad_no_weights},

@@ -9,6 +9,10 @@ import tensorflow as tf
 
 def remote_checkpoint(env):
     checkpoint_path = download_checkpoint(env)
+
+    if not checkpoint_path:
+        return
+
     latest_cp = tf.train.latest_checkpoint(checkpoint_path)
 
     if not latest_cp:

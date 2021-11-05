@@ -18,7 +18,7 @@ class ResNet50Builder:
         x = tf.keras.layers.Dropout(0.3)(x)
         x = tf.keras.layers.Flatten()(x)
         x = tf.keras.layers.Dense(embedding_dim)(x)
-        #x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=1))(x)
+        x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=1))(x) # L2 normalize embeddings
 
         embedding = Model(back_bone.input, x, name="Embedding")
 
