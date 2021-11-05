@@ -52,7 +52,7 @@ def deep_fashion_2_loader_info(variation):
 def deep_fashion_1_loader_info():
     return {
         "name": "deep_fashion_1_256",
-        "variation": "deepfashion1_info",  # "df_quad_3",
+        "variation": "deepfashion1info",  # "df_quad_3",
         "preprocess": {
             "commands": [
                 "mkdir -p ./deep_fashion_1_256",
