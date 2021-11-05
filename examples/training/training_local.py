@@ -10,19 +10,19 @@ job_settings = add_back_bone_to_train_job(environment=environment, **training_jo
 
 datasets = train_job["run"]["dataset"]()
 
-#train_ds, val_ds = datasets["train"], datasets["val"]
+train_ds, val_ds = datasets["train"], datasets["val"]
 #result_uploader = train_job["environment"].webdav
 train_job["environment"].webdav = None
 
 siamese_model, init_epoch, _callbacks = load_siamese_model_from_train_job(**train_job,
-                                                                          load_weights=True,
+                                                                          load_weights=False,
                                                                           force_preprocess_layer=True)
 
-exit(0)
+#train_ds = train_ds.take(3)
 
 history = siamese_model.fit(train_ds,
-                            epochs=1,#2,  # job_settings["epochs"]
-                            validation_data=train_ds,  # val_ds
+                            epochs=25,#2,  # job_settings["epochs"]
+                            #validation_data=train_ds,  # val_ds
                             #callbacks=_callbacks,
                             validation_steps=1,
                             steps_per_epoch=1,

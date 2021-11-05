@@ -261,14 +261,15 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
 
     return load_dataset_loader(**job_settings)()
 
-def build_dataset_hard_pairs_deep_fashion_1(model, job_settings):
-    if Path("./deep_fashion_1_256/train.csv").exists():
-        Path("./deep_fashion_1_256/train.csv").unlink()
+def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
+    if init_epoch > 0:
+        if Path("./deep_fashion_1_256/train.csv").exists():
+            Path("./deep_fashion_1_256/train.csv").unlink()
 
-    embedding_model = model.siamese_network.feature_extractor
+        embedding_model = model.siamese_network.feature_extractor
 
-    ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256", image_suffix="_256", model=embedding_model)
-    ds_loader.load_split("train", is_triplet=False, force=True)
+        ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256", image_suffix="_256", model=embedding_model)
+        ds_loader.load_split("train", is_triplet=False, force=True)
 
     return load_dataset_loader(**job_settings)()
 

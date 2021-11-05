@@ -35,7 +35,7 @@ def sanity_check_job_settings(**train_job):
     assert f"{optimizer.lr.numpy():.2e}" == train_job["learning_rate"]
 
 
-def load_siamese_model_from_train_job(force_preprocess_layer=False, **train_job):
+def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_weights=False, **train_job):
     logger = defaultLogger("Load_Siamese_Model")
     logger.disabled = not train_job["verbose"]
 
@@ -85,6 +85,8 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, **train_job)
         logger.debug("Loading Weights!")
 
         siamese_model.load_weights(_checkpoint)
+    elif force_load_weights:
+        raise Exception("force_load_weights is set, but no Checkpoints are found!")
 
     freeze_layers = train_job.get("freeze_layers", None)
 
