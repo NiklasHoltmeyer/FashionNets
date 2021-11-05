@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tensorflow.keras import layers
-import tensorflow_addons as tfa
 
 
 # Triplet loss = AP - AN + alpha
