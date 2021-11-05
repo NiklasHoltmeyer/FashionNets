@@ -262,6 +262,20 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     return load_dataset_loader(**job_settings)()
 
 def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
+    exception = None
+
+    for i in range(3): #<- just Retry a Few Time - forces Colab not to Close
+        try:
+            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch)
+        except Exception as e:
+            print("build_dataset_hard_pairs_deep_fashion_1 Failed")
+            print("Exception: ")
+            print(str(e))
+            exception = e
+
+    raise exception
+
+def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
     if init_epoch > 0:
         if Path("./deep_fashion_1_256/train.csv").exists():
             Path("./deep_fashion_1_256/train.csv").unlink()

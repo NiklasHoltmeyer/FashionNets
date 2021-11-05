@@ -42,36 +42,14 @@ def job_list(debugging):
         "q_11_f100": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
         "t_12_f100": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
 
-        "q_21_f100": {"run_idx": 121, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
-        "t_22_f100": {"run_idx": 122, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
-
-        "q_31_f100": {"run_idx": 131, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
-        "t_32_f100": {"run_idx": 132, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
-
         #non conv5
         "q_11_conv5": {"run_idx": 211, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
         "t_12_conv5": {"run_idx": 212, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
-
-        "q_21_conv5": {"run_idx": 221, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
-        "t_22_conv5": {"run_idx": 222, **base_cfg5e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
-
-        "q_31_conv5": {"run_idx": 231, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
-        "t_32_conv5": {"run_idx": 232, **base_cfg1e3, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
 
         # None
         "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds,
                         "freeze_layers": freeze_layers["none"]},
         "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds,
-                         "freeze_layers": freeze_layers["none"]},
-
-        "q_21_none": {"run_idx": 321, **base_cfg5e3, "dataset": ds,
-                        "freeze_layers": freeze_layers["none"]},
-        "t_22_none": {"run_idx": 322, **base_cfg5e3, "dataset": ds,
-                         "freeze_layers": freeze_layers["none"]},
-
-        "q_31_none": {"run_idx": 331, **base_cfg1e3, "dataset": ds,
-                        "freeze_layers": freeze_layers["none"]},
-        "t_32_none": {"run_idx": 332, **base_cfg1e3, "dataset": ds,
                          "freeze_layers": freeze_layers["none"]},
     }
 

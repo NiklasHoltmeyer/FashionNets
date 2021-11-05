@@ -20,11 +20,8 @@ class SiameseModel(Model):
         return self.siamese_network(inputs)
 
     def train_step(self, data):
-        #data_hard = self.build_hard_triplets(data)
-
         with tf.GradientTape() as tape:
             loss = self.siamese_network(data)
-            #loss = self.siamese_network.loss_layer(*embeddings)
 
         gradients = tape.gradient(loss, self.siamese_network.trainable_weights)
 

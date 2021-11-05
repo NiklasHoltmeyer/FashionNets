@@ -21,7 +21,7 @@ siamese_model, init_epoch, _callbacks = load_siamese_model_from_train_job(**trai
 #train_ds = train_ds.take(3)
 
 history = siamese_model.fit(train_ds,
-                            epochs=25,#2,  # job_settings["epochs"]
+                            epochs=20,#2,  # job_settings["epochs"]
                             #validation_data=train_ds,  # val_ds
                             #callbacks=_callbacks,
                             validation_steps=1,

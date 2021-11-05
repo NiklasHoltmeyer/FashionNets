@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.applications import resnet
+from tensorflow.keras.regularizers import l2
 
 
 class ResNet50Builder:
@@ -10,25 +11,32 @@ class ResNet50Builder:
             weights=weights, input_shape=input_shape + (3,), include_top=False
         )
 
-        x = tf.keras.layers.Conv2D(filters=128, kernel_size=2, padding='same', activation='relu')(back_bone.output)
-        x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
+        x = tf.keras.layers.Conv2D(128, (7, 7), activation='relu', padding='same',
+                                   input_shape=input_shape,
+                                   kernel_initializer='he_uniform',
+                                   kernel_regularizer=l2(2e-4))(back_bone.output)
+        x = tf.keras.layers.MaxPooling2D()(x)
         x = tf.keras.layers.Dropout(0.3)(x)
-        x = tf.keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu')(x)
-        x = tf.keras.layers.MaxPooling2D(pool_size=2)(x)
-        x = tf.keras.layers.Dropout(0.3)(x)
+        x = tf.keras.layers.Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same',
+                                   kernel_regularizer=l2(2e-4))(x)
         x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.layers.Dense(embedding_dim)(x)
-        x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=1))(x) # L2 normalize embeddings
+        x = tf.keras.layers.Dense(4096, activation='relu',
+                                  kernel_regularizer=l2(1e-3),
+                                  kernel_initializer='he_uniform')(x)
+        x = tf.keras.layers.Dense(embedding_dim, activation=None,
+                                  kernel_regularizer=l2(1e-3),
+                                  kernel_initializer='he_uniform')(x)
+        x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=-1))(x) # L2 normalize embeddings
 
         embedding = Model(back_bone.input, x, name="Embedding")
 
-#        #if weights:
-#        trainable = False
+        #        #if weights:
+        #        trainable = False
 
-#        for layer in back_bone.layers:
-#            if layer.name == "conv5_block1_out":
-#                trainable = True
-#            layer.trainable = trainable
+        #        for layer in back_bone.layers:
+        #            if layer.name == "conv5_block1_out":
+        #                trainable = True
+        #            layer.trainable = trainable
 
         return embedding, resnet.preprocess_input
 
@@ -53,5 +61,3 @@ class ResNet50Builder:
         for l_idx, layer in enumerate(model.layers):
             layer.trainable = l_idx > n
         return model
-
-

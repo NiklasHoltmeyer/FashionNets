@@ -1,48 +1,58 @@
 import tensorflow as tf
 from tensorflow.keras import layers
+import tensorflow_addons as tfa
 
 
 # Triplet loss = AP - AN + alpha
 
+@tf.function
+def euclidean_distance_sqrt(x, y):  # -> pow2 -> square
+    return tf.sqrt(euclidean_distance(x, y))
+
+
+@tf.function
+def mean_euclidean_distance(x, y):
+    return tf.reduce_mean(euclidean_distance(x, y))
+
+
+@tf.function
+def minkowski_distance(x, y):
+    return tf.sqrt(tf.reduce_sum(l2_distance(x, y)))
+
+
+@tf.function
+def euclidean_distance2(x, y):
+    sum_square = tf.math.reduce_sum(l2_distance(x, y), axis=1, keepdims=True)
+    return tf.math.sqrt(tf.math.maximum(sum_square, tf.keras.backend.epsilon()))
+
+
+@tf.function
+def l2_distance(x, y):
+    return tf.math.square(tf.subtract(x, y))
+
+@tf.function
+def euclidean_distance(x, y):
+    return tf.math.reduce_sum(l2_distance(x, y), axis=-1)
+
+
 class TripletDistance(layers.Layer):
-    def __init__(self, alpha, **kwargs):
-        self.alpha = alpha
+    def __init__(self,  **kwargs):
         super(TripletDistance, self).__init__(**kwargs)
 
-    # noinspection PyMethodOverriding
     def call(self, anchor, positive, negative):
-        ap_distance = tf.reduce_sum(tf.square(anchor - positive), -1)
-        an_distance = tf.reduce_sum(tf.square(anchor - negative), -1)
+        ap = minkowski_distance(anchor, positive)
+        an = minkowski_distance(anchor, negative)
 
-        return ap_distance, an_distance
+        return ap, an
 
-        # loss = ap_distance - an_distance + self.alpha
-        # loss = tf.maximum(loss, 0.0)
-
-        # return tf.reduce_sum(loss, axis=0)
-
-
-# TripletSemiHardLoss
-# Quadruplet Loss = AP-AN + alpha_1 + AP-NN + alpha_2
 
 class QuadrupletDistance(layers.Layer):
-    def __init__(self, alpha, beta, **kwargs):
-        self.alpha = alpha
-        self.beta = beta
+    def __init__(self, **kwargs):
         super(QuadrupletDistance, self).__init__(**kwargs)
 
-    # noinspection PyMethodOverriding
     def call(self, anchor, positive, negative1, negative2):
-        ap_distance = tf.reduce_sum(tf.square(anchor - positive), -1)
-        an_distance = tf.reduce_sum(tf.square(anchor - negative1), -1)
-        nn_distance = tf.reduce_sum(tf.square(negative1 - negative2), -1)
+        ap = euclidean_distance(anchor, positive)
+        an = euclidean_distance(anchor, negative1)
+        nn = euclidean_distance(negative1, negative2)
 
-        return ap_distance, an_distance, nn_distance
-        # loss = tf.maximum(ap_distance - an_distance + self.alpha, 0.0) + \
-               # tf.maximum(ap_distance - nn_distance - self.beta, 0.0)
-
-        # return tf.reduce_sum(loss, axis=0)
-
-
-
-
+        return ap, an, nn
