@@ -1,7 +1,6 @@
 import tensorflow as tf
 from fashionnets.metrics.distance_layers import TripletDistance, QuadrupletDistance
 from tensorflow.keras import layers
-import tensorflow_addons as tfa
 
 
 # Triplet loss = AP - AN + alpha
