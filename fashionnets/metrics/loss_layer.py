@@ -11,7 +11,7 @@ class TripletLoss(layers.Layer):
         super(TripletLoss, self).__init__(**kwargs)
         print("Triplet" * 100)
         self.alpha = alpha
-        self.alpha=1.0
+        self.alpha = 1.0
         self.distance_layer = TripletDistance()
 
     def call(self, anchor, positive, negative):
