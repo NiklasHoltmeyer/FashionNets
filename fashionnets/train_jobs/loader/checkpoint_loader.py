@@ -11,7 +11,7 @@ def remote_checkpoint(env):
     checkpoint_path = download_checkpoint(env)
 
     if not checkpoint_path:
-        return
+        return None, 0
 
     latest_cp = tf.train.latest_checkpoint(checkpoint_path)
 
