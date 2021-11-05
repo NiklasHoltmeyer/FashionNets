@@ -21,7 +21,7 @@ class SiameseModel(Model):
 
     def train_step(self, data):
         with tf.GradientTape() as tape:
-            loss = self.siamese_network(data)
+            loss = self.siamese_network(data) * 100
 
         gradients = tape.gradient(loss, self.siamese_network.trainable_weights)
 
