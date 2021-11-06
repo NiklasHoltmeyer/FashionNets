@@ -39,17 +39,17 @@ def job_list(debugging):
 
     train_jobs = {
         #first 100
-        "q_11_f100": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
-        "t_12_f100": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]}, #1
+        "q_11_f100": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]}, # <- ging nicht auf ok
+        "t_12_f100": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]}, # P
 
         #non conv5
         "q_11_conv5": {"run_idx": 211, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
-        "t_12_conv5": {"run_idx": 212, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]}, #1
+        "t_12_conv5": {"run_idx": 212, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]}, # Ichi
 
         # None
         "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds,
                         "freeze_layers": freeze_layers["none"]},
-        "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds,
+        "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, #V
                          "freeze_layers": freeze_layers["none"]},
     }
 

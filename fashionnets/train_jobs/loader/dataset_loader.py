@@ -263,11 +263,12 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
 
     return load_dataset_loader(**job_settings)()
 
+
 def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
     exception = None
 
-    for i in range(3): #<- just Retry a Few Time - forces Colab not to Close
-        try:
+    for i in range(3):  # <- just Retry a Few Time - forces Colab not to Close
+        try:  # ^ Try Catch can be delted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
             return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch)
         except Exception as e:
             print("build_dataset_hard_pairs_deep_fashion_1 Failed")
@@ -276,6 +277,7 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
             exception = e
 
     raise exception
+
 
 def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
     if init_epoch > 0:
@@ -288,4 +290,3 @@ def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
         ds_loader.load_split("train", is_triplet=False, force=True)
 
     return load_dataset_loader(**job_settings)()
-

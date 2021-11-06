@@ -51,6 +51,40 @@ class SiameseModel(Model):
         random_ds = [random_ds] * (3 if is_triplet else 4)
         self.predict(random_ds)
 
+    def validate_embedding(self, small_batch):
+        """
+        Check if Embeddings are Constant -> bad
+        :return:
+        """
+
+        def is_embedding_constant():
+#            random_data = (1,) + input_shape + (3,)
+#            random_ds = [tf.random.uniform(random_data)] * (3 if is_triplet else 4)
+
+            test_emmbeddings = self.siamese_network.embed(small_batch)
+
+            is_constant = lambda x, y: tf.math.reduce_sum(tf.math.square(x - y)) == 0
+
+            for i in range(len(test_emmbeddings)):
+                j = (i + 1) % len(test_emmbeddings)
+
+                assert i != j
+                x, y = test_emmbeddings[i], test_emmbeddings[j]
+                x_nans = tf.reduce_any(tf.math.is_nan(x))
+                y_nans = tf.reduce_any(tf.math.is_nan(y))
+
+                if x_nans or y_nans:
+                    raise Exception("Embedding Space contains NaN's!.")
+
+                _const = is_constant(x, y)
+                if not is_constant:
+                    return False
+            return True
+
+        if is_embedding_constant:
+            raise Exception("The Embedding-Model seems to produce constant results.")
+
+
     @property
     def metrics(self):
         return [self.loss_tracker]

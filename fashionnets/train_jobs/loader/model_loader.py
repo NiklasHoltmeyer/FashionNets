@@ -60,7 +60,9 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
 
     siamese_model = SiameseModel(siamese_network, back_bone_model)
     siamese_model.compile(optimizer=optimizer)
+
     siamese_model.fake_predict(train_job["input_shape"], train_job["is_triplet"])
+
 
     cp_path, run_name = train_job["path"]["checkpoint"], train_job["run"]["name"]
 
@@ -94,6 +96,10 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
         siamese_model.siamese_network.back_bone = freeze_layers(siamese_model.siamese_network.back_bone)
     else:
         print("No layers frozen!")
+
+    cp_path = Path(r"F:\workspace\FashNets\bla\212_resnet50_imagenet_triplet_cp-0006.ckpt")
+    assert cp_path.exists()
+    siamese_model.load_weights(str(cp_path.resolve()))
 
     dump_settings(train_job)
 
