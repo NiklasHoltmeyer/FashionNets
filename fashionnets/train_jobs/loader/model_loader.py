@@ -97,10 +97,6 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     else:
         print("No layers frozen!")
 
-    cp_path = Path(r"F:\workspace\FashNets\bla\212_resnet50_imagenet_triplet_cp-0006.ckpt")
-    assert cp_path.exists()
-    siamese_model.load_weights(str(cp_path.resolve()))
-
     dump_settings(train_job)
 
     return siamese_model, init_epoch, _callbacks
