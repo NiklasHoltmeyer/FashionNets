@@ -21,7 +21,7 @@ class SiameseModel(Model):
 
     def train_step(self, data):
         with tf.GradientTape() as tape:
-            loss = self.siamese_network(data) * 1000
+            loss = self.siamese_network(data)
 
         gradients = tape.gradient(loss, self.siamese_network.trainable_weights)
 
@@ -81,7 +81,7 @@ class SiameseModel(Model):
                     return False
             return True
 
-        if is_embedding_constant:
+        if is_embedding_constant():
             raise Exception("The Embedding-Model seems to produce constant results.")
 
 

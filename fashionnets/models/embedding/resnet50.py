@@ -2,43 +2,37 @@ import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.applications import resnet
 from tensorflow.keras.regularizers import l2
+from tensorflow.python.keras.models import Sequential
 
 
 class ResNet50Builder:
     @staticmethod
     def build(input_shape, embedding_dim=2048, weights="imagenet"):
-        back_bone = resnet.ResNet50(
+        R = resnet.ResNet50(
             weights=weights, input_shape=input_shape + (3,), include_top=False
         )
 
-        x = tf.keras.layers.Conv2D(128, (7, 7), activation='relu', padding='same',
+        embedding_model = Sequential([
+            R,
+            tf.keras.layers.Conv2D(128, (7, 7), activation='relu', padding='same',
                                    input_shape=input_shape,
                                    kernel_initializer='he_uniform',
-                                   kernel_regularizer=l2(2e-4))(back_bone.output)
-        x = tf.keras.layers.MaxPooling2D()(x)
-        x = tf.keras.layers.Dropout(0.3)(x)
-        x = tf.keras.layers.Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same',
-                                   kernel_regularizer=l2(2e-4))(x)
-        x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.layers.Dense(4096, activation='relu',
+                                   kernel_regularizer=l2(2e-4)),
+            tf.keras.layers.MaxPooling2D(),
+            tf.keras.layers.Dropout(0.3),
+            tf.keras.layers.Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same',
+                                   kernel_regularizer=l2(2e-4)),
+            tf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(4096, activation='relu',
                                   kernel_regularizer=l2(1e-3),
-                                  kernel_initializer='he_uniform')(x)
-        x = tf.keras.layers.Dense(embedding_dim, activation=None,
+                                  kernel_initializer='he_uniform'),
+            tf.keras.layers.Dense(embedding_dim, activation=None,
                                   kernel_regularizer=l2(1e-3),
-                                  kernel_initializer='he_uniform')(x)
-        x = tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=-1))(x) # L2 normalize embeddings
+                                  kernel_initializer='he_uniform'),
+            tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=-1)),
+        ], name="ResNet-50 Embedding Model")
 
-        embedding = Model(back_bone.input, x, name="Embedding")
-
-        #        #if weights:
-        #        trainable = False
-
-        #        for layer in back_bone.layers:
-        #            if layer.name == "conv5_block1_out":
-        #                trainable = True
-        #            layer.trainable = trainable
-
-        return embedding, resnet.preprocess_input
+        return embedding_model, resnet.preprocess_input
 
     @staticmethod
     def freeze_non_conv5_block1_out(model):
