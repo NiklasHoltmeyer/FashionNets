@@ -4,6 +4,8 @@ from tensorflow.keras.applications import resnet
 from tensorflow.keras.regularizers import l2
 from tensorflow.python.keras.models import Sequential
 
+from fashionnets.models.layer.ResNetIdentityBlock import ResnetIdentityBlock
+
 
 class ResNet50Builder:
     @staticmethod
@@ -12,26 +14,16 @@ class ResNet50Builder:
             weights=weights, input_shape=input_shape + (3,), include_top=False
         )
 
-        embedding_model = Sequential([
-            R,
-            tf.keras.layers.Conv2D(128, (7, 7), activation='relu', padding='same',
-                                   input_shape=input_shape,
-                                   kernel_initializer='he_uniform',
-                                   kernel_regularizer=l2(2e-4)),
-            tf.keras.layers.MaxPooling2D(),
-            tf.keras.layers.Dropout(0.3),
-            tf.keras.layers.Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same',
-                                   kernel_regularizer=l2(2e-4)),
-            tf.keras.layers.Flatten(),
-            #tf.keras.layers.BatchNormalization(),
-            tf.keras.layers.Dense(4096, activation='relu',
-                                  kernel_regularizer=l2(1e-3),
-                                  kernel_initializer='he_uniform'),
-            tf.keras.layers.Dense(embedding_dim, activation=None,
-                                  kernel_regularizer=l2(1e-3),
-                                  kernel_initializer='he_uniform'),
-#            tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=-1)), #<- doesnt work with l2
-        ])
+        embedding_model = Sequential([R,
+#                                      tf.keras.layers.MaxPooling2D(),
+#                                      tf.keras.layers.Dropout(0.1),
+#                                      tf.keras.layers.BatchNormalization(name="bn2c"),
+                                      tf.keras.layers.Conv2D(256, (3, 3), activation='relu',
+                                                             kernel_initializer='he_uniform', padding='same',
+                                                             kernel_regularizer=l2(2e-4)),
+                                      ResnetIdentityBlock(3, [64, 64, 256]),
+                                      tf.keras.layers.Dense(embedding_dim, activation=None, use_bias=False)
+                                      ])
 
         return embedding_model, resnet.preprocess_input
 
@@ -56,3 +48,5 @@ class ResNet50Builder:
         for l_idx, layer in enumerate(model.layers):
             layer.trainable = l_idx > n
         return model
+
+
