@@ -15,13 +15,15 @@ class ResNet50Builder:
         )
 
         embedding_model = Sequential([R,
-#                                      tf.keras.layers.MaxPooling2D(),
-#                                      tf.keras.layers.Dropout(0.1),
-#                                      tf.keras.layers.BatchNormalization(name="bn2c"),
+                                      #                                      tf.keras.layers.MaxPooling2D(),
+                                      #                                      tf.keras.layers.Dropout(0.1),
+                                      #                                      tf.keras.layers.BatchNormalization(name="bn2c"),
                                       tf.keras.layers.Conv2D(256, (3, 3), activation='relu',
                                                              kernel_initializer='he_uniform', padding='same',
                                                              kernel_regularizer=l2(2e-4)),
                                       ResnetIdentityBlock(3, [64, 64, 256]),
+                                      tf.keras.layers.AveragePooling2D(pool_size=(2, 2), strides=(1, 1), padding='same'),
+                                      tf.keras.layers.Flatten(),
                                       tf.keras.layers.Dense(embedding_dim, activation=None, use_bias=False)
                                       ])
 
@@ -48,5 +50,3 @@ class ResNet50Builder:
         for l_idx, layer in enumerate(model.layers):
             layer.trainable = l_idx > n
         return model
-
-
