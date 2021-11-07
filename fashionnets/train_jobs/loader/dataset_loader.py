@@ -267,9 +267,10 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
 def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
     exception = None
 
-    for i in range(3):  # <- just Retry a Few Time - forces Colab not to Close
+    for i in [25, 50, 100]:  # <- just Retry a Few Time - forces Colab not to Close
         try:  # ^ Try Catch can be delted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
-            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch)
+            print(f"Trying to build Hard-Triplets {i} N_Chunks")
+            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i)
         except Exception as e:
             print("build_dataset_hard_pairs_deep_fashion_1 Failed")
             print("Exception: ")
@@ -279,7 +280,7 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
     raise exception
 
 
-def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
+def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks):
     if init_epoch > 0:
         if Path("./deep_fashion_1_256/train.csv").exists():
             Path("./deep_fashion_1_256/train.csv").unlink()
@@ -288,7 +289,8 @@ def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
         ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
                                         image_suffix="_256",
                                         model=embedding_model,
-                                         batch_size=job_settings["batch_size"])
+                                        batch_size=job_settings["batch_size"],
+                                        n_chunks=n_chunks)
 
         ds_loader.load_split("train", is_triplet=False, force=True)
 

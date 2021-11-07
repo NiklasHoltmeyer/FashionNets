@@ -11,9 +11,9 @@ class SimpleCNN:
             tf.keras.layers.Dropout(0.3),
             tf.keras.layers.Conv2D(filters=32, kernel_size=2, padding='same', activation='relu'),
             tf.keras.layers.MaxPooling2D(pool_size=2),
-            tf.keras.layers.Dropout(0.3),
-            tf.keras.layers.Flatten(),
-            tf.keras.layers.Dense(embedding_dim, activation=None),  # No activation on final dense layer
+            tf.keras.layers.Droptf.keras.layers.Flatten(),
+            tf.keras.layers.Dense(embedding_dim, activation=None),  # No activation on final dense layerout(0.3),
+
             tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))  # L2 normalize embeddings
         ])
         preprocessing = None  # DS is already normalized!
