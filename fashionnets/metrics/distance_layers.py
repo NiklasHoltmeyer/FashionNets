@@ -39,8 +39,8 @@ class TripletDistance(layers.Layer):
         super(TripletDistance, self).__init__(**kwargs)
 
     def call(self, anchor, positive, negative):
-        ap = minkowski_distance(anchor, positive)
-        an = minkowski_distance(anchor, negative)
+        ap = euclidean_distance(anchor, positive)
+        an = euclidean_distance(anchor, negative)
 
         return ap, an
 

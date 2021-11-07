@@ -29,8 +29,8 @@ class ResNet50Builder:
             tf.keras.layers.Dense(embedding_dim, activation=None,
                                   kernel_regularizer=l2(1e-3),
                                   kernel_initializer='he_uniform'),
-            tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=-1)),
-        ], name="ResNet-50 Embedding Model")
+#            tf.keras.layers.Lambda(lambda d: tf.math.l2_normalize(d, axis=-1)), #<- doesnt work with l2
+        ])
 
         return embedding_model, resnet.preprocess_input
 

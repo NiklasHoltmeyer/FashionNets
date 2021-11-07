@@ -8,7 +8,6 @@ from tensorflow.keras import layers
 class TripletLoss(layers.Layer):
     def __init__(self, alpha, **kwargs):
         super(TripletLoss, self).__init__(**kwargs)
-        print("Triplet" * 100)
         self.alpha = alpha
         self.alpha = 1.0
         self.distance_layer = TripletDistance()
@@ -16,8 +15,8 @@ class TripletLoss(layers.Layer):
     def call(self, anchor, positive, negative):
         ap_distance, an_distance = self.distance_layer(anchor, positive, negative)
 
-        loss = ap_distance - an_distance
-        loss = tf.maximum(loss + self.alpha, 0.0)
+        loss = ap_distance - an_distance + self.alpha
+        loss = tf.maximum(loss, 0.0)
 
         return loss
 
