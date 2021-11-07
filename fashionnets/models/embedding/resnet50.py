@@ -39,7 +39,7 @@ class ResNet50Builder:
                 trainable = True
             layer.trainable = trainable
 
-        for layer in model.layers[-8:]:
+        for layer in model.layers[-20:]:
             layer.trainable = True
 
         return model
