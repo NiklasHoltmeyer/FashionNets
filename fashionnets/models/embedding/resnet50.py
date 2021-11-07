@@ -23,6 +23,7 @@ class ResNet50Builder:
             tf.keras.layers.Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same',
                                    kernel_regularizer=l2(2e-4)),
             tf.keras.layers.Flatten(),
+            #tf.keras.layers.BatchNormalization(),
             tf.keras.layers.Dense(4096, activation='relu',
                                   kernel_regularizer=l2(1e-3),
                                   kernel_initializer='he_uniform'),
