@@ -9,6 +9,9 @@ results_download_path = notebooks["local"]["paths"]["results_download_path"]
 for folder in os.listdir(results_download_path):
     full_path = Path(results_download_path, folder)
 
+    if full_path.is_file() or not "triplet" in folder:
+        continue
+
     header = None
     lines = []
 
@@ -25,7 +28,7 @@ for folder in os.listdir(results_download_path):
 
         lines.append(value_lines)
     print(lines)
-    break
+
 
 # unzipped_file = zipfile.ZipFile("sample.zip", "r")
 # a_file = unzipped_file.read("test.txt")

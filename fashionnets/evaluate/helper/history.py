@@ -181,3 +181,8 @@ def load_best_checkpoints(run_name_and_df):
     del data["epoch"]
 
     return data
+
+if __name__ == "__main__":
+    #aggregate_run_histories
+    helper = HistoryHelper(r"D:\masterarbeit_runs")
+    helper.aggregate_run_histories("312_resnet50_imagenet_triplet")

@@ -77,7 +77,7 @@ class SiameseModel(Model):
                     raise Exception("Embedding Space contains NaN's!.")
 
                 _const = is_constant(x, y)
-                if not is_constant:
+                if _const is not False:
                     return False
             return True
 
