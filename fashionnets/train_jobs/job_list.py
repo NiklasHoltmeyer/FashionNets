@@ -33,14 +33,14 @@ def job_list(debugging):
 
     freeze_layers = {
         "non_conv5_block1_out": ResNet50Builder.freeze_non_conv5_block1_out,
-        "first_100": lambda model: ResNet50Builder.freeze_first_n_layers(model, 100),
+        "first_30": lambda model: ResNet50Builder.freeze_first_n_layers(model, 30),
         "none": None
     }
 
     train_jobs = {
         #first 100
-        "q_11_f100": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
-        "t_12_f100": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_100"]},
+        "q_11_f100": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
+        "t_12_f100": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
 
         #non conv5
         "q_11_conv5": {"run_idx": 211, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
