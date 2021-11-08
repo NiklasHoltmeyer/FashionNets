@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 from fashionnets.callbacks.custom_history_dump import CustomHistoryDump
+from fashionnets.callbacks.custom_save_weights import CustomSaveModel, CustomSaveOptimizerState
 from fashionnets.callbacks.save_embedding_model import SaveEmbeddingModel
 from fashionnets.callbacks.upload_results import UploadResults
 from fashionnets.callbacks.zip_results import ZipResults
@@ -24,13 +25,13 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         keras.callbacks.EarlyStopping(monitor='loss', patience=3),
         tf.keras.callbacks.CSVLogger(history_cp_path, append=True, separator=csv_sep),
         #        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
-        model_checkpoint(checkpoint_path, name, monitor),
-        CustomHistoryDump(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
+#        model_checkpoint(checkpoint_path, name, monitor),
         SaveEmbeddingModel(model_cp_path=checkpoint_path),
+        CustomSaveOptimizerState(checkpoint_path=checkpoint_path, name=name),
+        CustomHistoryDump(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip),
         UploadResults(checkpoint_path=checkpoint_path, result_uploader=result_uploader)
     ]
-
 
 def model_checkpoint(checkpoint_path, name, monitor='val_accuracy'):
     model_cp_latest_path = Path(checkpoint_path, name + "_")  # .h5

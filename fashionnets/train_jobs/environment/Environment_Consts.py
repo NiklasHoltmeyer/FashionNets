@@ -41,7 +41,7 @@ notebooks = {
             "secrets": {
                 "webdav": r"F:\workspace\webdav.json"
             },
-            "checkpoint": r"F:\workspace\FashNets\\",
+            "checkpoint": r"F:\workspace\FashNets\\runs\\",
             "dataset_base_path": "F:\\workspace\\datasets\\",
             "tmp": "./tmp",
             "results_download_path": r"D:\masterarbeit_runs"

@@ -41,5 +41,7 @@ class HistoryCSVHelper:
     @staticmethod
     def last_epoch_from_train_job(train_job):
         history_path = Path(train_job["path"]["checkpoint"], "history.csv")
-        sep = ";"
-        return HistoryCSVHelper.last_epoch(history_path, sep)
+        if history_path.exists():
+            sep = ";"
+            return HistoryCSVHelper.last_epoch(history_path, sep)
+        return None

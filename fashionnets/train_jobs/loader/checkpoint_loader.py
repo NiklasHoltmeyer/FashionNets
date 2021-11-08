@@ -1,11 +1,85 @@
 import os
+import pickle
 from pathlib import Path
 import zipfile
 
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
+
+import os
+from pathlib import Path
+
 import tensorflow as tf
 
+from fashionnets.util.csv import HistoryCSVHelper
+
+
+def load_latest_checkpoint(model, ignore_remote=False, **train_job):
+    _checkpoint = None
+    ignore_remote = True
+    if not ignore_remote:
+        _checkpoint, last_epoch = remote_checkpoint(train_job["environment"])
+
+    if not _checkpoint:
+        _checkpoint = latest_checkpoint(train_job["path"]["checkpoint"])
+        last_epoch = retrieve_epoch_from_checkpoint(_checkpoint)
+
+    if not _checkpoint:
+        print("No Checkpoint found!")
+        return False, 0
+
+    checkpoint_file_path = Path(_checkpoint)
+
+    if not checkpoint_file_path.exists():
+        print("Checkpoint Path doesn not exist!")
+        return False, 0
+
+    opt_path = latest_optimizer(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
+
+    model.load_embedding_weights(str(checkpoint_file_path.resolve()))
+    model.make_train_function()
+
+    with open(opt_path, 'rb') as f:
+        weight_values = pickle.load(f)
+
+    model.optimizer.set_weights(weight_values)
+
+    return True, last_epoch + 1
+
+
+def latest_checkpoint(checkpoint_path):
+    valid_suffixes = [".ckpt", ".h5"]
+    for suffix in valid_suffixes:
+        latest_cp = sorted(filter(lambda d: d.endswith(suffix), os.listdir(checkpoint_path)))[-1:]
+
+        if len(latest_cp) == 1:
+            return os.path.join(checkpoint_path, latest_cp[0])
+
+        return tf.train.latest_checkpoint(checkpoint_path)
+
+
+def retrieve_epoch_from_checkpoint(latest_cp):
+    valid_suffixes = [".ckpt", ".h5"]
+    for suffix in valid_suffixes:
+        if latest_cp.endswith(suffix):
+            fName = (Path(latest_cp).name)
+            epoch_str = fName.split("-")[-1].split(".")[0]
+            return int(epoch_str)
+
+
+def latest_optimizer(checkpoint_path, epoch):
+    epoch_str = f"{epoch:04d}"
+    pickle_objects = filter(lambda p: p.endswith(".pkl"), os.listdir(checkpoint_path))
+    optimizers = filter(lambda opt: epoch_str in opt, pickle_objects)
+    optimizers = list(optimizers)
+
+    assert len(optimizers) == 1, f"""{checkpoint_path} Contains {len(optimizers)} Optimizer!
+    Looking for Optimizer with Epoch: {epoch} ({epoch_str}).
+    *.pkl Objects: {list(filter(lambda p: p.endswith(".pkl"), os.listdir(checkpoint_path)))}
+    """
+
+    optimizer = optimizers[0]
+    return str(Path(checkpoint_path, optimizer).resolve())
 
 def remote_checkpoint(env):
     checkpoint_path = download_checkpoint(env)
@@ -18,9 +92,9 @@ def remote_checkpoint(env):
     if not latest_cp:
         return None, 0
 
-    init_epoch = int(latest_cp.split("_cp-")[-1].replace(".ckpt", ""))
+    last_epoch = retrieve_epoch_from_checkpoint(latest_cp)
 
-    return latest_cp, init_epoch
+    return latest_cp, last_epoch
 
 
 def download_checkpoint(env):

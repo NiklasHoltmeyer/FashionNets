@@ -90,8 +90,14 @@ class SiameseModel(Model):
         return [self.loss_tracker]
 
     def save_backbone(self, model_cp_path, epoch):
-        backbone_cp_path = Path(model_cp_path, f"backbone-{epoch+1:04d}.ckpt")  # .h5
+        backbone_cp_path = Path(model_cp_path, f"backbone-{epoch:04d}.ckpt")
         backbone_cp_path.parent.mkdir(parents=True, exist_ok=True)
 
         self.back_bone.save(backbone_cp_path)
+
+    def load_embedding_weights(self, cp_path):
+        if not Path(cp_path).exists():
+            raise Exception(f"Checkpoint Path does not Exist! {cp_path}")
+        self.back_bone.load_weights(cp_path)
+
 

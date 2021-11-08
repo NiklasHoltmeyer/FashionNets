@@ -6,28 +6,9 @@ from fashionnets.callbacks.callbacks import callbacks
 from fashionnets.models.SiameseModel import SiameseModel
 from fashionnets.networks.SiameseNetwork import SiameseNetwork
 from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet
-from fashionnets.train_jobs.loader.checkpoint_loader import remote_checkpoint
+from fashionnets.train_jobs.loader.checkpoint_loader import remote_checkpoint, load_latest_checkpoint
 from fashionnets.train_jobs.loader.job_loader import dump_settings
 from fashionnets.util.csv import HistoryCSVHelper
-
-
-def retrieve_checkpoint_info(train_job, logger):
-    cp_path, name = train_job["path"]["checkpoint"], train_job["run"]["name"]
-
-    last_epoch = HistoryCSVHelper.last_epoch_from_train_job(train_job)
-    init_epoch = last_epoch + 1
-
-    if init_epoch > 0:
-        checkpoint = str(Path(cp_path, name)) + f"_cp-{init_epoch:04d}.ckpt"
-
-        logger.debug("Resume Training:")
-        logger.debug(f" - Initial Epoch: {init_epoch}")
-        logger.debug(f" - Checkpoint:    {checkpoint}")
-
-        return init_epoch, checkpoint
-    else:
-        logger.debug(f"No Checkpoints found in: {cp_path}")
-    return init_epoch, None
 
 
 def sanity_check_job_settings(**train_job):
@@ -76,19 +57,14 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     logger.debug(f"Callbacks: {_callbacks}")
 
     if train_job.get("load_weights", True):
-        _checkpoint, init_epoch = remote_checkpoint(train_job["environment"])
-
-        if not _checkpoint:
-            init_epoch, _checkpoint = retrieve_checkpoint_info(train_job, logger)
+        success, init_epoch = load_latest_checkpoint(siamese_model, **train_job)
+        if success:
+            logger.debug("Loaded Weights & Optimizer!")
+        else:
+            logger.warning("Loading Weights & Optimizer failed!")
+            assert not force_load_weights, "force_load_weights is set, but no Checkpoints are found!"
     else:
         _checkpoint, init_epoch = None, 0
-
-    if train_job.get("load_weights", True) and _checkpoint:
-        logger.debug("Loading Weights!")
-
-        siamese_model.load_weights(_checkpoint)
-    elif force_load_weights:
-        raise Exception("force_load_weights is set, but no Checkpoints are found!")
 
     freeze_layers = train_job.get("freeze_layers", None)
 
