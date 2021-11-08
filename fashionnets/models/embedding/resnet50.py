@@ -1,10 +1,8 @@
 import tensorflow as tf
-from tensorflow.keras import Model
+from fashionnets.models.layer.ResNetIdentityBlock import ResnetIdentityBlock
 from tensorflow.keras.applications import resnet
 from tensorflow.keras.regularizers import l2
 from tensorflow.python.keras.models import Sequential
-
-from fashionnets.models.layer.ResNetIdentityBlock import ResnetIdentityBlock
 
 
 class ResNet50Builder:
