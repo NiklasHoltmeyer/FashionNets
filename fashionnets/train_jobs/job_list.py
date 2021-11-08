@@ -39,8 +39,8 @@ def job_list(debugging):
 
     train_jobs = {
         #first 100
-        "q_11_f100": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
-        "t_12_f100": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
+        "q_11_f30": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
+        "t_12_f30": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
 
         #non conv5
         "q_11_conv5": {"run_idx": 211, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
