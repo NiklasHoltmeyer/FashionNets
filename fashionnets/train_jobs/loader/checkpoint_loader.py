@@ -57,12 +57,12 @@ def retrieve_epoch_from_checkpoint(latest_cp):
         return None
 
     if type(latest_cp) != str:
-        checkpoint_path_str = str(latest_cp.resolve())
+        latest_cp = str(latest_cp.resolve())
 
     valid_suffixes = [".ckpt", ".h5"]
     for suffix in valid_suffixes:
-        if checkpoint_path_str.endswith(suffix):
-            fName = Path(checkpoint_path_str).name
+        if latest_cp.endswith(suffix):
+            fName = Path(latest_cp).name
             epoch_str = fName.split("-")[-1].split(".")[0]
             return int(epoch_str)
     return None
