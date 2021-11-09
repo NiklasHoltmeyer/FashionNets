@@ -41,3 +41,7 @@ class HistoryState:
             lines.append(line)
         lines.append("}")
         return "\n".join(lines)
+
+if __name__ == "__main__":
+    path = r"D:\Download\311_resnet50_imagenet_quadruplet_history-0004.pkl"
+    print(HistoryState.load(path))
