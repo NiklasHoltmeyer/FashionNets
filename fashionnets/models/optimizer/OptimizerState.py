@@ -27,7 +27,7 @@ class OptimizerState:
 
     def apply(self, model):
         optimizer = self.empty_optimizer()
-        optimizer.weights.extend(self.weights)
+        optimizer.weights = self.weights
         optimizer.iterations = self.iterations
 
         model.optimizer = optimizer
@@ -53,11 +53,12 @@ class OptimizerState:
             return weights_equal
 
     def __str__(self):
-        str = "{"
+        lines = ["{"]
         for k, v in self.__dict__.items():
             if k == "weights":
-                str += ("\t", k + ":", "\t", str(type(v)) + ",")
+                line = f"\t{k}:\t{str(type(v))},"
             else:
-                str += ("\t", k + ":", "\t", str(v) + ",")
-        str += "}"
-        return str
+                line = f"\t{k}:\t{v},"
+            lines.append(line)
+        lines.append("}")
+        return "\n".join(lines)
