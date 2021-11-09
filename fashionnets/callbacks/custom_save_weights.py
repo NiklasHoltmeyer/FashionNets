@@ -6,6 +6,7 @@ from tensorflow.keras import backend as K
 
 assert K is not None or True
 
+
 class CustomSaveModel(keras.callbacks.Callback):
     def __init__(self, checkpoint_path, name, save_format=None):
         super(CustomSaveModel, self).__init__()
@@ -35,13 +36,17 @@ class CustomSaveOptimizerState(keras.callbacks.Callback):
         self.model_cp_latest_path = str(self.model_cp_latest_path.resolve())
 
     def on_epoch_end(self, epoch, logs=None):
-        cp_path = self.model_cp_latest_path + f"{epoch:04d}.pkl"
-        path = str(Path(cp_path).resolve())
+        try:
+            cp_path = self.model_cp_latest_path + f"{epoch:04d}.pkl"
+            path = str(Path(cp_path).resolve())
 
-        symbolic_weights = getattr(self.model.optimizer, 'weights')
-        weight_values = K.batch_get_value(symbolic_weights)
-        with open(path, 'wb') as f:
-            pickle.dump(weight_values, f)
+            symbolic_weights = getattr(self.model.optimizer, 'weights')
+            weight_values = K.batch_get_value(symbolic_weights)
+            with open(path, 'wb') as f:
+                pickle.dump(weight_values, f)
+        except Exception as e:
+            print("CustomSaveOptimizerState::on_epoch_end")  # easier to trace Exception from withing Google Colab
+            raise Exception(e)
 
 
 class CustomSaveWeights(keras.callbacks.Callback):

@@ -21,6 +21,7 @@ class CustomHistoryDump(keras.callbacks.Callback):
         try:
             self.dumb_history(epoch, logs)
         except Exception as e:
+            print("CustomHistoryDump::on_epoch_end")
             raise e
 
     def dumb_history(self, epoch, logs=None):

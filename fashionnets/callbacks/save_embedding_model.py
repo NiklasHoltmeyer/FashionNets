@@ -12,4 +12,9 @@ class SaveEmbeddingModel(keras.callbacks.Callback):
         self.model_cp_path = model_cp_path
 
     def on_epoch_end(self, epoch, logs=None):
-        self.model.save_backbone(self.model_cp_path, epoch)
+        try:
+            self.model.save_backbone(self.model_cp_path, epoch)
+        except Exception as e:
+            print("SaveEmbeddingModel::on_epoch_end") # easier to trace Exception from withing Google Colab
+            raise Exception(e)
+
