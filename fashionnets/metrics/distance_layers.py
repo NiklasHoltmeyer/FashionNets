@@ -51,8 +51,6 @@ class QuadrupletDistance(layers.Layer):
         super(QuadrupletDistance, self).__init__(**kwargs)
 
     def call(self, anchor, positive, negative1, negative2):
-
-
         ap = euclidean_distance(anchor, positive)
         an = euclidean_distance(anchor, negative1)
         nn = euclidean_distance(negative1, negative2)

@@ -36,22 +36,10 @@ class QuadrupletLoss(layers.Layer):
 
     def call(self, anchor, positive, negative1, negative2):
         # noinspection PyTupleAssignmentBalance
-        ap, an, nn = self.distance_layer(anchor, positive, negative1, negative2)
+        ap_distance, an_distance, nn_distance = self.distance_layer(anchor, positive, negative1, negative2)
 
-        ap, an, nn = tf.square(ap), tf.square(an), tf.square(nn)
+        loss = ap_distance - an_distance + self.alpha + ap_distance - nn_distance + self.beta
 
-        ap_an = tf.math.reduce_sum(
-            tf.maximum(
-                (tf.subtract(ap, an) + self.alpha)
-                , 0.0
-            )
-        )
+        loss = tf.maximum(loss, 0.0)
 
-        ap_nn = tf.math.reduce_sum(
-            tf.maximum(
-                (tf.subtract(ap, nn) + self.beta)
-                , 0.0
-            )
-        )
-
-        return ap_an + ap_nn
+        return loss
