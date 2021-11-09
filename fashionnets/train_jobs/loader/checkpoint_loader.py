@@ -16,7 +16,7 @@ from fashionnets.util.csv import HistoryCSVHelper
 
 def load_latest_checkpoint(model, ignore_remote=False, **train_job):
     _checkpoint = None
-    ignore_remote = True
+
     if not ignore_remote:
         _checkpoint, last_epoch = remote_checkpoint(train_job["environment"])
 
@@ -59,12 +59,17 @@ def latest_checkpoint(checkpoint_path):
 
 
 def retrieve_epoch_from_checkpoint(latest_cp):
+    if latest_cp is None:
+        return None
+
     valid_suffixes = [".ckpt", ".h5"]
     for suffix in valid_suffixes:
         if latest_cp.endswith(suffix):
-            fName = (Path(latest_cp).name)
+            fName = Path(latest_cp).name
             epoch_str = fName.split("-")[-1].split(".")[0]
             return int(epoch_str)
+    return None
+
 
 
 def latest_optimizer(checkpoint_path, epoch):
