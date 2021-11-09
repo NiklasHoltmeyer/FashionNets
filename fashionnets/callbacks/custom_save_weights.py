@@ -41,9 +41,9 @@ class CustomSaveOptimizerState(keras.callbacks.Callback):
             path = str(Path(cp_path).resolve())
 
             symbolic_weights = getattr(self.model.optimizer, 'weights')
-            weight_values = K.batch_get_value(symbolic_weights)
             with open(path, 'wb') as f:
-                pickle.dump(weight_values, f)
+                pickle.dump(symbolic_weights, f)
+
         except Exception as e:
             print("CustomSaveOptimizerState::on_epoch_end")  # easier to trace Exception from withing Google Colab
             raise Exception(e)

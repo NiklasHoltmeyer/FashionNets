@@ -34,10 +34,9 @@ def load_latest_checkpoint(model, ignore_remote=False, **train_job):
     model.make_train_function()
 
     with open(opt_path, 'rb') as f:
-        weight_values = pickle.load(f)
+        optimizer_weights = pickle.load(f)
 
-    #model.optimizer.set_weights(weight_values)
-    model.optimizer.weights.extend(weight_values)
+    setattr(model.optimizer, 'weights', optimizer_weights)
 
     return True, last_epoch + 1
 
