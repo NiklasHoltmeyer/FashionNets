@@ -3,11 +3,12 @@ from pathlib import Path
 import tensorflow as tf
 from tensorflow import keras
 
-from fashionnets.callbacks.custom_history_dump import CustomHistoryDump
-from fashionnets.callbacks.custom_save_weights import CustomSaveModel, CustomSaveOptimizerState
-from fashionnets.callbacks.save_embedding_model import SaveEmbeddingModel
-from fashionnets.callbacks.upload_results import UploadResults
-from fashionnets.callbacks.zip_results import ZipResults
+from fashionnets.callbacks.save.csv import CSVLogger
+from fashionnets.callbacks.save.embedding_model import SaveEmbeddingModel
+from fashionnets.callbacks.remote.upload_results import UploadResults
+from fashionnets.callbacks.remote.zip_results import ZipResults
+from fashionnets.callbacks.save.history_state import HistoryState
+from fashionnets.callbacks.save.optimizer_state import SaveOptimizerState
 
 csv_sep = ";"
 
@@ -27,8 +28,9 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         #        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
 #        model_checkpoint(checkpoint_path, name, monitor),
         SaveEmbeddingModel(model_cp_path=checkpoint_path),
-        CustomSaveOptimizerState(checkpoint_path=checkpoint_path, name=name),
-        CustomHistoryDump(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
+        SaveOptimizerState(checkpoint_path=checkpoint_path, name=name),
+        HistoryState(checkpoint_path=checkpoint_path, name=name),
+        CSVLogger(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip),
         UploadResults(checkpoint_path=checkpoint_path, result_uploader=result_uploader)
     ]

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from tensorflow import keras
 
-from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
+from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 
 
 class ZipResults(keras.callbacks.Callback):

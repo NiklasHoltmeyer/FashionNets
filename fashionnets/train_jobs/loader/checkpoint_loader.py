@@ -1,11 +1,9 @@
 import os
-import pickle
 import zipfile
 from pathlib import Path
-from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 import tensorflow as tf
 
-from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
+from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 from fashionnets.models.optimizer.OptimizerState import OptimizerState
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 

@@ -9,7 +9,7 @@ from fashionnets.train_jobs.loader.job_loader import dump_settings
 
 
 def sanity_check_job_settings(**train_job):
-    optimizer = train_job["optimizer"]
+    optimizer = train_job["states"]
     assert f"{optimizer.lr.numpy():.2e}" == train_job["learning_rate"]
 
 
@@ -19,7 +19,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
 
     sanity_check_job_settings(**train_job)
 
-    optimizer = train_job["optimizer"]
+    optimizer = train_job["states"]
 
     back_bone_model = train_job["back_bone"]["embedding_model"]
     back_bone_preprocess_input_layer = train_job["back_bone"]["preprocess_input_layer"]

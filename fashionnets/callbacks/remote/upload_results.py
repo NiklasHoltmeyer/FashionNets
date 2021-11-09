@@ -4,6 +4,9 @@ from tensorflow import keras
 
 
 class UploadResults(keras.callbacks.Callback):
+    """
+    Upload Results to Remote-Dst.
+    """
     def __init__(self, checkpoint_path, result_uploader):
         super(UploadResults, self).__init__()
         self.checkpoint_path = checkpoint_path
