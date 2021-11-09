@@ -1,17 +1,12 @@
 import os
 import pickle
-from pathlib import Path
 import zipfile
-
-from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
-from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
-
-import os
 from pathlib import Path
 
 import tensorflow as tf
 
-from fashionnets.util.csv import HistoryCSVHelper
+from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
+from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 
 
 def load_latest_checkpoint(model, ignore_remote=False, **train_job):
@@ -71,7 +66,6 @@ def retrieve_epoch_from_checkpoint(latest_cp):
     return None
 
 
-
 def latest_optimizer(checkpoint_path, epoch):
     epoch_str = f"{epoch:04d}"
     pickle_objects = filter(lambda p: p.endswith(".pkl"), os.listdir(checkpoint_path))
@@ -86,8 +80,10 @@ def latest_optimizer(checkpoint_path, epoch):
     optimizer = optimizers[0]
     return str(Path(checkpoint_path, optimizer).resolve())
 
+
 def remote_checkpoint(env):
     checkpoint_path = download_checkpoint(env)
+    print("Downloaded Remote : ")
 
     if not checkpoint_path:
         return None, 0
@@ -124,10 +120,10 @@ def extract_zip(zip_path, env):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(checkpoint_path)
 
-    backup_files_local = os.listdir(checkpoint_path)
-    unnecessary_files = filter(lambda d: "backbone" in d, backup_files_local)
-    unnecessary_files = list(unnecessary_files)
-    unnecessary_files.append(zip_path)
+#    backup_files_local = os.listdir(checkpoint_path)
+#    unnecessary_files = filter(lambda d: "backbone" in d, backup_files_local)
+#    unnecessary_files = list(unnecessary_files)
+#    unnecessary_files.append(zip_path)
     list(map(lambda d: DeleteOldModel.delete_path(str(Path(checkpoint_path, d).resolve())), unnecessary_files))
 
     return checkpoint_path

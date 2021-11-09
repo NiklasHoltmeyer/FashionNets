@@ -46,7 +46,10 @@ class DeleteOldModel(keras.callbacks.Callback):
     @staticmethod
     def delete_path(path):
         blacklist = [".csv", ".json"]
-        if any(filter(lambda bl: path.endswith(bl), blacklist)):
+        path = Path(path)
+        path_str = str(path.resolve())
+
+        if any(filter(lambda bl: path_str.endswith(bl), blacklist)):
             return True
         try:
             path.unlink()
@@ -54,7 +57,7 @@ class DeleteOldModel(keras.callbacks.Callback):
         except:
             pass
         try:
-            shutil.rmtree(path)
+            shutil.rmtree(path_str)
             return True
         except:
             return False
