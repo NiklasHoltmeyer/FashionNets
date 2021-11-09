@@ -76,30 +76,30 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     return siamese_model, init_epoch, _callbacks
 
 
-def load_backbone(checkpoint_path, input_shape, verbose, weights_path):
-    logger = defaultLogger("Load_Backbone")
-    logger.disabled = not verbose
+#def load_backbone(checkpoint_path, input_shape, verbose, weights_path):
+#    logger = defaultLogger("Load_Backbone")
+#    logger.disabled = not verbose
 
-    run_name, back_bone, preprocess_input = load_backbone_info_resnet(input_shape, "resnet50", True, None)
-    siamese_network = SiameseNetwork(back_bone=back_bone,
-                                     is_triplet=True,
-                                     input_shape=input_shape,
-                                     alpha=1.0,
-                                     beta=0.5,
-                                     preprocess_input=preprocess_input,
-                                     verbose=verbose,
-                                     channels=3)
+#    run_name, back_bone, preprocess_input = load_backbone_info_resnet(input_shape, "resnet50", True, None)
+#    siamese_network = SiameseNetwork(back_bone=back_bone,
+#                                     is_triplet=True,
+#                                     input_shape=input_shape,
+#                                     alpha=1.0,
+#                                     beta=0.5,
+#                                     preprocess_input=preprocess_input,
+#                                     verbose=verbose,
+#                                     channels=3)
 
-    siamese_model = SiameseModel(siamese_network, back_bone)
-    init_epoch, _checkpoint = retrieve_checkpoint_info({
-        "path": {
-            "checkpoint": checkpoint_path
-        },
-        "run": {"name": run_name}
-    }, logger)
-    assert _checkpoint
-    logger.debug("Loading Weights!")
-    siamese_model.fake_predict(input_shape=input_shape, is_triplet=True)
-    siamese_model.load_weights(weights_path)
-    return siamese_model
+#    siamese_model = SiameseModel(siamese_network, back_bone)
+#    init_epoch, _checkpoint = retrieve_checkpoint_info({
+#        "path": {
+#            "checkpoint": checkpoint_path
+#        },
+#        "run": {"name": run_name}
+#    }, logger)
+#    assert _checkpoint
+#    logger.debug("Loading Weights!")
+#    siamese_model.fake_predict(input_shape=input_shape, is_triplet=True)
+#    siamese_model.load_weights(weights_path)
 #    return siamese_model
+##    return siamese_model

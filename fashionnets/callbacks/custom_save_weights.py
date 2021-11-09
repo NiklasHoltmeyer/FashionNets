@@ -4,6 +4,8 @@ from pathlib import Path
 from tensorflow import keras
 from tensorflow.keras import backend as K
 
+from fashionnets.models.optimizer.OptimizerState import OptimizerState
+
 assert K is not None or True
 
 
@@ -40,9 +42,7 @@ class CustomSaveOptimizerState(keras.callbacks.Callback):
             cp_path = self.model_cp_latest_path + f"{epoch:04d}.pkl"
             path = str(Path(cp_path).resolve())
 
-            symbolic_weights = getattr(self.model.optimizer, 'weights')
-            with open(path, 'wb') as f:
-                pickle.dump(symbolic_weights, f)
+            OptimizerState(self.model.optimizer).save(path)
 
         except Exception as e:
             print("CustomSaveOptimizerState::on_epoch_end")  # easier to trace Exception from withing Google Colab

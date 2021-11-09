@@ -6,6 +6,7 @@ from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 import tensorflow as tf
 
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
+from fashionnets.models.optimizer.OptimizerState import OptimizerState
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 
 
@@ -33,10 +34,8 @@ def load_latest_checkpoint(model, ignore_remote=False, **train_job):
     model.load_embedding_weights(str(checkpoint_path.resolve()))
     model.make_train_function()
 
-    with open(opt_path, 'rb') as f:
-        optimizer_weights = pickle.load(f)
-
-    setattr(model.optimizer, 'weights', optimizer_weights)
+    opt_state = OptimizerState.load(opt_path)
+    opt_state.apply(model)
 
     return True, last_epoch + 1
 
