@@ -53,3 +53,13 @@ class OptimizerState:
                 map(lambda xy: tf.math.reduce_all(xy[0] == xy[1]).numpy(), zip(self.weights, other.weights)))
 
             return weights_equal
+
+    def __str__(self):
+        str = "{"
+        for k, v in self.__dict__.items():
+            if k == "weights" or k == "variables":
+                str += ("\t", k + ":", "\t", str(type(v)) + ",")
+            else:
+                str += ("\t", k + ":", "\t", str(v) + ",")
+        str += "}"
+        return str
