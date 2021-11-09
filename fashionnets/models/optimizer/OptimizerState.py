@@ -5,7 +5,7 @@ import tensorflow as tf
 class OptimizerState:
     def __init__(self, optimizer):
         self.config = optimizer.get_config()
-        self.weights = optimizer.weights
+        self.weights = optimizer.get_weights()
         self.iterations = optimizer.iterations
 
     def save(self, path):
@@ -25,22 +25,19 @@ class OptimizerState:
             )
         raise Exception(f"Optimizer {self.config['name']} is not Supported!")
 
-    @staticmethod
-    def apply_gradients(model, optimizer):
+    def apply_weights(self, model, optimizer):
         grad_vars = model.trainable_weights
+
         zero_grads = [tf.zeros_like(w) for w in grad_vars]
         optimizer.apply_gradients(zip(zero_grads, grad_vars))
 
-    def apply(self, model):
-        print("0")
-        optimizer = self.empty_optimizer()
-        print("1")
-        self.apply_gradients(model, model)
-        print("2")
         optimizer.set_weights(self.weights)
-        print("3")
+
+    def apply(self, model):
+        optimizer = self.empty_optimizer()
         optimizer.iterations = self.iterations
-        print("4")
+        self.apply_weights(model, optimizer)
+
         model.optimizer = optimizer
 
     def __eq__(self, other):
