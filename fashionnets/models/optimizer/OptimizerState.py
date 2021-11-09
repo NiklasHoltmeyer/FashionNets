@@ -5,9 +5,8 @@ import tensorflow as tf
 class OptimizerState:
     def __init__(self, optimizer):
         self.config = optimizer.get_config()
-        self.weights = optimizer.get_weights()
+        self.weights = optimizer.weights
         self.iterations = optimizer.iterations
-        self.variables = optimizer.variables()
 
     def save(self, path):
         with open(path, 'wb') as f:
@@ -30,7 +29,6 @@ class OptimizerState:
         optimizer = self.empty_optimizer()
         optimizer.weights.extend(self.weights)
         optimizer.iterations = self.iterations
-        optimizer.variables = self.variables
 
         model.optimizer = optimizer
 
@@ -57,7 +55,7 @@ class OptimizerState:
     def __str__(self):
         str = "{"
         for k, v in self.__dict__.items():
-            if k == "weights" or k == "variables":
+            if k == "weights":
                 str += ("\t", k + ":", "\t", str(type(v)) + ",")
             else:
                 str += ("\t", k + ":", "\t", str(v) + ",")
