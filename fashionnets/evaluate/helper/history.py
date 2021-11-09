@@ -95,7 +95,7 @@ class HistoryHelper:
 
     def walk_backbones(self):
         for root, dirs, files in (os.walk(self.base_path)):
-            if any(map(lambda d: "backbone" in d, dirs)):
+            if any(map(lambda d_name: "backbone" in d_name, dirs)):
                 for d in dirs:
                     yield root, d, os.path.join(root, d)
 

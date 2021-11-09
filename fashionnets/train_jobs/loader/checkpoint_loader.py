@@ -8,7 +8,7 @@ from fashionnets.models.states.OptimizerState import OptimizerState
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 
 
-def load_latest_checkpoint(model, ignore_remote=False, **train_job):
+def load_latest_checkpoint(model, **train_job):
     checkpoint_path = latest_checkpoint(train_job["path"]["checkpoint"])
 
     if not checkpoint_path:
@@ -25,6 +25,7 @@ def load_latest_checkpoint(model, ignore_remote=False, **train_job):
         print("Checkpoint Path does not exist!")
         return False, 0
 
+    # noinspection PyTypeChecker
     last_epoch = retrieve_epoch_from_checkpoint(checkpoint_path)
 
     opt_path = latest_optimizer(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)

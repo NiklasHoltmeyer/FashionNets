@@ -1,7 +1,9 @@
 import tensorflow as tf
 
 
+# noinspection PyAbstractClass,PyTypeChecker
 class ResnetIdentityBlock(tf.keras.Model):
+    # noinspection PyTypeChecker
     def __init__(self, kernel_size, filters) -> object:
         super(ResnetIdentityBlock, self).__init__(name='')
         filters1, filters2, filters3 = filters

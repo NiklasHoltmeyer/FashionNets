@@ -22,6 +22,7 @@ class DeleteOldModel(keras.callbacks.Callback):
         self.keep_n = keep_n
         self.only_weights = save_weights_only
 
+    # noinspection PyBroadException
     def on_epoch_end(self, epoch, logs=None):
         try:
             file_name_checkpoints = self.list_checkpoints()

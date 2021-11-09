@@ -63,7 +63,7 @@ class SiameseModel(Model):
 
             test_embeddings = self.siamese_network.embed(small_batch)
 
-            is_constant = lambda x, y: tf.math.reduce_sum(tf.math.square(x - y)) == 0
+            is_constant = lambda a, b: tf.math.reduce_sum(tf.math.square(a - b)) == 0
 
             for i in range(len(test_embeddings)):
                 j = (i + 1) % len(test_embeddings)

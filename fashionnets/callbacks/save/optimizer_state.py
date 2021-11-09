@@ -5,6 +5,7 @@ from tensorflow import keras
 from fashionnets.models.states.OptimizerState import OptimizerState
 
 
+# noinspection PyUnresolvedReferences
 class SaveOptimizerState(keras.callbacks.Callback):
     def __init__(self, checkpoint_path, name):
         super(SaveOptimizerState, self).__init__()

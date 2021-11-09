@@ -3,7 +3,6 @@ from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from fashionnets.callbacks.callbacks import callbacks
 from fashionnets.models.SiameseModel import SiameseModel
 from fashionnets.networks.SiameseNetwork import SiameseNetwork
-from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet
 from fashionnets.train_jobs.loader.checkpoint_loader import load_latest_checkpoint
 from fashionnets.train_jobs.loader.job_loader import dump_settings
 
@@ -47,7 +46,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     logger.debug(f"Run Name: {run_name}")
     result_uploader = train_job["environment"].webdav
 
-    _callbacks = callbacks(cp_path, run_name, monitor='val_loss', keep_n=train_job.get("keep_n", 1),
+    _callbacks = callbacks(cp_path, run_name, keep_n=train_job.get("keep_n", 1),
                            verbose=train_job["verbose"], result_uploader=result_uploader)
 
     logger.debug(f"Callbacks: {_callbacks}")

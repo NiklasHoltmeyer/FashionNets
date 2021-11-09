@@ -1,11 +1,10 @@
-from fashionnets.metrics.loss_layer import TripletLoss
-from fashionnets.networks.builder.builder import build_layers
-from tensorflow.keras import Model
-import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Model
 from tensorflow.keras import layers
 from tensorflow.keras.regularizers import l2
+
+from fashionnets.metrics.loss_layer import TripletLoss
+from fashionnets.networks.builder.builder import build_layers
 
 
 class MetricLearningSiameseNetwork:
@@ -22,6 +21,7 @@ class MetricLearningSiameseNetwork:
 
         self.input_layers, self.encoding_layers, self.distance_layers, self.loss_layer = build_layers(self)
 
+    # noinspection PyUnboundLocalVariable
     def combine(self):
         embedding_model = Model(inputs=self.input_layers, outputs=self.encoding_layers)
         input_layer = layers.Input(name="input_image", shape=self.input_shape + (self.channels,))
@@ -43,6 +43,7 @@ class MetricLearningSiameseNetwork:
         an_encoded = layers.Concatenate(axis=-1, name="Anchor-Negative")([encoded_a, encoded_n])
 
         if not self.is_triplet:
+            # noinspection PyUnboundLocalVariable
             nn_encoded = layers.Concatenate(axis=-1, name="Negative-Negative2")([encoded_n, encoded_n2])
 
         metric_network = self.build_metric_network()

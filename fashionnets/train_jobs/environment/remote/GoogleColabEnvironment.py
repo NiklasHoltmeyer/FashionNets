@@ -5,9 +5,10 @@ from fashionnets.train_jobs.environment.Environment import Environment
 from fashionnets.train_jobs.environment.Environment_Consts import kaggle, notebooks
 from fashionnets.util.io import json_load
 
+# noinspection PyBroadException
 try:
     # Imports that only work withing Google Colab
-    # noinspection PyPackageRequirements
+    # noinspection PyPackageRequirements,PyUnresolvedReferences
     from google.colab import drive
 except:
     pass
@@ -36,7 +37,7 @@ class GoogleColabEnvironment(Environment):
         if Path(gdrive_kaggle_path).exists():
             json_path = gdrive_kaggle_path
         else:
-            # noinspection PyPackageRequirements
+            # noinspection PyPackageRequirements,PyUnresolvedReferences
             from google.colab import files
             print("Please upload Kaggle.json")
             files.upload()

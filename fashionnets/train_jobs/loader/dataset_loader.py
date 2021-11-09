@@ -17,11 +17,11 @@ def loader_info(name, variation=""):
     if "deep_fashion_1" in name:
         return deep_fashion_1_loader_info()
     if "own" in name:
-        return own_loader_info(variation)
+        return own_loader_info()
     raise Exception(f"Unknown Loader Information {name} {variation}")
 
 
-def own_loader_info(variation):
+def own_loader_info():
     print("Warning! " * 72)
     print("Dataset Loader Implement own Loader")
     print("#TODO Implement")
@@ -265,8 +265,6 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
 
 
 def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
-    exception = None
-
     for i in [6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
         try:  # ^ Try Catch can be deleted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
             print(f"Trying to build Hard-Triplets {i} N_Chunks")

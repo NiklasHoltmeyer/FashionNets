@@ -26,6 +26,7 @@ def json_load(file_path):
 
 
 def download_extract_kaggle(ds_name, path="./", unzip=True):
+    # noinspection PyBroadException
     try:
         import kaggle
         kaggle.api.authenticate()

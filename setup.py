@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 with open('LICENSE') as f:
-    license = f.read()
+    license_f = f.read()
 
 with open('README.md') as f:
     readme = f.read()
@@ -17,7 +17,7 @@ setup(
     long_description=readme,
     author='Niklas Holtmeyer',
     url='https://github.com/NiklasHoltmeyer/FashionNets',
-    license=license,
+    license=license_f,
     packages=find_packages(exclude=('tests', 'docs')),
     install_requires=required
 )

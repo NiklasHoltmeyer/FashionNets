@@ -6,6 +6,7 @@ from fashionnets.models.states.HistoryState import HistoryState
 
 
 class SaveHistoryState(keras.callbacks.Callback):
+    # noinspection PyUnresolvedReferences
     def __init__(self, checkpoint_path, name):
         super(SaveHistoryState, self).__init__()
 

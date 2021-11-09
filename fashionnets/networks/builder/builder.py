@@ -1,9 +1,7 @@
+from tensorflow.keras import layers
+
 from fashionnets.metrics.distance_layers import TripletDistance, QuadrupletDistance
 from fashionnets.metrics.loss_layer import QuadrupletLoss, TripletLoss
-from tensorflow.keras import Model
-import tensorflow as tf
-from tensorflow.keras import Model
-from tensorflow.keras import layers
 
 
 def build_layers(builder):
@@ -26,6 +24,7 @@ def build_layers(builder):
 
     input_layers = [anchor_input, positive_input, *negative_inputs]
 
+    # noinspection PyUnreachableCode
     if builder.preprocess_input:
         encoding_layers = [builder.back_bone(builder.preprocess_input(i)) for i in input_layers]
     else:

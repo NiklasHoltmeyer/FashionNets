@@ -45,6 +45,7 @@ class CSVLogger(keras.callbacks.Callback):
 
         # add current run
 
+        # noinspection PyBroadException
         try:
             for k, v in logs.items():
                 history_csv_data[k].append(replace_dec(v))

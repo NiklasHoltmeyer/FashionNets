@@ -13,7 +13,7 @@ from fashionnets.callbacks.save.optimizer_state import SaveOptimizerState
 csv_sep = ";"
 
 
-def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_weights_only=False, keep_n=2,
+def callbacks(checkpoint_path, name, save_format=None, save_weights_only=False, keep_n=2,
               remove_after_zip=True, verbose=False, result_uploader=None):
     history_cp_path = Path(checkpoint_path, "history.csv")
 

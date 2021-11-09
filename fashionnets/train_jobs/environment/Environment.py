@@ -9,6 +9,7 @@ from fashionnets.util.remote import WebDav
 """
 
 
+# noinspection PyBroadException,PyTypeChecker
 class Environment:
     def __init__(self, notebook, download_dependencies=True, dataset_prefix="masterokay/"):
         self.notebook = notebook

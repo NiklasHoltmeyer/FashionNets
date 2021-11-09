@@ -39,7 +39,9 @@ class TripletDistance(layers.Layer):
     def __init__(self, **kwargs):
         super(TripletDistance, self).__init__(**kwargs)
 
-    def call(self, anchor, positive, negative):
+    def call(self, data):
+        anchor, positive, negative = data
+
         ap = euclidean_distance(anchor, positive)
         an = euclidean_distance(anchor, negative)
 
@@ -50,7 +52,9 @@ class QuadrupletDistance(layers.Layer):
     def __init__(self, **kwargs):
         super(QuadrupletDistance, self).__init__(**kwargs)
 
-    def call(self, anchor, positive, negative1, negative2):
+    def call(self, data):
+        anchor, positive, negative1, negative2 = data
+
         ap = euclidean_distance(anchor, positive)
         an = euclidean_distance(anchor, negative1)
         nn = euclidean_distance(negative1, negative2)

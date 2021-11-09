@@ -37,6 +37,7 @@ def load_job_settings(environment, training_job_cfg, kaggle_downloader, ignore_e
     return {**job_settings, **job}
 
 
+# noinspection PyUnboundLocalVariable
 def add_back_bone_to_train_job(environment, **settings):
     back_bone_name = settings["back_bone"]["info"]["back_bone_name"]
     back_bone_weights = settings["back_bone"]["info"]["weights"]
