@@ -56,9 +56,9 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     if train_job.get("load_weights", True):
         success, init_epoch = load_latest_checkpoint(siamese_model, **train_job)
         if success:
-            logger.debug("Loaded Weights & Optimizer!")
+            print("Loaded Weights & Optimizer!")
         else:
-            logger.warning("Loading Weights & Optimizer failed!")
+            print("Loading Weights & Optimizer failed!")
             assert not force_load_weights, "force_load_weights is set, but no Checkpoints are found!"
     else:
         print("Load_Weights is set to False!")
