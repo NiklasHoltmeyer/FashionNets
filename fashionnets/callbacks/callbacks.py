@@ -26,7 +26,7 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         keras.callbacks.EarlyStopping(monitor='loss', patience=3),
         tf.keras.callbacks.CSVLogger(history_cp_path, append=True, separator=csv_sep),
         #        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
-#        model_checkpoint(checkpoint_path, name, monitor),
+        #        model_checkpoint(checkpoint_path, name, monitor),
         SaveEmbeddingModel(model_cp_path=checkpoint_path),
         SaveOptimizerState(checkpoint_path=checkpoint_path, name=name),
         HistoryState(checkpoint_path=checkpoint_path, name=name),
@@ -34,6 +34,7 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip),
         UploadResults(checkpoint_path=checkpoint_path, result_uploader=result_uploader)
     ]
+
 
 def model_checkpoint(checkpoint_path, name, monitor='val_accuracy'):
     model_cp_latest_path = Path(checkpoint_path, name + "_")  # .h5

@@ -29,13 +29,14 @@ def euclidean_distance2(x, y):
 def l2_distance(x, y):
     return tf.math.square(tf.subtract(x, y))
 
+
 @tf.function
 def euclidean_distance(x, y):
     return tf.math.reduce_sum(l2_distance(x, y), axis=-1)
 
 
 class TripletDistance(layers.Layer):
-    def __init__(self,  **kwargs):
+    def __init__(self, **kwargs):
         super(TripletDistance, self).__init__(**kwargs)
 
     def call(self, anchor, positive, negative):

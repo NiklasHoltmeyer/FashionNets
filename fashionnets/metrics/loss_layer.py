@@ -21,11 +21,10 @@ class TripletLoss(layers.Layer):
         return loss
 
 
-# Quadrup Loss = AP-AN + alpha_1 + AP-NN + alpha_2
+# Quadruplet Loss = AP-AN + alpha_1 + AP-NN + alpha_2
 
 class QuadrupletLoss(layers.Layer):
     def __init__(self, alpha, beta, skip_distance_layer=False, **kwargs):
-        print("Quadloss" * 100)
         super(QuadrupletLoss, self).__init__(**kwargs)
         self.alpha = alpha
         self.beta = beta

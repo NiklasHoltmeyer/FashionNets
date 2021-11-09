@@ -3,7 +3,6 @@ from tensorflow.keras import Model
 from tensorflow.keras import layers
 
 
-
 class DistanceSiameseNetwork:
     def __init__(self, back_bone, is_triplet, input_shape, alpha, beta,
                  preprocess_input=None, verbose=False, channels=3):

@@ -58,18 +58,18 @@ class SiameseModel(Model):
         """
 
         def is_embedding_constant():
-#            random_data = (1,) + input_shape + (3,)
-#            random_ds = [tf.random.uniform(random_data)] * (3 if is_triplet else 4)
+            #            random_data = (1,) + input_shape + (3,)
+            #            random_ds = [tf.random.uniform(random_data)] * (3 if is_triplet else 4)
 
-            test_emmbeddings = self.siamese_network.embed(small_batch)
+            test_embeddings = self.siamese_network.embed(small_batch)
 
             is_constant = lambda x, y: tf.math.reduce_sum(tf.math.square(x - y)) == 0
 
-            for i in range(len(test_emmbeddings)):
-                j = (i + 1) % len(test_emmbeddings)
+            for i in range(len(test_embeddings)):
+                j = (i + 1) % len(test_embeddings)
 
                 assert i != j
-                x, y = test_emmbeddings[i], test_emmbeddings[j]
+                x, y = test_embeddings[i], test_embeddings[j]
                 x_nans = tf.reduce_any(tf.math.is_nan(x))
                 y_nans = tf.reduce_any(tf.math.is_nan(y))
 
@@ -83,7 +83,6 @@ class SiameseModel(Model):
 
         if is_embedding_constant():
             raise Exception("The Embedding-Model seems to produce constant results.")
-
 
     @property
     def metrics(self):
@@ -99,5 +98,3 @@ class SiameseModel(Model):
         if not Path(cp_path).exists():
             raise Exception(f"Checkpoint Path does not Exist! {cp_path}")
         self.back_bone.load_weights(cp_path)
-
-

@@ -4,7 +4,7 @@ from pathlib import Path
 import tensorflow as tf
 
 from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
-from fashionnets.models.optimizer.OptimizerState import OptimizerState
+from fashionnets.models.states.OptimizerState import OptimizerState
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 
 
@@ -22,7 +22,7 @@ def load_latest_checkpoint(model, ignore_remote=False, **train_job):
     checkpoint_path = Path(checkpoint_path)
 
     if checkpoint_path is None or not checkpoint_path.exists():
-        print("Checkpoint Path doesn not exist!")
+        print("Checkpoint Path does not exist!")
         return False, 0
 
     last_epoch = retrieve_epoch_from_checkpoint(checkpoint_path)
@@ -80,7 +80,7 @@ def latest_optimizer(checkpoint_path, epoch):
     return str(Path(checkpoint_path, optimizer).resolve())
 
 
-#def remote_checkpoint(env):
+# def remote_checkpoint(env):
 #    checkpoint_path = download_remote_checkpoint(env)
 #    print("Downloaded Remote : ")
 

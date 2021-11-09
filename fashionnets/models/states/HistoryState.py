@@ -21,5 +21,5 @@ class HistoryState:
 
     def apply(self, model):
         model.history.params = self.params
-        model.history.history = self.history
+        model.history.history = self.history_history
         model.history.epoch = self.epoch

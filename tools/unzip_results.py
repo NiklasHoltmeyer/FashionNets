@@ -29,6 +29,5 @@ for folder in os.listdir(results_download_path):
         lines.append(value_lines)
     print(lines)
 
-
 # unzipped_file = zipfile.ZipFile("sample.zip", "r")
 # a_file = unzipped_file.read("test.txt")

@@ -41,7 +41,6 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
 
     siamese_model.fake_predict(train_job["input_shape"], train_job["is_triplet"])
 
-
     cp_path, run_name = train_job["path"]["checkpoint"], train_job["run"]["name"]
 
     logger.debug(f"Checkpoint: {cp_path}")
@@ -75,8 +74,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
 
     return siamese_model, init_epoch, _callbacks
 
-
-#def load_backbone(checkpoint_path, input_shape, verbose, weights_path):
+# def load_backbone(checkpoint_path, input_shape, verbose, weights_path):
 #    logger = defaultLogger("Load_Backbone")
 #    logger.disabled = not verbose
 

@@ -36,7 +36,7 @@ class MetricLearningSiameseNetwork:
             full_model = Model(inputs=self.input_layers, outputs=loss_layer)
             return full_model, embedding_model, feature_extractor
 
-        if not self.is_triplet:  # <- eig. i mmer true, aber erstmal lassen um safe zu sein
+        if not self.is_triplet:  # <- Should always be True - but just in case
             encoded_n2 = self.encoding_layers[3]
 
         ap_encoded = layers.Concatenate(axis=-1, name="Anchor-Positive")([encoded_a, encoded_p])
@@ -66,15 +66,15 @@ class MetricLearningSiameseNetwork:
 
         network = keras.Sequential(name="learned_metric")
         network.add(layers.Dense(10, activation='relu',
-                          input_shape=__input_shape,
-                          kernel_regularizer=l2(1e-3),
-                          kernel_initializer='he_uniform'))
+                                 input_shape=__input_shape,
+                                 kernel_regularizer=l2(1e-3),
+                                 kernel_initializer='he_uniform'))
         network.add(layers.Dense(10, activation='relu',
-                          kernel_regularizer=l2(1e-3),
-                          kernel_initializer='he_uniform'))
+                                 kernel_regularizer=l2(1e-3),
+                                 kernel_initializer='he_uniform'))
         network.add(layers.Dense(10, activation='relu',
-                          kernel_regularizer=l2(1e-3),
-                          kernel_initializer='he_uniform'))
+                                 kernel_regularizer=l2(1e-3),
+                                 kernel_initializer='he_uniform'))
 
         # Last layer : binary softmax
         network.add(layers.Dense(2, activation='softmax'))
