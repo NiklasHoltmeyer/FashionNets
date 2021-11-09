@@ -4,6 +4,7 @@ from pathlib import Path
 import tensorflow as tf
 
 from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
+from fashionnets.models.states.HistoryState import HistoryState
 from fashionnets.models.states.OptimizerState import OptimizerState
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 
@@ -29,12 +30,18 @@ def load_latest_checkpoint(model, **train_job):
     last_epoch = retrieve_epoch_from_checkpoint(checkpoint_path)
 
     opt_path = latest_optimizer(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
-
+    hist_path = latest_history(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
+    print("Loading Weights...")
     model.load_embedding_weights(str(checkpoint_path.resolve()))
     model.make_train_function()
 
+    print("Loading Optimizer...")
     opt_state = OptimizerState.load(opt_path)
     opt_state.apply(model)
+
+    print("Loading History...")
+    history_state = HistoryState.load(hist_path)
+    history_state.apply(model)
 
     return True, last_epoch + 1
 
@@ -68,7 +75,7 @@ def retrieve_epoch_from_checkpoint(latest_cp):
 
 def latest_optimizer(checkpoint_path, epoch):
     epoch_str = f"{epoch:04d}"
-    pickle_objects = filter(lambda p: p.endswith(".pkl"), os.listdir(checkpoint_path))
+    pickle_objects = filter(lambda p: p.endswith(".pkl") and not "history" in p, os.listdir(checkpoint_path))
     optimizers = filter(lambda opt: epoch_str in opt, pickle_objects)
     optimizers = list(optimizers)
 
@@ -79,6 +86,20 @@ def latest_optimizer(checkpoint_path, epoch):
 
     optimizer = optimizers[0]
     return str(Path(checkpoint_path, optimizer).resolve())
+
+def latest_history(checkpoint_path, epoch):
+    epoch_str = f"{epoch:04d}"
+    pickle_objects = filter(lambda p: p.endswith(".pkl") and "history" in p, os.listdir(checkpoint_path))
+    histories = filter(lambda opt: epoch_str in opt, pickle_objects)
+    histories = list(histories)
+
+    assert len(histories) == 1, f"""{checkpoint_path} Contains {len(histories)} Optimizer!
+    Looking for History with Epoch: {epoch} ({epoch_str}).
+    *.pkl Objects: {list(filter(lambda p: p.endswith(".pkl"), os.listdir(checkpoint_path)))}
+    """
+
+    history = histories[0]
+    return str(Path(checkpoint_path, history).resolve())
 
 
 # def remote_checkpoint(env):

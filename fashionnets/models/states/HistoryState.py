@@ -23,3 +23,21 @@ class HistoryState:
         model.history.params = self.params
         model.history.history = self.history_history
         model.history.epoch = self.epoch
+
+    def __eq__(self, other):
+        if not isinstance(other, HistoryState):
+            return False
+
+        for attribute in self.__dict__.keys():
+            if getattr(self, attribute) != getattr(other, attribute):
+                return False
+
+        return True
+
+    def __str__(self):
+        lines = ["{"]
+        for k, v in self.__dict__.items():
+            line = f"\t{k}:\t{v},"
+            lines.append(line)
+        lines.append("}")
+        return "\n".join(lines)

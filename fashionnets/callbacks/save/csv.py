@@ -33,8 +33,8 @@ class CSVLogger(keras.callbacks.Callback):
         file_name = f"history_{epoch:04d}.csv"
         csv = Path(self.checkpoint_path, file_name)
 
-        history = self.model.history_history
-        metric_history = history.history_history
+        history = self.model.history
+        metric_history = history.history
         epochs = history.epoch
 
         replace_dec = lambda v: str(v).replace(".", ",")

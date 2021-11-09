@@ -12,8 +12,7 @@ class TripletLoss(layers.Layer):
         self.alpha = 1.0
         self.distance_layer = TripletDistance()
 
-    def call(self, data):
-        anchor, positive, negative = data
+    def call(self, anchor, positive, negative):
         ap_distance, an_distance = self.distance_layer(anchor, positive, negative)
 
         loss = ap_distance - an_distance + self.alpha
@@ -35,8 +34,7 @@ class QuadrupletLoss(layers.Layer):
         if skip_distance_layer:
             self.distance_layer = lambda a, p, n, n2: (a, p, n, n2)
 
-    def call(self, data):
-        anchor, positive, negative1, negative2 = data
+    def call(self, anchor, positive, negative1, negative2):
         # noinspection PyTupleAssignmentBalance
         ap, an, nn = self.distance_layer(anchor, positive, negative1, negative2)
 

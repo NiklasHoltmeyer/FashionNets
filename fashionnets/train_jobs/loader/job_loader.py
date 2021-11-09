@@ -116,7 +116,7 @@ def history_to_csv_string(history, _print=True, decimal_separator=None, **job_se
     ds = job_settings["dataset"]["name"]
     is_trip = job_settings["is_triplet"]
     rows = []
-    for metric, values in history.history_history.items():
+    for metric, values in history.history.items():
         if decimal_separator:
             values = [str(x).replace(".", decimal_separator) for x in values]
 

@@ -27,10 +27,12 @@ def callbacks(checkpoint_path, name, save_format=None, save_weights_only=False, 
         tf.keras.callbacks.CSVLogger(history_cp_path, append=True, separator=csv_sep),
         #        EarlyStoppingBasedOnHistory(history_path=history_cp_path, monitor='loss', patience=3, sep=csv_sep),
         #        model_checkpoint(checkpoint_path, name, monitor),
+        CSVLogger(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
+
         SaveEmbeddingModel(model_cp_path=checkpoint_path),
         SaveOptimizerState(checkpoint_path=checkpoint_path, name=name),
         SaveHistoryState(checkpoint_path=checkpoint_path, name=name),
-        CSVLogger(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
+
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip),
         UploadResults(checkpoint_path=checkpoint_path, result_uploader=result_uploader)
     ]
