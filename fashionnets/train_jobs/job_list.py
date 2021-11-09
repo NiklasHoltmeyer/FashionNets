@@ -47,11 +47,8 @@ def job_list(debugging):
 #        "t_12_conv5": {"run_idx": 212, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
 
         # None
-        #"q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
+        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
         "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
-
-        #plat ReduceLR on Platau!
-        "q_511_none": {"run_idx": 511, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
     }
 
     for k in train_jobs.keys():
