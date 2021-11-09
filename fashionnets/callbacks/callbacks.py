@@ -7,7 +7,7 @@ from fashionnets.callbacks.save.csv import CSVLogger
 from fashionnets.callbacks.save.embedding_model import SaveEmbeddingModel
 from fashionnets.callbacks.remote.upload_results import UploadResults
 from fashionnets.callbacks.remote.zip_results import ZipResults
-from fashionnets.callbacks.save.history_state import HistoryState
+from fashionnets.callbacks.save.history_state import SaveHistoryState
 from fashionnets.callbacks.save.optimizer_state import SaveOptimizerState
 
 csv_sep = ";"
@@ -29,7 +29,7 @@ def callbacks(checkpoint_path, name, monitor='val_loss', save_format=None, save_
         #        model_checkpoint(checkpoint_path, name, monitor),
         SaveEmbeddingModel(model_cp_path=checkpoint_path),
         SaveOptimizerState(checkpoint_path=checkpoint_path, name=name),
-        HistoryState(checkpoint_path=checkpoint_path, name=name),
+        SaveHistoryState(checkpoint_path=checkpoint_path, name=name),
         CSVLogger(checkpoint_path=checkpoint_path, sep=csv_sep, decimal_symbol="."),
         ZipResults(checkpoint_path=checkpoint_path, remove_after_zip=remove_after_zip),
         UploadResults(checkpoint_path=checkpoint_path, result_uploader=result_uploader)

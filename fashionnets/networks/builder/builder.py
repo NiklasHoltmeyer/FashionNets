@@ -9,17 +9,17 @@ from tensorflow.keras import layers
 def build_layers(builder):
     if builder.verbose:
         print(f"is_triplet={builder.is_triplet}, alpha={builder.alpha}, beta={builder.beta}")
-    anchor_input = layers.Input(name="anchor", shape=builder._input_shape + (builder.channels,))
-    positive_input = layers.Input(name="positive", shape=builder._input_shape + (builder.channels,))
+    anchor_input = layers.Input(name="anchor", shape=builder.input_shape + (builder.channels,))
+    positive_input = layers.Input(name="positive", shape=builder.input_shape + (builder.channels,))
 
     if builder.is_triplet:
-        negative_inputs = [layers.Input(name="negative", shape=builder._input_shape + (builder.channels,))]
+        negative_inputs = [layers.Input(name="negative", shape=builder.input_shape + (builder.channels,))]
         distance_layer = TripletDistance()
         loss_layer = TripletLoss(alpha=builder.alpha)
     else:
         negative_inputs = [
-            layers.Input(name="negative1", shape=builder._input_shape + (builder.channels,)),
-            layers.Input(name="negative2", shape=builder._input_shape + (builder.channels,))
+            layers.Input(name="negative1", shape=builder.input_shape + (builder.channels,)),
+            layers.Input(name="negative2", shape=builder.input_shape + (builder.channels,))
         ]
         distance_layer = QuadrupletDistance()
         loss_layer = QuadrupletLoss(alpha=builder.alpha, beta=builder.beta)

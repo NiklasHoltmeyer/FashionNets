@@ -8,7 +8,7 @@ class DistanceSiameseNetwork:
                  preprocess_input=None, verbose=False, channels=3):
         self.back_bone = back_bone
         self.is_triplet = is_triplet
-        self._input_shape = input_shape
+        self.input_shape = input_shape
         self.alpha = alpha
         self.beta = beta
         self.preprocess_input = preprocess_input
@@ -26,7 +26,7 @@ class DistanceSiameseNetwork:
 
         embedding_model = Model(inputs=self.input_layers, outputs=self.encoding_layers)
 
-        input_layer = layers.Input(name="input_image", shape=self._input_shape + (self.channels,))
+        input_layer = layers.Input(name="input_image", shape=self.input_shape + (self.channels,))
         encoding = self.back_bone(self.preprocess_input(input_layer))
         feature_extractor = Model(inputs=[input_layer], outputs=encoding)
 

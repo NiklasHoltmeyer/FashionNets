@@ -13,7 +13,7 @@ class MetricLearningSiameseNetwork:
                  preprocess_input=None, verbose=False, channels=3):
         self.back_bone = back_bone
         self.is_triplet = is_triplet
-        self._input_shape = input_shape
+        self.input_shape = input_shape
         self.alpha = alpha
         self.beta = beta
         self.preprocess_input = preprocess_input
@@ -24,7 +24,7 @@ class MetricLearningSiameseNetwork:
 
     def combine(self):
         embedding_model = Model(inputs=self.input_layers, outputs=self.encoding_layers)
-        input_layer = layers.Input(name="input_image", shape=self._input_shape + (self.channels,))
+        input_layer = layers.Input(name="input_image", shape=self.input_shape + (self.channels,))
         encoding = self.back_bone(self.preprocess_input(input_layer))
         feature_extractor = Model(inputs=[input_layer], outputs=encoding)
 
@@ -60,13 +60,13 @@ class MetricLearningSiameseNetwork:
         return full_model, embedding_model, feature_extractor
 
     def build_metric_network(self):
-        __input_shape = self._input_shape
-        print(self._input_shape)
-        __input_shape = self._input_shape[0] * 2, self._input_shape[1]
+        _input_shape = self.input_shape
+        print(self.input_shape)
+        _input_shape = self.input_shape[0] * 2, self.input_shape[1]
 
         network = keras.Sequential(name="learned_metric")
         network.add(layers.Dense(10, activation='relu',
-                                 input_shape=__input_shape,
+                                 input_shape=_input_shape,
                                  kernel_regularizer=l2(1e-3),
                                  kernel_initializer='he_uniform'))
         network.add(layers.Dense(10, activation='relu',

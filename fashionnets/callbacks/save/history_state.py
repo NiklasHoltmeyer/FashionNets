@@ -3,12 +3,11 @@ from pathlib import Path
 from tensorflow import keras
 
 from fashionnets.models.states.HistoryState import HistoryState
-from fashionnets.models.states.OptimizerState import OptimizerState
 
 
-class HistoryState(keras.callbacks.Callback):
+class SaveHistoryState(keras.callbacks.Callback):
     def __init__(self, checkpoint_path, name):
-        super(HistoryState, self).__init__()
+        super(SaveHistoryState, self).__init__()
 
         self.model_cp_latest_path = Path(checkpoint_path, name + "_history-")
         self.model_cp_latest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -23,7 +22,7 @@ class HistoryState(keras.callbacks.Callback):
             HistoryState(self.model.history).save(path)
 
         except Exception as e:
-            print("CustomSaveOptimizerState::on_epoch_end")  # easier to trace Exception from withing Google Colab
+            print("HistoryState::on_epoch_end")  # easier to trace Exception from withing Google Colab
             raise Exception(e)
 
 

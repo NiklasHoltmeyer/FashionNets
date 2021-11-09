@@ -11,7 +11,7 @@ class SiameseNetwork(tf.keras.Model):
         super(SiameseNetwork, self).__init__()
         self.back_bone = back_bone
         self.is_triplet = is_triplet
-        self._input_shape = input_shape
+        self.input_shape = input_shape
         self.alpha = alpha
         self.beta = beta
         self.preprocess_input = preprocess_input
