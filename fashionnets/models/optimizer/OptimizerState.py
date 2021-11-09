@@ -25,19 +25,22 @@ class OptimizerState:
             )
         raise Exception(f"Optimizer {self.config['name']} is not Supported!")
 
-    def apply_gradients(self, model, optimizer):
+    @staticmethod
+    def apply_gradients(model, optimizer):
         grad_vars = model.trainable_weights
         zero_grads = [tf.zeros_like(w) for w in grad_vars]
         optimizer.apply_gradients(zip(zero_grads, grad_vars))
 
     def apply(self, model):
+        print("0")
         optimizer = self.empty_optimizer()
-
+        print("1")
         self.apply_gradients(model, model)
-
+        print("2")
         optimizer.set_weights(self.weights)
+        print("3")
         optimizer.iterations = self.iterations
-
+        print("4")
         model.optimizer = optimizer
 
     def __eq__(self, other):
