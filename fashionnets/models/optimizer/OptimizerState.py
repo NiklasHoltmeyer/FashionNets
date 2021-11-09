@@ -1,12 +1,16 @@
 import pickle
 import tensorflow as tf
-
+from tensorflow.keras import backend
 
 class OptimizerState:
     def __init__(self, optimizer):
         self.config = optimizer.get_config()
         self.weights = optimizer.get_weights()
-        self.iterations = optimizer.iterations
+#        self.iterations = optimizer.iterations
+
+        self.lr = backend.get_value(optimizer.lr)
+        self.iterations = backend.get_value(optimizer.iterations)
+        self.learning_rate = backend.get_value(optimizer.learning_rate)
 
     def save(self, path):
         with open(path, 'wb') as f:
@@ -35,8 +39,11 @@ class OptimizerState:
 
     def apply(self, model):
         optimizer = self.empty_optimizer()
-        optimizer.iterations = self.iterations
         self.apply_weights(model, optimizer)
+
+        backend.set_value(self.lr)
+        backend.set_value(self.iterations)
+        backend.set_value(self.learning_rate)
 
         model.optimizer = optimizer
 
