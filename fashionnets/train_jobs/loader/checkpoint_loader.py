@@ -2,7 +2,7 @@ import os
 import pickle
 import zipfile
 from pathlib import Path
-
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 import tensorflow as tf
 
 from fashionnets.callbacks.delete_checkpoints import DeleteOldModel
@@ -10,28 +10,27 @@ from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 
 
 def load_latest_checkpoint(model, ignore_remote=False, **train_job):
-    _checkpoint = None
+    checkpoint_path = latest_checkpoint(train_job["path"]["checkpoint"])
 
-    if not ignore_remote:
-        _checkpoint, last_epoch = remote_checkpoint(train_job["environment"])
+    if not checkpoint_path:
+        download_remote_checkpoint(train_job["environment"])
+        checkpoint_path = latest_checkpoint(train_job["path"]["checkpoint"])  # <- Locally
 
-    if not _checkpoint:
-        _checkpoint = latest_checkpoint(train_job["path"]["checkpoint"])
-        last_epoch = retrieve_epoch_from_checkpoint(_checkpoint)
-
-    if not _checkpoint:
+    if not checkpoint_path:
         print("No Checkpoint found!")
         return False, 0
 
-    checkpoint_file_path = Path(_checkpoint)
+    checkpoint_path = Path(checkpoint_path)
 
-    if not checkpoint_file_path.exists():
+    if checkpoint_path is None or not checkpoint_path.exists():
         print("Checkpoint Path doesn not exist!")
         return False, 0
 
+    last_epoch = retrieve_epoch_from_checkpoint(checkpoint_path)
+
     opt_path = latest_optimizer(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
 
-    model.load_embedding_weights(str(checkpoint_file_path.resolve()))
+    model.load_embedding_weights(str(checkpoint_path.resolve()))
     model.make_train_function()
 
     with open(opt_path, 'rb') as f:
@@ -57,10 +56,13 @@ def retrieve_epoch_from_checkpoint(latest_cp):
     if latest_cp is None:
         return None
 
+    if type(latest_cp) != str:
+        checkpoint_path_str = str(latest_cp.resolve())
+
     valid_suffixes = [".ckpt", ".h5"]
     for suffix in valid_suffixes:
-        if latest_cp.endswith(suffix):
-            fName = Path(latest_cp).name
+        if checkpoint_path_str.endswith(suffix):
+            fName = Path(checkpoint_path_str).name
             epoch_str = fName.split("-")[-1].split(".")[0]
             return int(epoch_str)
     return None
@@ -81,24 +83,24 @@ def latest_optimizer(checkpoint_path, epoch):
     return str(Path(checkpoint_path, optimizer).resolve())
 
 
-def remote_checkpoint(env):
-    checkpoint_path = download_checkpoint(env)
-    print("Downloaded Remote : ")
+#def remote_checkpoint(env):
+#    checkpoint_path = download_remote_checkpoint(env)
+#    print("Downloaded Remote : ")
 
-    if not checkpoint_path:
-        return None, 0
+#    if not checkpoint_path:
+#        return None, 0
 
-    latest_cp = tf.train.latest_checkpoint(checkpoint_path)
+#    latest_cp = tf.train.latest_checkpoint(checkpoint_path)
 
-    if not latest_cp:
-        return None, 0
+#    if not latest_cp:
+#        return None, 0
 
-    last_epoch = retrieve_epoch_from_checkpoint(latest_cp)
+#    last_epoch = retrieve_epoch_from_checkpoint(latest_cp)
 
-    return latest_cp, last_epoch
+#    return latest_cp, last_epoch
 
 
-def download_checkpoint(env):
+def download_remote_checkpoint(env):
     if not env.webdav:
         env.init()
     remote = env.webdav
@@ -120,11 +122,7 @@ def extract_zip(zip_path, env):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(checkpoint_path)
 
-#    backup_files_local = os.listdir(checkpoint_path)
-#    unnecessary_files = filter(lambda d: "backbone" in d, backup_files_local)
-#    unnecessary_files = list(unnecessary_files)
-#    unnecessary_files.append(zip_path)
-    list(map(lambda d: DeleteOldModel.delete_path(str(Path(checkpoint_path, d).resolve())), unnecessary_files))
+    DeleteOldModel.delete_path(zip_path)
 
     return checkpoint_path
 

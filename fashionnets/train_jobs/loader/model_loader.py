@@ -1,14 +1,11 @@
-from pathlib import Path
-
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 
 from fashionnets.callbacks.callbacks import callbacks
 from fashionnets.models.SiameseModel import SiameseModel
 from fashionnets.networks.SiameseNetwork import SiameseNetwork
 from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_resnet
-from fashionnets.train_jobs.loader.checkpoint_loader import remote_checkpoint, load_latest_checkpoint
+from fashionnets.train_jobs.loader.checkpoint_loader import load_latest_checkpoint
 from fashionnets.train_jobs.loader.job_loader import dump_settings
-from fashionnets.util.csv import HistoryCSVHelper
 
 
 def sanity_check_job_settings(**train_job):
