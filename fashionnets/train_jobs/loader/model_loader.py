@@ -61,6 +61,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
             logger.warning("Loading Weights & Optimizer failed!")
             assert not force_load_weights, "force_load_weights is set, but no Checkpoints are found!"
     else:
+        print("Load_Weights is set to False!")
         _checkpoint, init_epoch = None, 0
 
     freeze_layers = train_job.get("freeze_layers", None)
