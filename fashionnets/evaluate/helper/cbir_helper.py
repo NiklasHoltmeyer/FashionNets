@@ -12,7 +12,7 @@ def build_similar_idxs(run_name, epoch, embedding_json_path, use_tqdm=True):
         # Threads)
         k = 101
 
-        fn = lambda needle_: find_top_k([needle_], _hay_stack, reverse=True, k=k)
+        fn = lambda needle_: find_top_k([needle_], _hay_stack, similar=True, k=k)
 
         if use_tqdm:
             return list(map(fn, tqdm(_needles)))

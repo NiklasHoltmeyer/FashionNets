@@ -11,7 +11,7 @@ def retrieve_similar_idxs(needles, hay_stack, k=21):
     print("Jobs", len(needles))
 
     def job(needle):
-        return find_top_k([needle], hay_stack, reverse=True, k=k)
+        return find_top_k([needle], hay_stack, similar=True, k=k)
 
     return parallel_map(needles,
                         job,
