@@ -26,7 +26,7 @@ def prepare_history(history):
     x = history.epoch
     return x, values
 
-def plot_history(history, title=None, xlabel=None, ylabel=None, loc=None, colors=None):
+def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colors=None):
     x_values, y_data = prepare_history(history)
 
     if colors is None:
@@ -34,10 +34,10 @@ def plot_history(history, title=None, xlabel=None, ylabel=None, loc=None, colors
             ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
              '#17becf']))
 
-    if xlabel is None:
-        xlabel = "x"
-    if ylabel is None:
-        ylabel = "y"
+    if x_label is None:
+        x_label = "Epoch"
+    if y_label is None:
+        y_label = "Loss"
     if loc is None:
         loc = 'upper left'
 
@@ -53,8 +53,8 @@ def plot_history(history, title=None, xlabel=None, ylabel=None, loc=None, colors
     if title:
         plt.title(title)
 
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.ylabel(y_label)
+    plt.xlabel(x_label)
     plt.legend(loc=loc)
 
     plt.xticks(x_values, labels)
