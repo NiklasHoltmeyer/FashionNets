@@ -51,7 +51,8 @@ def plot_history(history, title=None, xlabel=None, ylabel=None, loc=None, colors
     labels = [e for e in x_values]
 
     if title:
-        plt.title("Quadtruplet-Loss")
+        plt.title(title)
+
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
     plt.legend(loc=loc)
