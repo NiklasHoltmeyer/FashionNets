@@ -31,7 +31,7 @@ notebooks = {
             "webdav": "webdav"
         },
         "paths": {
-            "checkpoint": "./",
+            "checkpoint": "./results/",
             "dataset_base_path": "/kaggle/working/",
             "tmp": "./tmp"
         }
