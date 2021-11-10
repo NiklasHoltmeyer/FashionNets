@@ -38,17 +38,10 @@ def job_list(debugging):
     }
 
     train_jobs = {
-        #first 100
-        "q_11_f30": {"run_idx": 111, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
-        "t_12_f30": {"run_idx": 112, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["first_30"]},
-
-        #non conv5
-#        "q_11_conv5": {"run_idx": 211, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
-#        "t_12_conv5": {"run_idx": 212, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["non_conv5_block1_out"]},
-
         # None
-        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
+#WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
         "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
+        "q_n11_none": {"run_idx": 411, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
     }
 
     for k in train_jobs.keys():

@@ -38,8 +38,9 @@ class QuadrupletLoss(layers.Layer):
         # noinspection PyTupleAssignmentBalance
         ap_distance, an_distance, nn_distance = self.distance_layer(anchor, positive, negative1, negative2)
 
-        loss = ap_distance - an_distance + self.alpha + ap_distance - nn_distance + self.beta
+        loss = tf.maximum((ap_distance - an_distance + self.alpha), 0.0) + \
+               tf.maximum((ap_distance - nn_distance + self.beta), 0.0)
 
-        loss = tf.maximum(loss, 0.0)
+        # loss = tf.maximum(loss, 0.0)
 
         return loss

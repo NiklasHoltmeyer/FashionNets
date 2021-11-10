@@ -53,6 +53,6 @@ class QuadrupletDistance(layers.Layer):
     def call(self, anchor, positive, negative1, negative2):
         ap = euclidean_distance(anchor, positive)
         an = euclidean_distance(anchor, negative1)
-        nn = euclidean_distance(negative1, negative2)
+        nn = euclidean_distance(negative2, negative1)
 
         return ap, an, nn
