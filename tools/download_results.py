@@ -31,6 +31,7 @@ def download_results():
         for remote_zip in zips_full_remote_path:
             cmd = f'rclone move "hi:/{remote_zip}" "{target_folder}" -P'
             print(os.system(cmd))
+        break
 
 
 while True:
