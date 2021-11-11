@@ -284,7 +284,7 @@ def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n
     if init_epoch == 0:
         return load_dataset_loader(**job_settings)()
 
-    result = __download_deepfashion_hard_pairs(job_settings, init_epoch)
+    result = __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
 
     if result is not None:
         return result
