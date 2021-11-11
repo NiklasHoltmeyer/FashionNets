@@ -318,9 +318,11 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     return load_dataset_loader(**job_settings)()
 
 def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency):
+    if Path("./deep_fashion_1_256/train.csv").exists():
+        Path("./deep_fashion_1_256/train.csv").unlink()
+
     last_epoch = total_epochs(init_epoch, build_frequency) - build_frequency
 
-    old_train_settings = "./deep_fashion_1_256/train.csv"
     dst_name = f"train_{last_epoch:04d}.csv"
 
     remote = job_settings["environment"].webdav
@@ -328,21 +330,14 @@ def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
     csv = list(csv)
 
     if not len(csv) == 1:
-        return None
+        raise Exception("Return None")
 
     csv = csv[0]
     csv_path = os.path.join(remote.base_path, csv)
 
     _callback = lambda: print(f"{csv} downloaded!")
 
-    remote.download(csv_path, "./deep_fashion_1_256/ ", callback=_callback, _async=False)
-
-    if Path(old_train_settings).exists():
-        Path(old_train_settings).unlink()
-
-    new_train_settings = os.path.join(f"./deep_fashion_1_256/train_{last_epoch:04d}.csv")
-
-    os.rename(new_train_settings, old_train_settings)
+    remote.download(csv_path, "./deep_fashion_1_256/train.csv", callback=_callback, _async=False)
 
     return load_dataset_loader(**job_settings)()
 
