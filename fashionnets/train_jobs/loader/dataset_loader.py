@@ -281,11 +281,18 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
 
 
 def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks, build_frequency):
-    if init_epoch > 0 and ((init_epoch % build_frequency) == 0):
+    if init_epoch == 0:
+        return load_dataset_loader(**job_settings)()
+
+    result = __download_deepfashion_hard_pairs(job_settings, init_epoch)
+
+    if result is not None:
+        return result
+
+    if (init_epoch % build_frequency) == 0:
         return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks)
-    if init_epoch > 0:
-        return __download_deepfashion_hard_pairs(job_settings, init_epoch)
-    return load_dataset_loader(**job_settings)()
+
+    raise Exception("Could not Download Train.csv.")
 
 def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks):
     if Path("./deep_fashion_1_256/train.csv").exists():
@@ -310,15 +317,18 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
 
     return load_dataset_loader(**job_settings)()
 
-def __download_deepfashion_hard_pairs(job_settings, init_epoch):
+def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency):
+    last_epoch = total_epochs(init_epoch, build_frequency) - build_frequency
+
     old_train_settings = "./deep_fashion_1_256/train.csv"
-    dst_name = f"train_{init_epoch:04d}.csv"
+    dst_name = f"train_{last_epoch:04d}.csv"
 
     remote = job_settings["environment"].webdav
     csv = filter(lambda d: dst_name in d, remote.list(remote.base_path))
     csv = list(csv)
 
-    assert len(csv) == 1
+    if not len(csv) == 1:
+        return None
 
     csv = csv[0]
     csv_path = os.path.join(remote.base_path, csv)
@@ -329,7 +339,7 @@ def __download_deepfashion_hard_pairs(job_settings, init_epoch):
 
     Path(old_train_settings).unlink()
 
-    new_train_settings = os.path.join(f"./deep_fashion_1_256/train_{init_epoch:04d}.csv")
+    new_train_settings = os.path.join(f"./deep_fashion_1_256/train_{last_epoch:04d}.csv")
 
     os.rename(new_train_settings, old_train_settings)
 
