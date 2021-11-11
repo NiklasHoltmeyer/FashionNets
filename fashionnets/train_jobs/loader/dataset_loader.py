@@ -335,4 +335,9 @@ def __download_deepfashion_hard_pairs(job_settings, init_epoch):
 
     return load_dataset_loader(**job_settings)()
 
-
+def total_epochs(init_epoch, build_frequency):
+    max_epochs = init_epoch + build_frequency
+    if max_epochs % build_frequency == 0:
+        return max_epochs
+    dif = max_epochs % build_frequency
+    return max_epochs - dif
