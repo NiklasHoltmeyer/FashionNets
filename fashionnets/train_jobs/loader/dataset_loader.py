@@ -330,7 +330,7 @@ def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
     csv = list(csv)
 
     if not len(csv) == 1:
-        raise Exception("Return None")
+        return None
 
     csv = csv[0]
     csv_path = os.path.join(remote.base_path, csv)
