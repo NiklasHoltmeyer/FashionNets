@@ -337,7 +337,8 @@ def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
 
     remote.download(csv_path, "./deep_fashion_1_256/ ", callback=_callback, _async=False)
 
-    Path(old_train_settings).unlink()
+    if Path(old_train_settings).exists():
+        Path(old_train_settings).unlink()
 
     new_train_settings = os.path.join(f"./deep_fashion_1_256/train_{last_epoch:04d}.csv")
 
