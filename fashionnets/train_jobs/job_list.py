@@ -13,6 +13,7 @@ def job_list(debugging):
     base_cfg1e4 = base_settings(debugging, 1e-4)
     base_cfg5e3 = base_settings(debugging, 5e-3)
     base_cfg1e3 = base_settings(debugging, 1e-3)
+    base_cfg1e5 = base_settings(debugging, 1e-5)
 
     # back_bone_cfg =
     triplet_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=True)
@@ -42,7 +43,10 @@ def job_list(debugging):
 #WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
         "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
         "q_n11_none": {"run_idx": 411, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
+
+        "t_12_none1e5": {"run_idx": 512, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"]},
     }
+    #
 
     for k in train_jobs.keys():
         back_bone_key = k.split("_")[0]

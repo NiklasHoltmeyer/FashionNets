@@ -12,7 +12,7 @@ def base_settings(debugging, learning_rate=1e-4):
         "nrows": None,
         "buffer_size": 32,
         "batch_size": 32,
-        "states": optimizer,
+        "optimizer": optimizer,
         "learning_rate": f"{optimizer.lr.numpy():.2e}"
     }
 

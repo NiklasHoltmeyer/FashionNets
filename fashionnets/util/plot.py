@@ -1,6 +1,4 @@
 from matplotlib import pyplot as plt
-import matplotlib.patches as mpatches
-from matplotlib.patches import Ellipse, Circle
 
 
 def prepare_history(history):
@@ -27,8 +25,6 @@ def prepare_history(history):
     return x, values
 
 def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colors=None):
-    x_values, y_data = prepare_history(history)
-
     if colors is None:
         colors = list(reversed(
             ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
@@ -42,6 +38,8 @@ def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colo
         loc = 'upper left'
 
     #fig, ax = plt.subplots()
+
+    x_values, y_data = prepare_history(history)
 
     for k, v in y_data.items():
         color = colors.pop()
