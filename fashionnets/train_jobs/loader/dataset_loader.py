@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+from shutil import copyfile
 
 import tensorflow as tf
 from fashiondatasets.deepfashion1.DeepFashion1 import DeepFashion1Dataset
@@ -264,11 +266,11 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     return load_dataset_loader(**job_settings)()
 
 
-def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
+def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency=5):
     for i in [6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
         try:  # ^ Try Catch can be deleted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
             print(f"Trying to build Hard-Triplets {i} N_Chunks")
-            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i)
+            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i, build_frequency=build_frequency)
         except Exception as e:
             print("build_dataset_hard_pairs_deep_fashion_1 Failed")
             print("Exception: ")
@@ -278,18 +280,59 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch):
     raise exception
 
 
-def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks):
+def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks, build_frequency):
+    if init_epoch > 0 and ((init_epoch % build_frequency) == 0):
+        return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks)
     if init_epoch > 0:
-        if Path("./deep_fashion_1_256/train.csv").exists():
-            Path("./deep_fashion_1_256/train.csv").unlink()
+        return __download_deepfashion_hard_pairs(job_settings, init_epoch)
+    return load_dataset_loader(**job_settings)()
 
-        embedding_model = model.siamese_network.feature_extractor
-        ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
-                                        image_suffix="_256",
-                                        model=embedding_model,
-                                        batch_size=job_settings["batch_size"],
-                                        n_chunks=n_chunks)
+def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks):
+    if Path("./deep_fashion_1_256/train.csv").exists():
+        Path("./deep_fashion_1_256/train.csv").unlink()
 
-        ds_loader.load_split("train", is_triplet=False, force=True)
+    embedding_model = model.siamese_network.feature_extractor
+    ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
+                                    image_suffix="_256",
+                                    model=embedding_model,
+                                    batch_size=job_settings["batch_size"],
+                                    n_chunks=n_chunks)
+
+    ds_loader.load_split("train", is_triplet=False, force=True)
+
+    src = "./deep_fashion_1_256/train.csv"
+    dst = f"./deep_fashion_1_256/train_{init_epoch:04d}.csv"
+
+    copyfile(src, dst)
+
+    result_uploader = job_settings["environment"].webdav
+    result_uploader.move(dst, _async=False)
 
     return load_dataset_loader(**job_settings)()
+
+def __download_deepfashion_hard_pairs(job_settings, init_epoch):
+    old_train_settings = "./deep_fashion_1_256/train.csv"
+    dst_name = f"train_{init_epoch:04d}.csv"
+
+    remote = job_settings["environment"].webdav
+    csv = filter(lambda d: dst_name in d, remote.list(remote.base_path))
+    csv = list(csv)
+
+    assert len(csv) == 1
+
+    csv = csv[0]
+    csv_path = os.path.join(remote.base_path, csv)
+
+    _callback = lambda: print(f"{csv} downloaded!")
+
+    remote.download(csv_path, "./deep_fashion_1_256/ ", callback=_callback, _async=False)
+
+    Path(old_train_settings).unlink()
+
+    new_train_settings = os.path.join(f"./deep_fashion_1_256/train_{init_epoch:04d}.csv")
+
+    os.rename(new_train_settings, old_train_settings)
+
+    return load_dataset_loader(**job_settings)()
+
+
