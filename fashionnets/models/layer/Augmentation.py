@@ -10,22 +10,30 @@ def random_crop_layer(crop_shape):
 
 
 def compose_augmentations():
-    cfg = AugmentationConfig()
+    def __call__(is_train):
+        cfg = AugmentationConfig()
 
-    pad = cfg.PADDING
+        if not is_train:
+            return tf.keras.Sequential([
+                layers.experimental.preprocessing.Resizing(*cfg.SIZE_TRAIN),
+                normalize_image(cfg.PIXEL_MEAN, cfg.PIXEL_STD),
+            ])
 
-    resize_padding_shape = cfg.SIZE_TRAIN[0] + pad, cfg.SIZE_TRAIN[1] + pad
+        pad = cfg.PADDING
 
-    transform = tf.keras.Sequential([
-        layers.experimental.preprocessing.Resizing(*cfg.SIZE_TRAIN),
-        RandomHorizontalFlip(p=cfg.PROB),
-        resize_with_padding(resize_padding_shape),
-        random_crop(cfg.SIZE_TRAIN),
-        normalize_image(cfg.PIXEL_MEAN, cfg.PIXEL_STD),
-        RandomErasing(probability=cfg.RE_PROB, mean=cfg.PIXEL_MEAN)
-    ])
+        resize_padding_shape = cfg.SIZE_TRAIN[0] + pad, cfg.SIZE_TRAIN[1] + pad
 
-    return transform
+        transform = tf.keras.Sequential([
+            layers.experimental.preprocessing.Resizing(*cfg.SIZE_TRAIN),
+            RandomHorizontalFlip(p=cfg.PROB),
+            resize_with_padding(resize_padding_shape),
+            random_crop(cfg.SIZE_TRAIN),
+            normalize_image(cfg.PIXEL_MEAN, cfg.PIXEL_STD),
+            RandomErasing(probability=cfg.RE_PROB, mean=cfg.PIXEL_MEAN)
+        ])
+
+        return transform
+    return __call__
 
 
 # padding, fill=0, padding_mode="constant"
