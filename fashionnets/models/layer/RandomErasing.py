@@ -5,9 +5,10 @@ from tensorflow.keras import layers
 class RandomErasing(layers.Layer):
     # SRC https://github.com/Janghyeonwoong/Random-Erasing-Tensorflow2/blob/master/erasing.py Adapted as Layer
 
-    def __init__(self, probability=0.5,  sl=0.02, sh=0.2, r1=0.15, mean=(0.4914, 0.4822, 0.4465), method="mean",
+    def __init__(self, probability=0.5, sl=0.02, sh=0.4, r1=0.3, mean=(0.4914, 0.4822, 0.4465), method="mean",
                  **kwargs):
-        #sl = 0.02, sh = 0.4, r1 = 0.3
+
+        # im Paper sl = 0.02, r1 = 1/r2, sh = 0.4, r1=0.3
         super().__init__(**kwargs)
         self.probability = probability
         self.mean = mean
