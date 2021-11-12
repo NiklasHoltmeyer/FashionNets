@@ -136,7 +136,7 @@ def load_deepfashion_2(**settings):
 
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
 
-    train_ds, val_ds = prepare_ds(train_ds, **settings), prepare_ds(val_ds, **settings)
+    train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
 
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
@@ -175,7 +175,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
 
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
 
-    train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=True, **settings)
+    train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
 
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
@@ -241,7 +241,7 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     else:
         augmentation = None
 
-    print("Augmentation", augmentation)
+    print("Augmentation", augmentation, "IS_Train", is_train)
 
     return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet, augmentation=augmentation)) \
         .batch(batch_size, drop_remainder=False) \
