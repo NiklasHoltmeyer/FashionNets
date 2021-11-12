@@ -10,6 +10,7 @@ def job_config_by_notebook_name(notebook_name, debugging):
     job_id = "_".join(x)  # g_b1_12 => b1_12
     return job_list(debugging)[job_id]
 
+
 def job_list(debugging):
     base_cfg1e4 = base_settings(debugging, 1e-4)
     base_cfg5e3 = base_settings(debugging, 5e-3)
@@ -18,19 +19,19 @@ def job_list(debugging):
 
     # back_bone_cfg =
     triplet_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=True)
-#    triplet_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=True)
+    #    triplet_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=True)
 
     quad_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=False)
-#    quad_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=False)
+    #    quad_no_weights = back_bone_settings("resnet50", weights=None, is_triplet=False)
 
     ds = loader_info("deep_fashion_1")
 
     back_bone_by_notebook = {
-#        "b1": {**quad_no_weights},
+        #        "b1": {**quad_no_weights},
         "q": {**quad_w_weights},
 
         "t": {**triplet_w_weights},
-#        "b4": {**triplet_no_weights},
+        #        "b4": {**triplet_no_weights},
     }
 
     freeze_layers = {
@@ -41,14 +42,14 @@ def job_list(debugging):
 
     train_jobs = {
         # None
-#WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
+        # WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
         "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"],
                       "augmentation": compose_augmentations()},
         "q_n11_none": {"run_idx": 411, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                        "augmentation": compose_augmentations()},
+                       "augmentation": compose_augmentations()},
 
-        "t_12_none1e5": {"run_idx": 512, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                         "augmentation": compose_augmentations()},
+        "t_1e5aug_none": {"run_idx": 512, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
+                          "augmentation": compose_augmentations()},
     }
     #
 
@@ -57,7 +58,7 @@ def job_list(debugging):
         back_bone_info = back_bone_by_notebook[back_bone_key]
 
         train_jobs[k]["back_bone"] = {
-                "info": back_bone_info, "embedding_model": None, "preprocess_input_layer": None
+            "info": back_bone_info, "embedding_model": None, "preprocess_input_layer": None
         }
 
     return train_jobs
@@ -77,5 +78,6 @@ def validate_job_list():
 
     jobs_distinct = distinct(jobs)
     assert len(jobs) != jobs_distinct, "At least one duplicate Job!"
+
 
 validate_job_list()
