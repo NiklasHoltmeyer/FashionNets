@@ -237,13 +237,14 @@ def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, *
 def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     target_shape = settings["input_shape"]
     if is_train:
-        augmentation = settings.get("augmentation", None)
+        augmentation_fn = settings.get("augmentation", None)
     else:
-        augmentation = None
+        augmentation_fn = None
 
-    print("Augmentation", augmentation, "IS_Train", is_train)
+    print("Augmentation", augmentation_fn, "IS_Train", is_train)
 
-    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet, augmentation=augmentation)) \
+    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
+                                                augmentation=augmentation_fn)) \
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
