@@ -175,7 +175,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
 
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
 
-    train_ds, val_ds = prepare_ds(train_ds, **settings), prepare_ds(val_ds, **settings)
+    train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=True, **settings)
 
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
@@ -228,20 +228,28 @@ def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, *
     train_dataset = dataset.take(n_train_items)
     val_dataset = dataset.skip(n_train_items)
 
-    train_dataset, val_dataset = prepare_ds(train_dataset, **settings), prepare_ds(val_dataset, **settings)
+    train_dataset, val_dataset = prepare_ds(train_dataset, is_train=True, **settings), \
+                                 prepare_ds(val_dataset, is_train=False, **settings)
 
     return train_dataset, val_dataset, n_train_items, n_val_items
 
 
-def prepare_ds(dataset, batch_size, is_triplet, **settings):
+def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     target_shape = settings["input_shape"]
-    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet)) \
+    if is_train:
+        augmentation = settings.get("augmentation", None)
+    else:
+        augmentation = None
+
+    print("Augmentation", augmentation)
+
+    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet, augmentation=augmentation)) \
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
 
-def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None):
-    prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img)
+def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None, augmentation=None):
+    prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img, augmentation=augmentation)
     assert not preprocess_img, "None of the two Datasets needs further Preprocessing!"
 
     if is_triplet:
@@ -270,7 +278,8 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
     for i in [6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
         try:  # ^ Try Catch can be deleted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
             print(f"Trying to build Hard-Triplets {i} N_Chunks")
-            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i, build_frequency=build_frequency)
+            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i,
+                                                             build_frequency=build_frequency)
         except Exception as e:
             print("build_dataset_hard_pairs_deep_fashion_1 Failed")
             print("Exception: ")
@@ -293,6 +302,7 @@ def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n
         return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks)
 
     raise Exception("Could not Download Train.csv.")
+
 
 def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks):
     if Path("./deep_fashion_1_256/train.csv").exists():
@@ -317,6 +327,7 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
 
     return load_dataset_loader(**job_settings)()
 
+
 def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency):
     if Path("./deep_fashion_1_256/train.csv").exists():
         Path("./deep_fashion_1_256/train.csv").unlink()
@@ -340,6 +351,7 @@ def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
     remote.download(csv_path, "./deep_fashion_1_256/train.csv", callback=_callback, _async=False)
 
     return load_dataset_loader(**job_settings)()
+
 
 def total_epochs(init_epoch, build_frequency):
     max_epochs = init_epoch + build_frequency

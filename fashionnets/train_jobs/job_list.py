@@ -1,3 +1,4 @@
+from fashionnets.models.layer.Augmentation import compose_augmentations
 from fashionscrapper.utils.list import distinct
 from fashionnets.models.embedding.resnet50 import ResNet50Builder
 from fashionnets.train_jobs.loader.dataset_loader import loader_info
@@ -41,10 +42,13 @@ def job_list(debugging):
     train_jobs = {
         # None
 #WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
-        "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
-        "q_n11_none": {"run_idx": 411, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
+        "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"],
+                      "augmentation": compose_augmentations()},
+        "q_n11_none": {"run_idx": 411, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"],
+                        "augmentation": compose_augmentations()},
 
-        "t_12_none1e5": {"run_idx": 512, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"]},
+        "t_12_none1e5": {"run_idx": 512, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
+                         "augmentation": compose_augmentations()},
     }
     #
 

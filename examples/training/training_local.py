@@ -1,4 +1,4 @@
-notebook_name = "l_t_12_f100"  # 212
+notebook_name = "l_t_12_none"  # 212
 from fashionnets.train_jobs.loader.job_loader import load_job_settings, history_to_csv_string, prepare_environment
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job
 from fashionnets.train_jobs.loader.job_loader import add_back_bone_to_train_job
