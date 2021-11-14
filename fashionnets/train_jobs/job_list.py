@@ -34,8 +34,8 @@ def job_list(debugging):
     }
 
     freeze_layers = {
-#        "non_conv5_block1_out": ResNet50Builder.freeze_non_conv5_block1_out,
-#        "first_30": lambda model: ResNet50Builder.freeze_first_n_layers(model, 30),
+        #        "non_conv5_block1_out": ResNet50Builder.freeze_non_conv5_block1_out,
+        #        "first_30": lambda model: ResNet50Builder.freeze_first_n_layers(model, 30),
         "none": None
     }
 
@@ -49,6 +49,10 @@ def job_list(debugging):
 
         "t_1e5aug_none": {"run_idx": 512, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                           "augmentation": compose_augmentations()},
+
+        "t_1e5aug_none_less_building": {"run_idx": 522, **base_cfg1e5, "dataset": ds,
+                                        "freeze_layers": freeze_layers["none"],
+                                        "augmentation": compose_augmentations()},
 
         "q_1e5aug_none": {"run_idx": 612, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                           "augmentation": compose_augmentations()},
