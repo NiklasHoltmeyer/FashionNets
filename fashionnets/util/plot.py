@@ -24,11 +24,15 @@ def prepare_history(history):
     x = history.epoch
     return x, values
 
-def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colors=None, label_mapping=None):
+def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colors=None,
+                 label_mapping=None, build_epochs=None):
     if colors is None:
         colors = list(reversed(
             ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
              '#17becf']))
+
+    if build_epochs is None:
+        build_epochs = []
 
     if label_mapping is None:
         label_mapping = {
@@ -51,7 +55,10 @@ def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colo
         label = label_mapping.get(k, k)
 
         plt.plot(x_values, v["values"], label=label, color=color)
-        plt.plot(v["min_idx"], v["min_value"], 'go', color=color)
+        plt.plot(v["min_idx"], v["min_value"], 'v', color=color)  #
+
+        for b_epoch in build_epochs:
+            plt.plot(b_epoch, v["values"][b_epoch], 'go', color=color)  # linewidth=2, markersize=12
 
     if title:
         plt.title(title)

@@ -16,4 +16,12 @@ def extract_history(path):
 def extract_run_histories(path):
     for zip_file_name in filter(lambda p: p.endswith(".zip"), os.listdir(path)):
         zip_path = os.path.join(path, zip_file_name)
-        extract_history(zip_path)
+        try:
+            extract_history(zip_path)
+        except Exception as e:
+            print(zip_path)
+            raise e
+
+if __name__ == "__main__":
+    path = r"D:\masterarbeit_runs\522_resnet50_imagenet_triplet"
+    extract_run_histories(path)
