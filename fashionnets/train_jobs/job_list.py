@@ -58,6 +58,10 @@ def job_list(debugging):
                                           "freeze_layers": freeze_layers["none"],
                                           "augmentation": compose_augmentations()},
 
+        "t_1e5aug_random_building": {"run_idx": 542, **base_cfg1e5, "dataset": ds,
+                                          "freeze_layers": freeze_layers["none"],
+                                          "augmentation": compose_augmentations()},
+
         "q_1e5aug_none": {"run_idx": 612, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                           "augmentation": compose_augmentations()},
 
