@@ -271,8 +271,7 @@ def load_npy_file(path):
 
 
 def load_npy(p):
-    # data = tf.py_function(load_npy_file, [p], tf.float32)
-    data = np.random.rand(2048)
+    data = tf.py_function(load_npy_file, [p], tf.float32)
     data = np.asarray(data, np.float32)
 
     return tf.convert_to_tensor(data, dtype=tf.float32)
