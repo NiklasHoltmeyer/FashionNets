@@ -257,17 +257,25 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
+
 def read_npy_file(item):
     data = np.load(item.decode())
     return data.astype(np.float32)
 
+
 def load_npy_file(path):
     path_str = path.numpy()
     data = np.load(path_str)
-    return tf.convert_to_tensor(data, dtype=tf.float32)
+    data = np.asarray(data, np.float32)
+    return data
+
 
 def load_npy(p):
-    return tf.py_function(load_npy_file, [p], (tf.float32))
+    # data = tf.py_function(load_npy_file, [p], tf.float32)
+    data = np.random.rand(2048)
+    data = np.asarray(data, np.float32)
+
+    return tf.convert_to_tensor(data, dtype=tf.float32)
 
 
 def _load_image_preprocessor(is_triplet, target_shape, generator_type, preprocess_img=None, augmentation=None):
@@ -276,20 +284,16 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, preproces
 
     if "ctl" == generator_type:
         if is_triplet:
-            return lambda a, p, n, a_ctl, p_ctl, n_ctl,: (prep_image(a),
-                                                          prep_image(p),
-                                                          prep_image(n),
-                                                          load_npy(p_ctl),
-                                                          load_npy(n_ctl))
+            return lambda a, a_ctl, p_ctl, n_ctl: (prep_image(a),
+                                                    load_npy(p_ctl),
+                                                    load_npy(n_ctl))
         else:
-            return lambda a, p, n1, n2, a_ctl, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
-                                                                       prep_image(p),
-                                                                       prep_image(n1),
-                                                                       prep_image(n2),
-                                                                       load_npy(p_ctl),
-                                                                       load_npy(n1_ctl),
-                                                                       load_npy(n2_ctl),
-                                                                       )
+            return lambda a, n1, a_ctl, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
+                                                                prep_image(n1),
+                                                                load_npy(p_ctl),
+                                                                load_npy(n1_ctl),
+                                                                load_npy(n2_ctl),
+                                                                )
 
     if "apn" == generator_type:
         if is_triplet:

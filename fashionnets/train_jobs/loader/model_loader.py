@@ -44,7 +44,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     siamese_model = SiameseModel(siamese_network, back_bone_model)
     siamese_model.compile(optimizer=optimizer)
 
-    siamese_model.fake_predict(train_job["input_shape"], train_job["is_triplet"])
+    siamese_model.fake_predict()
 
     cp_path, run_name = train_job["path"]["checkpoint"], train_job["run"]["name"]
 

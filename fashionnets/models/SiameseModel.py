@@ -5,8 +5,10 @@ from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow.keras import Model
 from tensorflow.keras import metrics
 
-
 # noinspection PyAbstractClass,PyMethodOverriding
+from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
+
+
 class SiameseModel(Model):
     # https://keras.io/examples/vision/siamese_network/
     def __init__(self, siamese_network, back_bone):
@@ -39,17 +41,33 @@ class SiameseModel(Model):
 
         return {"loss": self.loss_tracker.result()}
 
-    def fake_predict(self, input_shape, is_triplet):
+    def fake_predict(self):
         """
         Force Init Layers (-> Model cant be Saved by Training without Init. Layers)
         :param is_triplet:
         :param input_shape:
         :return:
         """
+        input_shape = self.siamese_network.input_shape_
+        is_triplet = self.siamese_network.is_triplet
+        is_ctl = self.siamese_network.is_ctl
+
         random_data = (1,) + input_shape + (3,)
-        random_ds = tf.random.uniform(random_data)
-        random_ds = [random_ds] * (3 if is_triplet else 4)
-        self.predict(random_ds)
+        random_apn = tf.random.uniform(random_data)
+        random_apn = [random_apn] * (3 if is_triplet else 4)
+
+        if is_ctl:
+            random_centroid = (1, EMBEDDING_DIM)
+            random_centroid = tf.random.uniform(random_centroid)
+            random_centroid = [random_centroid] * (2 if is_triplet else 3)
+            if is_triplet:
+                data = [random_apn[0], random_centroid]
+            else:
+                data = [random_apn[0], random_apn[1], random_centroid]
+        else:
+            data = random_apn
+
+        self.predict(data)
 
     def validate_embedding(self, small_batch):
         """

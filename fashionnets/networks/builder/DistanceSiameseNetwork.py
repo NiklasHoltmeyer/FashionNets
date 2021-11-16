@@ -26,7 +26,6 @@ class DistanceSiameseNetwork:
         )
 
         embedding_model = Model(inputs=self.input_layers, outputs=self.encoding_layers)
-
         input_layer = layers.Input(name="input_image", shape=self.input_shape + (self.channels,))
         encoding = self.back_bone(self.preprocess_input(input_layer))
         feature_extractor = Model(inputs=[input_layer], outputs=encoding)

@@ -3,6 +3,8 @@ from tensorflow.keras import layers
 from fashionnets.metrics.distance_layers import TripletDistance, QuadrupletDistance, TripletCTLDistance, \
     QuadrupletCTLDistance
 from fashionnets.metrics.loss_layer import QuadrupletLoss, TripletLoss
+from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
+from fashionnets.models.embedding.simple_cnn import SimpleCNN
 from fashionnets.models.layer.PassThroughLayer import PassThroughLayer
 
 
@@ -15,7 +17,7 @@ def build_layers(builder):
     if builder.is_ctl:
         ctl_names = ["positive_ctl", "negative_ctl"] if builder.is_triplet \
             else ["positive_ctl", "negative1_ctl", "negative2_ctl"]
-        ctl_input = [layers.Input(name=name, shape=builder.input_shape + (builder.channels,)) for name in ctl_names]
+        ctl_input = [layers.Input(name=name, shape=EMBEDDING_DIM) for name in ctl_names]
     else:
         ctl_input = None
 
@@ -43,12 +45,47 @@ def build_layers(builder):
         encoding_layers = [builder.back_bone(builder.preprocess_input(i)) for i in input_layers]
         if ctl_input:
             encoding_layers = encoding_layers + ctl_input
+            input_layers = input_layers + ctl_input
     else:
         assert False, "Currently just using ResNet which requires Preprocessing"
         encoding_layers = [builder.back_bone(i) for i in input_layers]
         if ctl_input:
             encoding_layers = encoding_layers + ctl_input
+            input_layers = input_layers + ctl_input
 
     distance_layers = distance_layer(*encoding_layers)
 
     return input_layers, encoding_layers, distance_layers, loss_layer
+
+if __name__ == "__main__":
+    import tensorflow as tf
+    from tensorflow.keras import Model
+
+    class FakeBuilder:
+        def __init__(self):
+            self.back_bone, _ = SimpleCNN.build((224, 224), 2048)
+            self.is_triplet = True
+            self.is_ctl = True
+            self.input_shape = (224, 224)
+            self.alpha = 1.0
+            self.beta = 0.5
+            self.preprocess_input = lambda d: d
+            self.verbose = True
+            self.channels = 3
+
+    mock_sn = FakeBuilder()
+    input_layers, encoding_layers, distance_layers, loss_layer = build_layers(builder=mock_sn)
+    output_layers = loss_layer(*encoding_layers)
+    for l in input_layers:
+        print(l)
+    exit(0)
+    full_model = Model(
+        inputs=input_layers, outputs=output_layers
+    )
+
+    print(full_model.summary())
+
+    embedding_model = Model(inputs=input_layers, outputs=encoding_layers)
+    input_layer = layers.Input(name="input_image", shape=mock_sn.input_shape + (mock_sn.channels,))
+    encoding = mock_sn.back_bone(mock_sn.preprocess_input(input_layer))
+    feature_extractor = Model(inputs=[input_layer], outputs=encoding)

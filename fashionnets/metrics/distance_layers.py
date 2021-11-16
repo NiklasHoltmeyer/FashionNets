@@ -50,10 +50,6 @@ class TripletCTLDistance(layers.Layer):
         super(TripletCTLDistance, self).__init__(**kwargs)
 
     def call(self, anchor, positive_centroid, negative_centroid):
-        print(anchor)
-        print("*")
-        print(positive_centroid)
-        exit(0)
         a_cp = euclidean_distance(anchor, positive_centroid)
         a_cn = euclidean_distance(anchor, negative_centroid)
 
