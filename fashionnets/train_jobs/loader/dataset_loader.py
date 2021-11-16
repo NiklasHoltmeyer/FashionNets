@@ -9,6 +9,7 @@ from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_2_pairs_generator im
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 import tensorflow as tf
+from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
 from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path
@@ -351,7 +352,12 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     if Path("./deep_fashion_1_256/train.csv").exists():
         Path("./deep_fashion_1_256/train.csv").unlink()
 
+        #train_ctl, val_ctl
+
     embedding_model = model.siamese_network.feature_extractor
+
+    DeleteOldModel.delete_path(Path("./ctl"))
+
     ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
                                     image_suffix="_256",
                                     model=embedding_model,
@@ -360,8 +366,12 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
                                     augmentation=job_settings["augmentation"](is_train=False),
                                     generator_type=job_settings["generator_type"])
 
-    ds_loader.load_split("train", is_triplet=False, force=True)
+    if job_settings["sampling"] == "random":
+        ds_loader.load_split("train", is_triplet=False, force=True, force_hard_sampling=False)
+    elif job_settings["sampling"] == "hard":
+        ds_loader.load_split("train", is_triplet=False, force=True, force_hard_sampling=True)
 
+#force=False, force_hard_sampling=False
     src = "./deep_fashion_1_256/train.csv"
     dst = f"./deep_fashion_1_256/train_{init_epoch:04d}.csv"
 
