@@ -261,13 +261,13 @@ def read_npy_file(item):
     data = np.load(item.decode())
     return data.astype(np.float32)
 
-def load_npy(path):
-    with np.load(path) as data:
-        print(data)
-    exit(0)
-    return None
+def load_npy_file(path):
+    path_str = path.numpy()
+    data = np.load(path_str)
+    return tf.convert_to_tensor(data, dtype=tf.float32)
 
-    # return tf.convert_to_tensor(data, dtype=tf.float32)
+def load_npy(p):
+    return tf.py_function(load_npy_file, [p], (tf.float32))
 
 
 def _load_image_preprocessor(is_triplet, target_shape, generator_type, preprocess_img=None, augmentation=None):
@@ -354,7 +354,8 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
                                     model=embedding_model,
                                     batch_size=job_settings["batch_size"],
                                     n_chunks=n_chunks,
-                                    augmentation=job_settings["augmentation"](is_train=False))
+                                    augmentation=job_settings["augmentation"](is_train=False),
+                                    generator_type=job_settings["generator_type"])
 
     ds_loader.load_split("train", is_triplet=False, force=True)
 

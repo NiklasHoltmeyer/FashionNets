@@ -45,6 +45,19 @@ class TripletDistance(layers.Layer):
 
         return ap, an
 
+class TripletCTLDistance(layers.Layer):
+    def __init__(self, **kwargs):
+        super(TripletCTLDistance, self).__init__(**kwargs)
+
+    def call(self, anchor, positive_centroid, negative_centroid):
+        print(anchor)
+        print("*")
+        print(positive_centroid)
+        exit(0)
+        a_cp = euclidean_distance(anchor, positive_centroid)
+        a_cn = euclidean_distance(anchor, negative_centroid)
+
+        return a_cp, a_cn
 
 class QuadrupletDistance(layers.Layer):
     def __init__(self, **kwargs):
@@ -56,3 +69,17 @@ class QuadrupletDistance(layers.Layer):
         nn = euclidean_distance(negative2, negative1)
 
         return ap, an, nn
+
+class QuadrupletCTLDistance(layers.Layer):
+    def __init__(self, **kwargs):
+        super(QuadrupletCTLDistance, self).__init__(**kwargs)
+
+    def call(self, anchor, negative1, positive_centroid, negative1_centroid, negative2_centroid):
+        a_cp = euclidean_distance(anchor, positive_centroid)
+        a_cn = euclidean_distance(anchor, negative1_centroid)
+        n1_cn2 = euclidean_distance(negative1, negative2_centroid)
+
+        return a_cp, a_cn, n1_cn2
+
+
+

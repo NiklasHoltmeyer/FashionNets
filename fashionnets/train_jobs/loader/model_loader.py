@@ -11,6 +11,11 @@ def sanity_check_job_settings(**train_job):
     optimizer = train_job["optimizer"]
     assert f"{optimizer.lr.numpy():.2e}" == train_job["learning_rate"]
 
+    if train_job["is_ctl"]:
+        assert train_job["generator_type"] == "ctl"
+    else:
+        assert train_job["generator_type"] == "apn"
+
 
 def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_weights=False, **train_job):
     logger = defaultLogger("Load_Siamese_Model")
@@ -28,6 +33,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
 
     siamese_network = SiameseNetwork(back_bone=back_bone_model,
                                      is_triplet=train_job["is_triplet"],
+                                     is_ctl=train_job["is_ctl"],
                                      input_shape=train_job["input_shape"],
                                      alpha=train_job["alpha"],
                                      beta=train_job["beta"],

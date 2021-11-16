@@ -73,7 +73,7 @@ def job_list(debugging):
                           "augmentation": compose_augmentations()},
 
         "t_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                          "augmentation": compose_augmentations(), "generator_type": "ctl"}
+                          "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True}
 
     }
     #

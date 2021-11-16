@@ -5,11 +5,12 @@ from fashionnets.networks.builder.DistanceSiameseNetwork import DistanceSiameseN
 
 # noinspection PyAbstractClass
 class SiameseNetwork(tf.keras.Model):
-    def __init__(self, back_bone, is_triplet, input_shape, alpha, beta,
+    def __init__(self, back_bone, is_triplet, is_ctl, input_shape, alpha, beta,
                  preprocess_input=None, verbose=False, channels=3):
         super(SiameseNetwork, self).__init__()
         self.back_bone = back_bone
         self.is_triplet = is_triplet
+        self.is_ctl = is_ctl
         self.input_shape_ = input_shape
         self.alpha = alpha
         self.beta = beta
@@ -17,7 +18,8 @@ class SiameseNetwork(tf.keras.Model):
         self.verbose = verbose
         self.channels = channels
         # MetricLearningSiameseNetwork  DistanceSiameseNetwork
-        network_type = DistanceSiameseNetwork(back_bone=back_bone, is_triplet=is_triplet, input_shape=input_shape,
+        network_type = DistanceSiameseNetwork(back_bone=back_bone, is_triplet=is_triplet, is_ctl=is_ctl,
+                                              input_shape=input_shape,
                                               alpha=alpha, beta=beta,
                                               preprocess_input=preprocess_input, verbose=verbose,
                                               channels=channels)

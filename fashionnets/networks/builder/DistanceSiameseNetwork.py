@@ -4,10 +4,11 @@ from tensorflow.keras import layers
 
 
 class DistanceSiameseNetwork:
-    def __init__(self, back_bone, is_triplet, input_shape, alpha, beta,
+    def __init__(self, back_bone, is_triplet, is_ctl, input_shape, alpha, beta,
                  preprocess_input=None, verbose=False, channels=3):
         self.back_bone = back_bone
         self.is_triplet = is_triplet
+        self.is_ctl = is_ctl
         self.input_shape = input_shape
         self.alpha = alpha
         self.beta = beta

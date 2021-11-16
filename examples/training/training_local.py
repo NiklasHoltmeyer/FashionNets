@@ -1,8 +1,11 @@
+import os
+
 notebook_name = "l_t_test_ctl"  # 212
+#
 from fashionnets.train_jobs.loader.job_loader import load_job_settings, history_to_csv_string, prepare_environment
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job
 from fashionnets.train_jobs.loader.job_loader import add_back_bone_to_train_job
-
+os.chdir(r'F:\workspace\FashNets\runs\1337_resnet50_imagenet_triplet')
 environment, training_job_cfg = prepare_environment(notebook_name, debugging=True)
 
 train_job = load_job_settings(environment=environment, training_job_cfg=training_job_cfg, kaggle_downloader=None)
