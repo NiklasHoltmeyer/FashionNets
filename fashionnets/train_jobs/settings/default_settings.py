@@ -13,7 +13,8 @@ def base_settings(debugging, learning_rate=1e-4):
         "buffer_size": 32,
         "batch_size": 32,
         "optimizer": optimizer,
-        "learning_rate": f"{optimizer.lr.numpy():.2e}"
+        "learning_rate": f"{optimizer.lr.numpy():.2e}",
+        "generator_type": "apn"
     }
 
     base["target_shape"] = base["input_shape"]

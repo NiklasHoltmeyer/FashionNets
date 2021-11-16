@@ -8,9 +8,12 @@ from fashiondatasets.deepfashion2.DeepFashion2Quadruplets import DeepFashion2Qua
 from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_2_pairs_generator import DeepFashion2PairsGenerator
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
+import tensorflow as tf
 
+from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
 from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path
 from fashionnets.util.io import all_paths_exist
+import numpy as np
 
 
 def loader_info(name, variation=""):
@@ -160,7 +163,12 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
 
-    ds_loader = DeepFashion1Dataset(base_path=base_path, image_suffix="_256", model=None, nrows=settings["nrows"])
+    ds_loader = DeepFashion1Dataset(base_path=base_path,
+                                    image_suffix="_256",
+                                    model=None,
+                                    nrows=settings["nrows"],
+                                    augmentation=None,
+                                    generator_type=settings["generator_type"])
 
     if settings["nrows"]:
         force_train_recreate = False
@@ -245,19 +253,49 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     print("Augmentation", augmentation, "IS_Train", is_train)
 
     return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
-                                                augmentation=augmentation)) \
+                                                augmentation=augmentation, generator_type=settings["generator_type"])) \
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
+def read_npy_file(item):
+    data = np.load(item.decode())
+    return data.astype(np.float32)
 
-def _load_image_preprocessor(is_triplet, target_shape, preprocess_img=None, augmentation=None):
+def load_npy(path):
+    with np.load(path) as data:
+        print(data)
+    exit(0)
+    return None
+
+    # return tf.convert_to_tensor(data, dtype=tf.float32)
+
+
+def _load_image_preprocessor(is_triplet, target_shape, generator_type, preprocess_img=None, augmentation=None):
     prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img, augmentation=augmentation)
     assert not preprocess_img, "None of the two Datasets needs further Preprocessing!"
 
-    if is_triplet:
-        return lambda a, p, n: (prep_image(a), prep_image(p), prep_image(n))
-    else:
-        return lambda a, p, n1, n2: (prep_image(a), prep_image(p), prep_image(n1), prep_image(n2))
+    if "ctl" == generator_type:
+        if is_triplet:
+            return lambda a, p, n, a_ctl, p_ctl, n_ctl,: (prep_image(a),
+                                                          prep_image(p),
+                                                          prep_image(n),
+                                                          load_npy(p_ctl),
+                                                          load_npy(n_ctl))
+        else:
+            return lambda a, p, n1, n2, a_ctl, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
+                                                                       prep_image(p),
+                                                                       prep_image(n1),
+                                                                       prep_image(n2),
+                                                                       load_npy(p_ctl),
+                                                                       load_npy(n1_ctl),
+                                                                       load_npy(n2_ctl),
+                                                                       )
+
+    if "apn" == generator_type:
+        if is_triplet:
+            return lambda a, p, n: (prep_image(a), prep_image(p), prep_image(n))
+        else:
+            return lambda a, p, n1, n2: (prep_image(a), prep_image(p), prep_image(n1), prep_image(n2))
 
 
 def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
@@ -315,7 +353,8 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
                                     image_suffix="_256",
                                     model=embedding_model,
                                     batch_size=job_settings["batch_size"],
-                                    n_chunks=n_chunks)
+                                    n_chunks=n_chunks,
+                                    augmentation=job_settings["augmentation"](is_train=False))
 
     ds_loader.load_split("train", is_triplet=False, force=True)
 

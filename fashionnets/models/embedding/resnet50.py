@@ -4,10 +4,11 @@ from tensorflow.keras.applications import resnet
 from tensorflow.keras.regularizers import l2
 from tensorflow.python.keras.models import Sequential
 
+EMBEDDING_DIM = 2048
 
 class ResNet50Builder:
     @staticmethod
-    def build(input_shape, embedding_dim=2048, weights="imagenet"):
+    def build(input_shape, embedding_dim=EMBEDDING_DIM, weights="imagenet"):
         R = resnet.ResNet50(
             weights=weights, input_shape=input_shape + (3,), include_top=False
         )
