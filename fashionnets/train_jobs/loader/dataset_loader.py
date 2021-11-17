@@ -256,27 +256,13 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
         .prefetch(tf.data.AUTOTUNE)
 
 
-def read_npy_file(item):
-    path = item.numpy().decode("utf-8")
-    data = np.load(path)
-    return data.astype(np.float32)
+def np_load(feature_path):
+    return np.load(feature_path)
 
-def map_func(feature_path):
-  feature = np.load(feature_path)
-  return feature
-
-def load_npy_file(path):
-    bytes = tf.io.read_file(path)
-    data = np.load(path_str)
-    data = np.asarray(data, np.float32)
-    print("-")
-    print(data)
-    exit(0)
-    return data
 
 def load_npy(p):
-    d = tf.numpy_function(map_func, [p], [tf.float32])
-    return tf.convert_to_tensor(d, dtype=tf.float32)
+    d = tf.numpy_function(np_load, [p], tf.float64)
+    return tf.convert_to_tensor(d, dtype=tf.float64)
 
 
 def _load_image_preprocessor(is_triplet, target_shape, generator_type, preprocess_img=None, augmentation=None):
