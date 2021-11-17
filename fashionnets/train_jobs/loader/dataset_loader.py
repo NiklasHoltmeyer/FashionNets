@@ -319,7 +319,10 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     return load_dataset_loader(**job_settings)()
 
 
-def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency=5):
+def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency=5, n_chunks=None):
+    if n_chunks:
+        return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks=n_chunks,
+                                                         build_frequency=build_frequency)
     for i in [6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
         try:  # ^ Try Catch can be deleted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
             print(f"Trying to build Hard-Triplets {i} N_Chunks")
