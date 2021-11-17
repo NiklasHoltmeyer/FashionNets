@@ -15,6 +15,7 @@ def base_settings(debugging, learning_rate=1e-4):
         "optimizer": optimizer,
         "learning_rate": f"{optimizer.lr.numpy():.2e}",
         "generator_type": "apn",
+        "is_ctl": False,
         "sampling": "random"
     }
 

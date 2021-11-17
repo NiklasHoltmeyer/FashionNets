@@ -42,7 +42,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
                                      channels=3)
 
     siamese_model = SiameseModel(siamese_network, back_bone_model)
-    siamese_model.compile(optimizer=optimizer)
+    siamese_model.compile(optimizer=optimizer, run_eagerly=True)
 
     siamese_model.fake_predict()
 

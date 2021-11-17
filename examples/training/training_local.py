@@ -1,6 +1,6 @@
 import os
 
-notebook_name = "l_t_test_ctl"  # 212
+notebook_name = "l_q_1e5aug_random_building"  # 212
 #
 from fashionnets.train_jobs.loader.job_loader import load_job_settings, history_to_csv_string, prepare_environment
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job

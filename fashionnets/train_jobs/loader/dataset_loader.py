@@ -171,12 +171,9 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
                                     augmentation=None,
                                     generator_type=settings["generator_type"])
 
-    if settings["nrows"]:
-        force_train_recreate = False
-
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
-                              force_train_recreate=force_train_recreate)
+                              force=False, force_hard_sampling=False)
 
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
@@ -260,22 +257,26 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
 
 
 def read_npy_file(item):
-    data = np.load(item.decode())
+    path = item.numpy().decode("utf-8")
+    data = np.load(path)
     return data.astype(np.float32)
 
+def map_func(feature_path):
+  feature = np.load(feature_path)
+  return feature
 
 def load_npy_file(path):
-    path_str = path.numpy()
+    bytes = tf.io.read_file(path)
     data = np.load(path_str)
     data = np.asarray(data, np.float32)
+    print("-")
+    print(data)
+    exit(0)
     return data
 
-
 def load_npy(p):
-    data = tf.py_function(load_npy_file, [p], tf.float32)
-    data = np.asarray(data, np.float32)
-
-    return tf.convert_to_tensor(data, dtype=tf.float32)
+    d = tf.numpy_function(map_func, [p], [tf.float32])
+    return tf.convert_to_tensor(d, dtype=tf.float32)
 
 
 def _load_image_preprocessor(is_triplet, target_shape, generator_type, preprocess_img=None, augmentation=None):
@@ -284,16 +285,16 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, preproces
 
     if "ctl" == generator_type:
         if is_triplet:
-            return lambda a, a_ctl, p_ctl, n_ctl: (prep_image(a),
-                                                    load_npy(p_ctl),
-                                                    load_npy(n_ctl))
+            return lambda a, p_ctl, n_ctl: (prep_image(a),
+                                            load_npy(p_ctl),
+                                            load_npy(n_ctl))
         else:
-            return lambda a, n1, a_ctl, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
-                                                                prep_image(n1),
-                                                                load_npy(p_ctl),
-                                                                load_npy(n1_ctl),
-                                                                load_npy(n2_ctl),
-                                                                )
+            return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
+                                                         prep_image(n1),
+                                                         load_npy(p_ctl),
+                                                         load_npy(n1_ctl),
+                                                         load_npy(n2_ctl),
+                                                         )
 
     if "apn" == generator_type:
         if is_triplet:
@@ -352,11 +353,14 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     if Path("./deep_fashion_1_256/train.csv").exists():
         Path("./deep_fashion_1_256/train.csv").unlink()
 
-        #train_ctl, val_ctl
+        # train_ctl, val_ctl
 
-    embedding_model = model.siamese_network.feature_extractor
+    if model:
+        embedding_model = model.siamese_network.feature_extractor
+    else:
+        embedding_model = None
 
-    DeleteOldModel.delete_path(Path("./ctl"))
+    #DeleteOldModel.delete_path(Path("./ctl"))
 
     ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
                                     image_suffix="_256",
@@ -371,7 +375,7 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     elif job_settings["sampling"] == "hard":
         ds_loader.load_split("train", is_triplet=False, force=True, force_hard_sampling=True)
 
-#force=False, force_hard_sampling=False
+    # force=False, force_hard_sampling=False
     src = "./deep_fashion_1_256/train.csv"
     dst = f"./deep_fashion_1_256/train_{init_epoch:04d}.csv"
 
