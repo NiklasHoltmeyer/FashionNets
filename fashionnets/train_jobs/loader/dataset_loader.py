@@ -360,7 +360,7 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     else:
         embedding_model = None
 
-    #DeleteOldModel.delete_path(Path("./ctl"))
+    DeleteOldModel.delete_path(Path("./ctl"))
 
     ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
                                     image_suffix="_256",
