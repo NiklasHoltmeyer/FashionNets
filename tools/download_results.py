@@ -27,8 +27,12 @@ def download_results():
             zips)
 
         target_folder = Path(results_download_path, result_folder).resolve()
+        zips_full_remote_path = sorted(zips_full_remote_path)
 
-        for remote_zip in zips_full_remote_path:
+        if len(zips_full_remote_path) < 2:
+            continue
+
+        for remote_zip in zips_full_remote_path[:-1]:
             cmd = f'rclone move "hi:/{remote_zip}" "{target_folder}" -P'
             print(os.system(cmd))
 
