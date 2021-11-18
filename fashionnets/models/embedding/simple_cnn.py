@@ -3,7 +3,7 @@ import tensorflow as tf
 
 class SimpleCNN:
     @staticmethod
-    def build(input_shape, embedding_dim=256):
+    def build(input_shape, embedding_dim=2048):
         embedding_model = tf.keras.Sequential([
             tf.keras.layers.Conv2D(filters=64, kernel_size=2, padding='same', activation='relu',
                                    input_shape=(input_shape[0], input_shape[1], 3)),

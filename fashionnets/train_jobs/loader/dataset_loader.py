@@ -12,7 +12,7 @@ import tensorflow as tf
 from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
-from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path
+from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path, _load_embedding_base_path
 from fashionnets.util.io import all_paths_exist
 import numpy as np
 
@@ -163,6 +163,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
     base_path = _load_dataset_base_path(**settings)
+    embedding_base_path = _load_embedding_base_path(**settings)
 
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
@@ -173,7 +174,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
 
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
-                              force=False, force_hard_sampling=False)
+                              force=False, force_hard_sampling=False, embedding_path=embedding_base_path)
 
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
@@ -359,10 +360,17 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
                                     augmentation=job_settings["augmentation"](is_train=False),
                                     generator_type=job_settings["generator_type"])
 
+    embedding_base_path = _load_embedding_base_path(job_settings) if job_settings["is_ctl"] or \
+                                                                     job_settings["sampling"] == "hard" else None
+
     if job_settings["sampling"] == "random":
-        ds_loader.load_split("train", is_triplet=False, force=True, force_hard_sampling=False)
+        ds_loader.load_split("train", is_triplet=False, force=True,
+                             force_hard_sampling=False, embedding_path=embedding_base_path)
+
     elif job_settings["sampling"] == "hard":
-        ds_loader.load_split("train", is_triplet=False, force=True, force_hard_sampling=True)
+
+        ds_loader.load_split("train", is_triplet=False, force=True,
+                             force_hard_sampling=True, embedding_path=embedding_base_path)
 
     # force=False, force_hard_sampling=False
     src = "./deep_fashion_1_256/train.csv"

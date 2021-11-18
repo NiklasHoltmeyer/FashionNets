@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fashionnets.train_jobs.environment.Environment_Consts import notebooks
 
 
@@ -16,3 +18,8 @@ def _load_dataset_base_path(**settings):
     assert notebook in notebooks.keys()
 
     return notebooks[notebook]["paths"]["dataset_base_path"] + settings["dataset"]["name"]
+
+def _load_embedding_base_path(**settings):
+    p = Path(_load_dataset_base_path(**settings), "embeddings")
+    return str(p.resolve())
+
