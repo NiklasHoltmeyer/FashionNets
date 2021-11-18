@@ -263,13 +263,10 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
 
     print("Augmentation", augmentation, "IS_Train", is_train)
 
-    ds = dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
-                                              augmentation=augmentation, generator_type=settings["generator_type"]))
-#    if settings["is_ctl"]:
-#        ds = ds.filter(filter_ds_not_nan)
-    return ds
-#    return ds.batch(batch_size, drop_remainder=False) \
-#        .prefetch(tf.data.AUTOTUNE)
+    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
+                                               augmentation=augmentation, generator_type=settings["generator_type"])) \
+        .batch(batch_size, drop_remainder=False) \
+        .prefetch(tf.data.AUTOTUNE)
 
 
 def np_load(feature_path):
@@ -287,11 +284,11 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, preproces
 
     if "ctl" == generator_type:
         if is_triplet:
-            return lambda a, p_ctl, n_ctl: (load_npy(a),
+            return lambda a, p_ctl, n_ctl: (prep_image(a),
                                             load_npy(p_ctl),
                                             load_npy(n_ctl))
         else:
-            return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (load_npy(a),
+            return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
                                                          load_npy(n1),
                                                          load_npy(p_ctl),
                                                          load_npy(n1_ctl),

@@ -53,10 +53,13 @@ class SiameseModel(Model):
         is_ctl = self.siamese_network.is_ctl
 
         if is_ctl:
+            random_data = (1,) + input_shape + (3,)
+            random_apn = tf.random.uniform(random_data)
+
             embedding_shape = (1, EMBEDDING_DIM)
             random_centroid = tf.random.uniform(embedding_shape)
             random_centroid = [random_centroid] * (3 if is_triplet else 5)
-            data = random_centroid
+            data = random_apn + random_centroid
         else:
             image_shape = (1,) + input_shape + (3,)
             random_apn = tf.random.uniform(image_shape)

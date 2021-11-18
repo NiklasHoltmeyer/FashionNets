@@ -42,36 +42,20 @@ def job_list(debugging):
     train_jobs = {
         # None
         # WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"]},
-        "t_12_none": {"run_idx": 312, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                      "augmentation": compose_augmentations()},
-        "q_n11_none": {"run_idx": 411, **base_cfg1e4, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                       "augmentation": compose_augmentations()},
-
-        "t_1e5aug_none": {"run_idx": 512, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                          "augmentation": compose_augmentations()},
-
-        "t_1e5aug_none_less_building": {"run_idx": 522, **base_cfg1e5, "dataset": ds,
-                                        "freeze_layers": freeze_layers["none"],
-                                        "augmentation": compose_augmentations()},
-
-        "t_1e5aug_none_building_resume": {"run_idx": 532, **base_cfg1e5, "dataset": ds,
-                                          "freeze_layers": freeze_layers["none"],
-                                          "augmentation": compose_augmentations()},
 
         "t_1e5aug_random_building": {"run_idx": 542, **base_cfg1e5, "dataset": ds,
                                      "freeze_layers": freeze_layers["none"],
                                      "augmentation": compose_augmentations()},
+
+        "t_1e5aug_random_building_hard_sampling": {"run_idx": 545, **base_cfg1e5, "dataset": ds,
+                                                   "freeze_layers": freeze_layers["none"],
+                                                   "augmentation": compose_augmentations(),
+                                                   "sampling": "hard"},
+
         "t_1e5aug_random_building_ctl": {"run_idx": 552, **base_cfg1e5, "dataset": ds,
                                          "freeze_layers": freeze_layers["none"],
                                          "augmentation": compose_augmentations(), "generator_type": "ctl",
                                          "is_ctl": True},
-
-        "q_1e5aug_none": {"run_idx": 612, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                          "augmentation": compose_augmentations()},
-
-        "q_1e5aug_none_less_building": {"run_idx": 622, **base_cfg1e5, "dataset": ds,
-                                        "freeze_layers": freeze_layers["none"],
-                                        "augmentation": compose_augmentations()},
 
         "q_1e5aug_random_building": {"run_idx": 642, **base_cfg1e5, "dataset": ds,
                                      "freeze_layers": freeze_layers["none"],
@@ -83,6 +67,8 @@ def job_list(debugging):
                                          "is_ctl": True},
 
         "t_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
+                       "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True},
+        "q_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                        "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True}
 
     }

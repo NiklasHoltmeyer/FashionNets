@@ -13,42 +13,44 @@ def build_layers(builder):
     positive_input = layers.Input(name="positive", shape=builder.input_shape + (builder.channels,))
 
     if builder.is_ctl:
-        #q anchor, negative1, positive_centroid, negative1_centroid, negative2_centroid
-        #t anchor, positive_centroid, negative_centroid
+        # q anchor, negative1, positive_centroid, negative1_centroid, negative2_centroid
+        # t anchor, positive_centroid, negative_centroid
 
         if builder.is_triplet:
-            ctl_names = ["anchor", "positive_centroid", "negative_centroid"]
+            ctl_names = ["positive_centroid", "negative_centroid"]
         else:
-            ctl_names = ["anchor", "negative1", "positive_centroid", "negative1_centroid", "negative2_centroid"]
+            ctl_names = ["negative1", "positive_centroid", "negative1_centroid", "negative2_centroid"]
 
-        ctl_inputs = [layers.Input(name=name, shape=EMBEDDING_DIM) for name in ctl_names]
-
-
+        ctl_input = [layers.Input(name=name, shape=EMBEDDING_DIM) for name in ctl_names]
     else:
-        ctl_inputs = None
+        ctl_input = None
 
     if builder.is_triplet:
         negative_inputs = [layers.Input(name="negative", shape=builder.input_shape + (builder.channels,))]
-        distance_layer = TripletDistance() if ctl_inputs is None else TripletCTLDistance()
+        distance_layer = TripletDistance() if ctl_input is None else TripletCTLDistance()
         loss_layer = TripletLoss(alpha=builder.alpha)
     else:
         negative_inputs = [
             layers.Input(name="negative1", shape=builder.input_shape + (builder.channels,)),
             layers.Input(name="negative2", shape=builder.input_shape + (builder.channels,))
         ]
-        distance_layer = QuadrupletDistance() if ctl_inputs is None else QuadrupletCTLDistance()
+        distance_layer = QuadrupletDistance() if ctl_input is None else QuadrupletCTLDistance()
         loss_layer = QuadrupletLoss(alpha=builder.alpha, beta=builder.beta)
 
     if builder.is_ctl:
-        input_layers = []
+        input_layers = [anchor_input]
+#        if builder.is_triplet:
+#            input_layers = [anchor_input]
+#        else:
+#            input_layers = [anchor_input, negative_inputs[0]]
     else:
         input_layers = [anchor_input, positive_input, *negative_inputs]
-    # noinspection PyUnreachableCode
+        # noinspection PyUnreachableCode
     if builder.preprocess_input:
         encoding_layers = [builder.back_bone(builder.preprocess_input(i)) for i in input_layers]
-        if ctl_inputs:
-            encoding_layers = encoding_layers + ctl_inputs
-            input_layers = input_layers + ctl_inputs
+        if ctl_input:
+            encoding_layers = encoding_layers + ctl_input
+            input_layers = input_layers + ctl_input
     else:
         assert False, "Currently just using ResNet which requires Preprocessing"
         encoding_layers = [builder.back_bone(i) for i in input_layers]
@@ -60,8 +62,10 @@ def build_layers(builder):
 
     return input_layers, encoding_layers, distance_layers, loss_layer
 
+
 if __name__ == "__main__":
     from tensorflow.keras import Model
+
 
     class FakeBuilder:
         def __init__(self):
@@ -74,6 +78,7 @@ if __name__ == "__main__":
             self.preprocess_input = lambda d: d
             self.verbose = True
             self.channels = 3
+
 
     mock_sn = FakeBuilder()
     input_layers, encoding_layers, distance_layers, loss_layer = build_layers(builder=mock_sn)
