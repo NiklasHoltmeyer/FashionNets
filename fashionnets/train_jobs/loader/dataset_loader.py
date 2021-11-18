@@ -337,7 +337,7 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
 
 
 def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks, build_frequency):
-    if init_epoch == 0 and not job_settings["is_ctl"]:
+    if init_epoch == 0 and not job_settings["is_ctl"] and not job_settings["sampling"] == "hard":
         return load_dataset_loader(**job_settings)()
 
     result = __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
