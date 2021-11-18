@@ -12,7 +12,9 @@ import tensorflow as tf
 from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
-from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path, _load_embedding_base_path
+from fashionnets.models.layer.Augmentation import compose_augmentations
+from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path, _load_embedding_base_path, \
+    _load_centroid_base_path
 from fashionnets.util.io import all_paths_exist
 import numpy as np
 
@@ -165,17 +167,23 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     base_path = _load_dataset_base_path(**settings)
     embedding_base_path = _load_embedding_base_path(**settings)
 
+    model = settings["back_bone"]["embedding_model"] if settings["is_ctl"] else None
+    # back_bone
+
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
-                                    model=None,
+                                    model=model,
                                     nrows=settings["nrows"],
-                                    augmentation=None,
+                                    augmentation=compose_augmentations()(False),
                                     generator_type=settings["generator_type"])
+
+    DeleteOldModel.delete_path(_load_centroid_base_path(**settings))
+    if embedding_base_path:
+        DeleteOldModel.delete_path(embedding_base_path)
 
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=False, force_hard_sampling=False, embedding_path=embedding_base_path)
-
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
@@ -241,6 +249,10 @@ def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, *
     return train_dataset, val_dataset, n_train_items, n_val_items
 
 
+def filter_ds_not_nan(x):
+    return not tf.reduce_any(tf.reduce_any(tf.math.is_nan(x)))
+
+
 def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     target_shape = settings["input_shape"]
 
@@ -251,14 +263,17 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
 
     print("Augmentation", augmentation, "IS_Train", is_train)
 
-    return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
-                                                augmentation=augmentation, generator_type=settings["generator_type"])) \
-        .batch(batch_size, drop_remainder=False) \
-        .prefetch(tf.data.AUTOTUNE)
+    ds = dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
+                                              augmentation=augmentation, generator_type=settings["generator_type"]))
+#    if settings["is_ctl"]:
+#        ds = ds.filter(filter_ds_not_nan)
+    return ds
+#    return ds.batch(batch_size, drop_remainder=False) \
+#        .prefetch(tf.data.AUTOTUNE)
 
 
 def np_load(feature_path):
-    return np.load(feature_path)
+    return np.load(feature_path).astype(np.float64)
 
 
 def load_npy(p):
@@ -272,12 +287,12 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, preproces
 
     if "ctl" == generator_type:
         if is_triplet:
-            return lambda a, p_ctl, n_ctl: (prep_image(a),
+            return lambda a, p_ctl, n_ctl: (load_npy(a),
                                             load_npy(p_ctl),
                                             load_npy(n_ctl))
         else:
-            return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
-                                                         prep_image(n1),
+            return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (load_npy(a),
+                                                         load_npy(n1),
                                                          load_npy(p_ctl),
                                                          load_npy(n1_ctl),
                                                          load_npy(n2_ctl),
@@ -350,7 +365,11 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     else:
         embedding_model = None
 
-    DeleteOldModel.delete_path(Path("./ctl"))
+    embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
+                                                                       job_settings["sampling"] == "hard" else None
+    DeleteOldModel.delete_path(_load_centroid_base_path(**job_settings))
+    if embedding_base_path:
+        DeleteOldModel.delete_path(embedding_base_path)
 
     ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
                                     image_suffix="_256",
@@ -361,14 +380,13 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
                                     generator_type=job_settings["generator_type"])
 
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
-                                                                     job_settings["sampling"] == "hard" else None
+                                                                       job_settings["sampling"] == "hard" else None
 
     if job_settings["sampling"] == "random":
         ds_loader.load_split("train", is_triplet=False, force=True,
                              force_hard_sampling=False, embedding_path=embedding_base_path)
 
     elif job_settings["sampling"] == "hard":
-
         ds_loader.load_split("train", is_triplet=False, force=True,
                              force_hard_sampling=True, embedding_path=embedding_base_path)
 

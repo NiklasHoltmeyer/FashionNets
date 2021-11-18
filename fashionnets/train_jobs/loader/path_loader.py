@@ -23,3 +23,7 @@ def _load_embedding_base_path(**settings):
     p = Path(_load_dataset_base_path(**settings), "embeddings")
     return str(p.resolve())
 
+def _load_centroid_base_path(**settings):
+    p = Path(_load_dataset_base_path(**settings), "centroids")
+    return str(p.resolve())
+
