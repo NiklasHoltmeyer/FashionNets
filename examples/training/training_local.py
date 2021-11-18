@@ -15,6 +15,10 @@ datasets = train_job["run"]["dataset"]()
 
 train_ds, val_ds = datasets["train"], datasets["val"]
 
+for row in train_ds.take(1):
+    print(row)
+    break
+
 # result_uploader = train_job["environment"].webdav
 train_job["environment"].webdav = None
 
