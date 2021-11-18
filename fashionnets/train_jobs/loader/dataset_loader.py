@@ -360,7 +360,7 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
                                     augmentation=job_settings["augmentation"](is_train=False),
                                     generator_type=job_settings["generator_type"])
 
-    embedding_base_path = _load_embedding_base_path(job_settings) if job_settings["is_ctl"] or \
+    embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                      job_settings["sampling"] == "hard" else None
 
     if job_settings["sampling"] == "random":
