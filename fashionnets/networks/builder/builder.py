@@ -1,11 +1,9 @@
-from tensorflow.keras import layers
-
 from fashionnets.metrics.distance_layers import TripletDistance, QuadrupletDistance, TripletCTLDistance, \
     QuadrupletCTLDistance
 from fashionnets.metrics.loss_layer import QuadrupletLoss, TripletLoss
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
 from fashionnets.models.embedding.simple_cnn import SimpleCNN
-from fashionnets.models.layer.PassThroughLayer import PassThroughLayer
+from tensorflow.keras import layers
 
 
 def build_layers(builder):
@@ -58,7 +56,6 @@ def build_layers(builder):
     return input_layers, encoding_layers, distance_layers, loss_layer
 
 if __name__ == "__main__":
-    import tensorflow as tf
     from tensorflow.keras import Model
 
     class FakeBuilder:
