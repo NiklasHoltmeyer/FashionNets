@@ -356,7 +356,7 @@ def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n
     raise Exception("Could not Download Train.csv.")
 
 
-def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks):
+def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks, force_ctl):
     if Path("./deep_fashion_1_256/train.csv").exists():
         Path("./deep_fashion_1_256/train.csv").unlink()
 
@@ -370,7 +370,8 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                        job_settings["sampling"] == "hard" else None
     DeleteOldModel.delete_path(_load_centroid_base_path(**job_settings))
-    if embedding_base_path:
+
+    if embedding_base_path and force_ctl:
         DeleteOldModel.delete_path(embedding_base_path)
 
     hard_sampling = job_settings["sampling"] == "hard"
