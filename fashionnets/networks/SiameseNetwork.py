@@ -23,7 +23,6 @@ class SiameseNetwork(tf.keras.Model):
                                               alpha=alpha, beta=beta,
                                               preprocess_input=preprocess_input, verbose=verbose,
                                               channels=channels)
-
         self.full_model, self.embedding_model, self.feature_extractor = network_type.combine()
 
     def call(self, inputs):

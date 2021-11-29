@@ -44,5 +44,3 @@ class QuadrupletLoss(layers.Layer):
         # loss = tf.maximum(loss, 0.0)
 
         return loss
-
-

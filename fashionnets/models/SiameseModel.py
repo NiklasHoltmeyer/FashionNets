@@ -48,25 +48,27 @@ class SiameseModel(Model):
         :param input_shape:
         :return:
         """
+
         input_shape = self.siamese_network.input_shape_
         is_triplet = self.siamese_network.is_triplet
         is_ctl = self.siamese_network.is_ctl
 
         if is_ctl:
             random_data = (1,) + input_shape + (3,)
-            random_apn = tf.random.uniform(random_data)
+            random_a = tf.random.uniform(random_data)
 
             embedding_shape = (1, EMBEDDING_DIM)
-            random_centroid = tf.random.uniform(embedding_shape)
-            random_centroid = [random_centroid] * (3 if is_triplet else 5)
-            data = random_apn + random_centroid
+            # random_centroid = tf.random.uniform(embedding_shape)
+
+            random_centroid = [tf.random.uniform(embedding_shape)] * (2 if is_triplet else 3)
+            # random_centroid = [random_centroid] * (2 if is_triplet else 3)
+            data = [random_a, *random_centroid]
         else:
             image_shape = (1,) + input_shape + (3,)
             random_apn = tf.random.uniform(image_shape)
             random_apn = [random_apn] * (3 if is_triplet else 4)
             data = random_apn
-
-        self.predict(data)
+        return self.predict(data)
 
     def validate_embedding(self, small_batch):
         """

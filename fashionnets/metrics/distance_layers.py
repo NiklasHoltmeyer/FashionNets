@@ -70,12 +70,14 @@ class QuadrupletCTLDistance(layers.Layer):
     def __init__(self, **kwargs):
         super(QuadrupletCTLDistance, self).__init__(**kwargs)
 
-    def call(self, anchor, negative1, positive_centroid, negative1_centroid, negative2_centroid):
+    def call(self, anchor, positive_centroid, negative1_centroid, negative2_centroid):
         a_cp = euclidean_distance(anchor, positive_centroid)
-        a_cn = euclidean_distance(anchor, negative1_centroid)
-        n1_cn2 = euclidean_distance(negative1, negative2_centroid)
+        a_cn1 = euclidean_distance(anchor, negative1_centroid)
+        a_cn2 = euclidean_distance(anchor, negative2_centroid)
 
-        return a_cp, a_cn, n1_cn2
+        return a_cp, a_cn1, a_cn2
+
+    # anchor, positive, negative1, negative2
 
 
 

@@ -175,7 +175,8 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
                                     model=model,
                                     nrows=settings["nrows"],
                                     augmentation=compose_augmentations()(False),
-                                    generator_type=settings["generator_type"])
+                                    generator_type=settings["generator_type"],
+                                    embedding_path=embedding_base_path)
 
     DeleteOldModel.delete_path(_load_centroid_base_path(**settings))
     if embedding_base_path:
@@ -289,7 +290,6 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, preproces
                                             load_npy(n_ctl))
         else:
             return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
-                                                         load_npy(n1),
                                                          load_npy(p_ctl),
                                                          load_npy(n1_ctl),
                                                          load_npy(n2_ctl),

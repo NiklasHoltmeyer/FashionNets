@@ -19,7 +19,7 @@ def build_layers(builder):
         if builder.is_triplet:
             ctl_names = ["positive_centroid", "negative_centroid"]
         else:
-            ctl_names = ["negative1", "positive_centroid", "negative1_centroid", "negative2_centroid"]
+            ctl_names = ["positive_centroid", "negative1_centroid", "negative2_centroid"]
 
         ctl_input = [layers.Input(name=name, shape=EMBEDDING_DIM) for name in ctl_names]
     else:

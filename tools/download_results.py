@@ -17,7 +17,7 @@ result_folders = filter(lambda x: "quadruplet" in x or "triplet" in x, files)
 results_download_path = notebooks["local"]["paths"]["results_download_path"]
 
 
-def download_results():
+def download_results(keep_latest_version=True):
     for result_folder in result_folders:
         remote_path = "/".join([remote_base_path, result_folder])
         remote_files = client.list(remote_path)
@@ -32,7 +32,10 @@ def download_results():
         if len(zips_full_remote_path) < 2:
             continue
 
-        for remote_zip in zips_full_remote_path[:-1]:
+        if keep_latest_version:
+            zips_full_remote_path = zips_full_remote_path[:-1]
+
+        for remote_zip in zips_full_remote_path:
             cmd = f'rclone move "hi:/{remote_zip}" "{target_folder}" -P'
             print(os.system(cmd))
 
@@ -40,6 +43,3 @@ def download_results():
 while True:
     download_results()
     time.sleep(60 * 15)
-
-# TODO: maybe only Download Latest N-1 and not all N-Zips
-# therefore the Backups dont have to be uploaded again to resume training

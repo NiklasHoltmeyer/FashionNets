@@ -45,7 +45,6 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     siamese_model.compile(optimizer=optimizer) # , run_eagerly=True
 
     siamese_model.fake_predict()
-
     cp_path, run_name = train_job["path"]["checkpoint"], train_job["run"]["name"]
 
     logger.debug(f"Checkpoint: {cp_path}")
