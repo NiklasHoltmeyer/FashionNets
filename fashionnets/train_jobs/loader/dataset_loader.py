@@ -189,6 +189,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
                               is_triplet=settings["is_triplet"],
                               force=False, force_hard_sampling=False, embedding_path=embedding_base_path,
                               nrows=settings["nrows"])
+
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
@@ -387,13 +388,9 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                        job_settings["sampling"] == "hard" else None
 
-    if job_settings["sampling"] == "random":
-        ds_loader.load_split("train", is_triplet=False, force=True,
-                             force_hard_sampling=False, embedding_path=embedding_base_path, nrows=job_settings["nrows"])
-
-    elif job_settings["sampling"] == "hard":
-        ds_loader.load_split("train", is_triplet=False, force=True,
-                             force_hard_sampling=True, embedding_path=embedding_base_path, nrows=job_settings["nrows"])
+    ds_loader.load_split("train", is_triplet=False, force=True,
+        force_hard_sampling=job_settings["sampling"] == "hard",
+                         embedding_path=embedding_base_path, nrows=job_settings["nrows"])
 
     # force=False, force_hard_sampling=False
     src = "./deep_fashion_1_256/train.csv"
