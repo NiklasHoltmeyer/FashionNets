@@ -187,7 +187,8 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
 
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
-                              force=False, force_hard_sampling=False, embedding_path=embedding_base_path)
+                              force=False, force_hard_sampling=False, embedding_path=embedding_base_path,
+                              nrows=settings["nrows"])
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
@@ -325,7 +326,7 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
     if n_chunks:
         return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks=n_chunks,
                                                          build_frequency=build_frequency)
-    for i in [6]:#[6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
+    for i in [6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
         try:  # ^ Try Catch can be deleted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
             print(f"Trying to build Hard-Triplets {i} N_Chunks")
             return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i,
@@ -388,11 +389,11 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
 
     if job_settings["sampling"] == "random":
         ds_loader.load_split("train", is_triplet=False, force=True,
-                             force_hard_sampling=False, embedding_path=embedding_base_path)
+                             force_hard_sampling=False, embedding_path=embedding_base_path, nrows=job_settings["nrows"])
 
     elif job_settings["sampling"] == "hard":
         ds_loader.load_split("train", is_triplet=False, force=True,
-                             force_hard_sampling=True, embedding_path=embedding_base_path)
+                             force_hard_sampling=True, embedding_path=embedding_base_path, nrows=job_settings["nrows"])
 
     # force=False, force_hard_sampling=False
     src = "./deep_fashion_1_256/train.csv"
