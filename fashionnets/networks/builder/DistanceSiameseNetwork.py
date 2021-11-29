@@ -20,9 +20,6 @@ class DistanceSiameseNetwork:
         self.input_layers, self.encoding_layers, self.distance_layers, self.loss_layer = build_layers(self)
 
     def combine(self):
-        print((self.encoding_layers))
-        print(len(self.encoding_layers))
-        print(self.loss_layer)
         output_layers = self.loss_layer(*self.encoding_layers)
 
         full_model = Model(
