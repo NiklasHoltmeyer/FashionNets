@@ -198,7 +198,7 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
     print("Prepare DS")
     train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
-
+    print("Prepare DS [DONE]")
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
     return {
