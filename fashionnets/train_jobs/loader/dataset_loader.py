@@ -170,13 +170,16 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     model = settings["back_bone"]["embedding_model"] if settings["is_ctl"] else None
     # back_bone
 
+    hard_sampling = settings["sampling"] == "hard"
+
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
                                     model=model,
                                     nrows=settings["nrows"],
                                     augmentation=compose_augmentations()(False),
                                     generator_type=settings["generator_type"],
-                                    embedding_path=embedding_base_path)
+                                    embedding_path=embedding_base_path,
+                                    hard_sampling=hard_sampling)
 
     DeleteOldModel.delete_path(_load_centroid_base_path(**settings))
     if embedding_base_path:
@@ -368,6 +371,8 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     if embedding_base_path:
         DeleteOldModel.delete_path(embedding_base_path)
 
+    hard_sampling = job_settings["sampling"] == "hard"
+
     ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
                                     image_suffix="_256",
                                     model=embedding_model,
@@ -375,7 +380,8 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
                                     n_chunks=n_chunks,
                                     augmentation=job_settings["augmentation"](is_train=False),
                                     generator_type=job_settings["generator_type"],
-                                    embedding_path=embedding_base_path)
+                                    embedding_path=embedding_base_path,
+                                    hard_sampling=hard_sampling)
 
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                        job_settings["sampling"] == "hard" else None
