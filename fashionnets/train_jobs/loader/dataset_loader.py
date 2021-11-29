@@ -185,17 +185,18 @@ def load_deepfashion_1(force_train_recreate=False, **settings):
     if embedding_base_path:
         DeleteOldModel.delete_path(embedding_base_path)
 
+    print("DS_Loader::load")
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=False, force_hard_sampling=False, embedding_path=embedding_base_path,
                               nrows=settings["nrows"])
-
+    print("DS_Loader::load [DONE]")
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
-
+    print("Prepare DS")
     train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
 
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
