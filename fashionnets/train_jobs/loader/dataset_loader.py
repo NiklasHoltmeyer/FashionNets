@@ -180,8 +180,6 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
     model = settings["back_bone"]["embedding_model"] if settings["is_ctl"] else None
     # back_bone
 
-    hard_sampling = settings["sampling"] == "hard"
-
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
                                     model=model,
@@ -189,9 +187,7 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
                                     augmentation=compose_augmentations()(False),
                                     generator_type=settings["generator_type"],
                                     embedding_path=embedding_base_path,
-                                    hard_sampling=hard_sampling,
-                                    batch_size=settings["batch_size"],
-                                    n_chunks=settings.get("ds_load_n_chunks", None))
+                                    batch_size=settings["batch_size"])
 
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
@@ -332,25 +328,7 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     return load_dataset_loader(**job_settings)()
 
 
-def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency=5, n_chunks=None):
-    if n_chunks:
-        return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks=n_chunks,
-                                                         build_frequency=build_frequency)
-    for i in [6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
-        try:  # ^ Try Catch can be deleted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
-            logger.debug(f"Trying to build Hard-Triplets {i} N_Chunks")
-            return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i,
-                                                             build_frequency=build_frequency)
-        except Exception as e:
-            logger.error("build_dataset_hard_pairs_deep_fashion_1 Failed")
-            logger.error("Exception: ")
-            logger.error(str(e))
-            exception = e
-
-    raise exception
-
-
-def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks, build_frequency):
+def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency):
     job_settings["force_ctl"] = init_epoch > 0
 
     if init_epoch == 0 and not job_settings["is_ctl"] and not job_settings["sampling"] == "hard":
@@ -362,12 +340,12 @@ def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n
         return result
 
     if (init_epoch % build_frequency) == 0:
-        return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks)
+        return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch)
 
     raise Exception("Could not Download Train.csv.")
 
 
-def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunks):
+def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch):
     if Path("./deep_fashion_1_256/train.csv").exists():
         Path("./deep_fashion_1_256/train.csv").unlink()
 
@@ -386,7 +364,6 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
         DeleteOldModel.delete_path(_load_centroid_base_path(**job_settings))
 
     job_settings["ds_load_force"] = True
-    job_settings["ds_load_n_chunks"] = n_chunks
 
     datasets = load_dataset_loader(**job_settings)()
 
