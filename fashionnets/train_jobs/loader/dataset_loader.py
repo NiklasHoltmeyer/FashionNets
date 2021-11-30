@@ -8,6 +8,8 @@ from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_2_pairs_generator im
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 import tensorflow as tf
+from fashionscrapper.utils.io import time_logger
+
 from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
@@ -162,6 +164,7 @@ def load_deepfashion_2(**settings):
     }
 
 
+@time_logger(name="Load", header="Pair-Gen (CTL)", padding_length=50, logger=defaultLogger("FashionNet"))
 def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
     logger.debug(f"Load own DeepFashion {settings['batch_size']} Batch Size")
 
@@ -271,7 +274,8 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     if augmentation:
         augmentation = augmentation(is_train)
 
-    logger.debug(f"Augmentation {augmentation}, IS_Train {is_train}")
+    if settings.get("verbose", False):
+        logger.debug(f"Augmentation {augmentation}, IS_Train {is_train}")
 
     return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
                                                 augmentation=augmentation, generator_type=settings["generator_type"])) \
