@@ -1,7 +1,9 @@
 from pathlib import Path
 
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
+logger = defaultLogger("deepfashion_callbacks")
 
 class UploadResults(keras.callbacks.Callback):
     """
@@ -23,6 +25,6 @@ class UploadResults(keras.callbacks.Callback):
                 try:
                     self.result_uploader.move(zip_name_old, _async=False)  # <- Retry uploading old Zips
                 except:
-                    print(f"Uploading: {zip_name_old} failed!")
+                    self.debug.info(f"Uploading: {zip_name_old} failed!")
 
 

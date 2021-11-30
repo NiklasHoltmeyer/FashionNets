@@ -1,10 +1,12 @@
 import tensorflow as tf
 from fashionnets.models.layer.ResNetIdentityBlock import ResnetIdentityBlock
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow.keras.applications import resnet
 from tensorflow.keras.regularizers import l2
 from tensorflow.python.keras.models import Sequential
 
 EMBEDDING_DIM = 2048
+logger = defaultLogger("deepfashion_model_builder")
 
 class ResNet50Builder:
     @staticmethod
@@ -30,7 +32,7 @@ class ResNet50Builder:
 
     @staticmethod
     def freeze_non_conv5_block1_out(model):
-        print(f"Freeze non Conv5_Block1_Out Layers!")
+        logger.debug("Freeze non Conv5_Block1_Out Layers!")
 
         trainable = False
         for layer in model.layers:
@@ -45,7 +47,8 @@ class ResNet50Builder:
 
     @staticmethod
     def freeze_first_n_layers(model, n):
-        print(f"Freeze first {n} Layers!")
+        logger.debug(f"Freeze first {n} Layers!")
+
         for l_idx, layer in enumerate(model.layers):
             layer.trainable = l_idx > n
         return model

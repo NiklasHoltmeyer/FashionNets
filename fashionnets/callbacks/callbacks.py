@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import tensorflow as tf
+from fashionscrapper.default_logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
 from fashionnets.callbacks.save.csv import CSVLogger
@@ -12,14 +13,15 @@ from fashionnets.callbacks.save.optimizer_state import SaveOptimizerState
 
 csv_sep = ";"
 
+logger = defaultLogger("deepfashion_callbacks")
 
 def callbacks(checkpoint_path, name, save_format=None, save_weights_only=False, keep_n=2,
               remove_after_zip=True, verbose=False, result_uploader=None):
     history_cp_path = Path(checkpoint_path, "history.csv")
 
     if verbose:
-        print(f"save_format={save_format}, save_weights_only={save_weights_only}, ")
-        print(f"keep_n={keep_n},remove_after_zip={remove_after_zip}, verbose={verbose}")
+        logger.debug(f"save_format={save_format}, save_weights_only={save_weights_only}, "
+                     f"keep_n={keep_n},remove_after_zip={remove_after_zip}, verbose={verbose}")
 
     return [  # history_path, monitor="loss", patience=3, sep=","
         tf.keras.callbacks.LambdaCallback(on_train_begin=lambda logs: history_cp_path.parent.mkdir(exist_ok=True)),

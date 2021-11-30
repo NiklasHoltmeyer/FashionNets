@@ -36,6 +36,7 @@ class DistanceSiameseNetwork:
 
         return full_model, embedding_model, feature_extractor
 
+
 if __name__ == "__main__":
     class FakeBuilder:
         def __init__(self):
@@ -51,6 +52,5 @@ if __name__ == "__main__":
 
 
     dsn = DistanceSiameseNetwork(SimpleCNN.build((224, 224), 2048)[0], is_triplet=False, is_ctl=True,
-                           input_shape=(224, 224), alpha=1.0, beta=0.5,
-                 preprocess_input=lambda d: d, verbose=True, channels=3)
-
+                                 input_shape=(224, 224), alpha=1.0, beta=0.5,
+                                 preprocess_input=lambda d: d, verbose=True, channels=3)

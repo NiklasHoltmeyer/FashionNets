@@ -6,6 +6,8 @@ from fashionnets.train_jobs.environment.Environment_Consts import kaggle, notebo
 from fashionnets.util.io import json_load
 
 # noinspection PyBroadException
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
+
 try:
     # Imports that only work withing Google Colab
     # noinspection PyPackageRequirements,PyUnresolvedReferences
@@ -13,6 +15,7 @@ try:
 except:
     pass
 
+logger = defaultLogger("deepfashion_environment")
 
 class GoogleColabEnvironment(Environment):
     def __init__(self):
@@ -39,7 +42,7 @@ class GoogleColabEnvironment(Environment):
         else:
             # noinspection PyPackageRequirements,PyUnresolvedReferences
             from google.colab import files
-            print("Please upload Kaggle.json")
+            logger.error("Please upload Kaggle.json")
             files.upload()
             json_path = "kaggle.json"
         os.system(f"cp {json_path} ~/.kaggle/")

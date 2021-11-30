@@ -9,7 +9,7 @@ def prepare_history(history):
     """
     _history = getattr(history, "history", None)  # <- only works for History
     if not _history:
-        _history = getattr(history, "history_history") # <- only works for HistoryState
+        _history = getattr(history, "history_history")  # <- only works for HistoryState
 
     values = {}
     for k, v in _history.items():
@@ -23,6 +23,7 @@ def prepare_history(history):
 
     x = history.epoch
     return x, values
+
 
 def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colors=None,
                  label_mapping=None, build_epochs=None, bin_size=5):

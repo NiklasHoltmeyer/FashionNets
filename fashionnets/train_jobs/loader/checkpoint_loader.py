@@ -7,6 +7,9 @@ from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldM
 from fashionnets.models.states.HistoryState import HistoryState
 from fashionnets.models.states.OptimizerState import OptimizerState
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
+
+logger = defaultLogger("deepfashion_model_builder")
 
 
 def load_latest_checkpoint(model, **train_job):
@@ -17,13 +20,13 @@ def load_latest_checkpoint(model, **train_job):
         checkpoint_path = latest_checkpoint(train_job["path"]["checkpoint"])  # <- Locally
 
     if not checkpoint_path:
-        print("No Checkpoint found!")
+        logger.info("No Checkpoint found!")
         return False, 0
 
     checkpoint_path = Path(checkpoint_path)
 
     if checkpoint_path is None or not checkpoint_path.exists():
-        print("Checkpoint Path does not exist!")
+        logger.info("Checkpoint Path does not exist!")
         return False, 0
 
     # noinspection PyTypeChecker
@@ -31,17 +34,17 @@ def load_latest_checkpoint(model, **train_job):
 
     opt_path = latest_optimizer(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
     hist_path = latest_history(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
-    print("Loading Weights...")
+
     model.load_embedding_weights(str(checkpoint_path.resolve()))
     model.make_train_function()
 
-    print("Loading Optimizer...")
     opt_state = OptimizerState.load(opt_path)
     opt_state.apply(model)
 
-    print("Loading History...")
     history_state = HistoryState.load(hist_path)
     history_state.apply(model)
+
+    logger.info("Model loaded Weights, Optimizer, History.")
 
     return True, last_epoch + 1
 
@@ -86,6 +89,7 @@ def latest_optimizer(checkpoint_path, epoch):
 
     optimizer = optimizers[0]
     return str(Path(checkpoint_path, optimizer).resolve())
+
 
 def latest_history(checkpoint_path, epoch):
     epoch_str = f"{epoch:04d}"
@@ -155,12 +159,12 @@ def download_zip(env, latest_zip):
     dst = Path(checkpoint_path, zip_file_name)
 
     if dst.exists():
-        print("RETURN TODO")
+        return
 
     dst = str(dst.parent.resolve()) + ".zip"
 
-    callback = lambda: print(f"Downloading Checkpoint: {zip_file_name} [DONE]")
-    print(f"Downloading Checkpoint: {Path(latest_zip).name}")
+    callback = lambda: logger.info(f"Downloading Checkpoint: {zip_file_name} [DONE]")
+    logger.info(f"Downloading Checkpoint: {Path(latest_zip).name}")
 
     zip_path = remote.download(latest_zip, dst, callback, _async=False)
 

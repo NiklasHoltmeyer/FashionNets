@@ -1,8 +1,7 @@
 import tensorflow as tf
-from fashionnets.models.layer.RandomHorizontalFlip import RandomHorizontalFlip
 from fashionnets.models.layer.RandomErasing import RandomErasing
+from fashionnets.models.layer.RandomHorizontalFlip import RandomHorizontalFlip
 from tensorflow.keras import layers
-import torchvision.transforms as T
 
 
 def random_crop_layer(crop_shape):
@@ -33,6 +32,7 @@ def compose_augmentations():
         ])
 
         return transform
+
     return __call__
 
 
@@ -42,8 +42,6 @@ def resize_with_padding(shape):
     return layers.Lambda(lambda x: tf.image.resize_with_pad(
         x, shape[0], shape[1]
     ))
-
-
 
 
 def random_crop(input_shape):

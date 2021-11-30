@@ -31,7 +31,7 @@ class RandomErasing(layers.Layer):
     def call(self, img):
         # Motivated by https://github.com/Amitayus/Random-Erasing-TensorFlow.git
         # Motivated by https://github.com/zhunzhong07/Random-Erasing/blob/master/transforms.py
-        '''
+        """
             Class that performs Random Erasing in Random Erasing Data Augmentation by Zhong et al.
             -------------------------------------------------------------------------------------
             img : 3D Tensor data (H,W,Channels) normalized value [0,1]
@@ -41,7 +41,7 @@ class RandomErasing(layers.Layer):
             r1: min aspect ratio
             method : 'black', 'white' or 'random'. Erasing type
             -------------------------------------------------------------------------------------
-            '''
+        """
 
         if tf.random.uniform([]) > self.probability:
             return img

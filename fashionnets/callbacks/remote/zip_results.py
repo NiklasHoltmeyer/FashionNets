@@ -2,10 +2,12 @@ import os
 import shutil
 from pathlib import Path
 
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
 from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 
+logger = defaultLogger("deepfashion_callbacks")
 
 class ZipResults(keras.callbacks.Callback):
     def __init__(self, checkpoint_path, remove_after_zip):
@@ -32,13 +34,13 @@ class ZipResults(keras.callbacks.Callback):
         #                self.result_uploader.move(zip_name+".zip")
 
         except Exception as e:
-            print("zip_results Exception")
-            print(e)
+            logger.error("zip_results Exception")
+            logger.error(e)
 
     @staticmethod
     def delete_already_zipped_results(folder_path):
         if not DeleteOldModel.delete_path(folder_path):
-            print("Couldn't Remove:", folder_path)
+            logger.error(f"Couldn't Remove: {folder_path}")
 
     @staticmethod
     def list_sub_folders(path):

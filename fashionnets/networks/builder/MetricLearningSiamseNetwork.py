@@ -1,3 +1,4 @@
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 from tensorflow.keras import Model
 from tensorflow.keras import layers
@@ -6,6 +7,7 @@ from tensorflow.keras.regularizers import l2
 from fashionnets.metrics.loss_layer import TripletLoss
 from fashionnets.networks.builder.builder import build_layers
 
+logger = defaultLogger("deepfashion_model_builder")
 
 class MetricLearningSiameseNetwork:
     def __init__(self, back_bone, is_triplet, input_shape, alpha, beta,
@@ -62,7 +64,7 @@ class MetricLearningSiameseNetwork:
 
     def build_metric_network(self):
         _input_shape = self.input_shape
-        print(self.input_shape)
+        logger.debug(self.input_shape)
         _input_shape = self.input_shape[0] * 2, self.input_shape[1]
 
         network = keras.Sequential(name="learned_metric")

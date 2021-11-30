@@ -2,8 +2,10 @@ from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
+logger = defaultLogger("deepfashion_callbacks")
 
 class CSVLogger(keras.callbacks.Callback):
     """
@@ -21,7 +23,7 @@ class CSVLogger(keras.callbacks.Callback):
         try:
             self.dumb_history(epoch, logs)
         except Exception as e:
-            print("CustomHistoryDump::on_epoch_end")
+            logger.debug("CustomHistoryDump::on_epoch_end")
             raise e
 
     def dumb_history(self, epoch, logs=None):

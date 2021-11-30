@@ -42,7 +42,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
                                      channels=3)
 
     siamese_model = SiameseModel(siamese_network, back_bone_model)
-    siamese_model.compile(optimizer=optimizer) # , run_eagerly=True
+    siamese_model.compile(optimizer=optimizer)  # , run_eagerly=True
 
     siamese_model.fake_predict()
     cp_path, run_name = train_job["path"]["checkpoint"], train_job["run"]["name"]
@@ -60,13 +60,13 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
         success, init_epoch = load_latest_checkpoint(siamese_model, **train_job)
         if success:
             train_job["weights_loaded"] = True
-            print("Loaded Weights & Optimizer!")
+            logger.info("Loaded Weights & Optimizer!")
         else:
-            print("Loading Weights & Optimizer failed!")
+            logger.info("Loading Weights & Optimizer failed!")
             assert not force_load_weights, "force_load_weights is set, but no Checkpoints are found!"
             train_job["weights_loaded"] = False
     else:
-        print("Load_Weights is set to False!")
+        logger.info("Load_Weights is set to False!")
         _checkpoint, init_epoch = None, 0
         train_job["weights_loaded"] = False
 
@@ -75,7 +75,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     if freeze_layers:
         siamese_model.siamese_network.back_bone = freeze_layers(siamese_model.siamese_network.back_bone)
     else:
-        print("No layers frozen!")
+        logger.info("No layers frozen!")
 
     dump_settings(train_job)
 

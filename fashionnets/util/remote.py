@@ -1,7 +1,9 @@
 from pathlib import Path
 
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from webdav3.client import Client
 
+logger = defaultLogger("deepfashion_environment")
 
 class WebDav:
     def __init__(self, base_path, **webdav_options):
@@ -53,7 +55,7 @@ class WebDav:
         try:
             Path(path).unlink()
             callback()
-            print(f"Uploading: {path} done.")
+            logger.info(f"Uploading: {path} done.")
         except Exception as e:
             if not ignore_exception:
                 raise e
@@ -64,8 +66,8 @@ class WebDav:
 
         self.client.mkdir(self.base_path)
 
-        callback = lambda: WebDav.remove_local(src_local, lambda: print(f"moved {src_local} to {dst_remote}"))
-        print(f"Uploading: {src_local}")
+        callback = lambda: WebDav.remove_local(src_local, lambda: logger.info(f"moved {src_local} to {dst_remote}"))
+        logger.info(f"Uploading: {src_local}")
         self.upload(src_local, dst_remote, callback, _async)
 
     def list(self, path, _filter=None):

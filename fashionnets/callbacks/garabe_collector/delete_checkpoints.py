@@ -3,8 +3,11 @@ import shutil
 from pathlib import Path
 from collections import defaultdict
 import collections
+
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
+logger = defaultLogger("deepfashion_callbacks")
 
 class DeleteOldModel(keras.callbacks.Callback):
     def __init__(self, checkpoint_path, name, keep_n, save_format=None, save_weights_only=False):
@@ -40,9 +43,9 @@ class DeleteOldModel(keras.callbacks.Callback):
                 for path in paths:
                     path = str(Path(path).resolve())
                     if DeleteOldModel.delete_path(path):
-                        print(f"Removing CP (EP={ep}): ./{path.name}")
+                        logger.debug(f"Removing CP (EP={ep}): ./{path}")
                     else:
-                        print(f"Removing CP (EP={ep}): ./{path.name} FAILED!!!")
+                        logger.debug(f"Removing CP (EP={ep}): ./{path} FAILED!!!")
 
     @staticmethod
     def delete_path(path):

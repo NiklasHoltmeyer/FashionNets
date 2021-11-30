@@ -1,8 +1,7 @@
 from fashionnets.models.layer.Augmentation import compose_augmentations
-from fashionscrapper.utils.list import distinct
-from fashionnets.models.embedding.resnet50 import ResNet50Builder
 from fashionnets.train_jobs.loader.dataset_loader import loader_info
 from fashionnets.train_jobs.settings.default_settings import base_settings, back_bone_settings
+from fashionscrapper.utils.list import distinct
 
 
 def job_config_by_notebook_name(notebook_name, debugging):
@@ -12,9 +11,9 @@ def job_config_by_notebook_name(notebook_name, debugging):
 
 
 def job_list(debugging):
-    base_cfg1e4 = base_settings(debugging, 1e-4)
-    base_cfg5e3 = base_settings(debugging, 5e-3)
-    base_cfg1e3 = base_settings(debugging, 1e-3)
+#    base_cfg1e4 = base_settings(debugging, 1e-4)
+#    base_cfg5e3 = base_settings(debugging, 5e-3)
+#    base_cfg1e3 = base_settings(debugging, 1e-3)
     base_cfg1e5 = base_settings(debugging, 1e-5)
 
     # back_bone_cfg =

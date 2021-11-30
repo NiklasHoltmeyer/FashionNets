@@ -1,7 +1,9 @@
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
 from fashionnets.util.csv import HistoryCSVHelper
 
+logger = defaultLogger("deepfashion_callbacks")
 
 class EarlyStoppingBasedOnHistory(keras.callbacks.Callback):
     def __init__(self, history_path, monitor="loss", patience=3, sep=",", lower_is_better=True):
@@ -24,8 +26,8 @@ class EarlyStoppingBasedOnHistory(keras.callbacks.Callback):
 
         early_stopping = (best_epoch + self.patience) < epoch
         if early_stopping:
-            print(f"Best {self.monitor} Results at {best_epoch}.")
-            print(f"Stop Training. {self.monitor} has not improved in {epoch - best_epoch} Epochs!")
+            logger.debug(f"Best {self.monitor} Results at {best_epoch}.")
+            logger.debug(f"Stop Training. {self.monitor} has not improved in {epoch - best_epoch} Epochs!")
             self.model.stop_training = True
 
 #        if len(history) < 1:

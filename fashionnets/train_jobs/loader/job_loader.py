@@ -7,7 +7,9 @@ from fashionnets.train_jobs.loader.backbone_loader import load_backbone_info_res
 from fashionnets.train_jobs.loader.dataset_loader import load_dataset_loader
 from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 from fashionnets.util.io import json_dump, string_serializer
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 
+logger = defaultLogger("deepfashion_model_builder")
 
 def prepare_environment(notebook_name, debugging=False, **settings):
     environment = EnvironmentBuilder.by_runtime_notebook_name(notebook_name)
@@ -31,8 +33,8 @@ def load_job_settings(environment, training_job_cfg, kaggle_downloader, ignore_e
         if not ignore_exception:
             raise e
         else:
-            print("Exception:")
-            print(e)
+            logger.error("Exception:")
+            logger.error(e)
 
     return {**job_settings, **job}
 
@@ -67,7 +69,7 @@ def add_back_bone_to_train_job(environment, **settings):
                                                                                           is_triplet=back_bone_is_triplet)
     settings["back_bone"]["embedding_model"] = embedding_model
     settings["back_bone"]["preprocess_input_layer"] = preprocess_input_layer
-    print(settings["back_bone"]["preprocess_input_layer"])
+    logger.debug(settings["back_bone"]["preprocess_input_layer"])
 
     run_name = f"{settings['run_idx']}_{run_name}"
     settings["run_name"] = run_name
@@ -106,7 +108,7 @@ def dump_settings(job_settings):
     settings = string_serializer(job_settings)
 
     if job_settings.get("verbose", False):
-        print(f"Dumbing {path}")
+        logger.debug(f"Dumbing {path}")
     json_dump(path, settings)
 
 
@@ -125,7 +127,7 @@ def history_to_csv_string(history, _print=True, decimal_separator=None, **job_se
 
         csv = ";".join(values)
         rows.append(csv)
-        if print:
-            print(csv)
+        if _print:
+            logger.info(csv)
 
     return rows

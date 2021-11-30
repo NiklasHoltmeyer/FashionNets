@@ -1,6 +1,7 @@
 import copy
 from pathlib import Path
 
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
 from fashionnets.models.states.HistoryState import HistoryState
@@ -24,6 +25,9 @@ class DeepCopyHistory:
             if k not in keys:
                 self.history[k] = []
             self.history[k].append(v)
+
+
+logger = defaultLogger("deepfashion_callbacks")
 
 
 class SaveHistoryState(keras.callbacks.Callback):
@@ -62,5 +66,5 @@ class SaveHistoryState(keras.callbacks.Callback):
             HistoryState(history_copy).save(path)
 
         except Exception as e:
-            print("HistoryState::save_state")  # easier to trace Exception from withing Google Colab
+            logger.error("HistoryState::save_state")  # easier to trace Exception from withing Google Colab
             raise Exception(e)

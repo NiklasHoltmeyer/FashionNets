@@ -5,10 +5,10 @@ from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow.keras import Model
 from tensorflow.keras import metrics
 
-# noinspection PyAbstractClass,PyMethodOverriding
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
 
 
+# noinspection PyAbstractClass,PyMethodOverriding,PyAbstractClass
 class SiameseModel(Model):
     # https://keras.io/examples/vision/siamese_network/
     def __init__(self, siamese_network, back_bone):
@@ -44,9 +44,6 @@ class SiameseModel(Model):
     def fake_predict(self):
         """
         Force Init Layers (-> Model cant be Saved by Training without Init. Layers)
-        :param is_triplet:
-        :param input_shape:
-        :return:
         """
 
         input_shape = self.siamese_network.input_shape_

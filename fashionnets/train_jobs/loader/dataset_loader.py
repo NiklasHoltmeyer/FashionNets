@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from shutil import copyfile
 
-import tensorflow as tf
 from fashiondatasets.deepfashion1.DeepFashion1 import DeepFashion1Dataset
 from fashiondatasets.deepfashion2.DeepFashion2Quadruplets import DeepFashion2Quadruplets
 from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_2_pairs_generator import DeepFashion2PairsGenerator
@@ -17,6 +16,9 @@ from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path, _
     _load_centroid_base_path
 from fashionnets.util.io import all_paths_exist
 import numpy as np
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
+
+logger = defaultLogger("deepfashion_data_builder")
 
 
 def loader_info(name, variation=""):
@@ -30,12 +32,13 @@ def loader_info(name, variation=""):
 
 
 def own_loader_info():
-    print("Warning! " * 72)
-    print("Dataset Loader Implement own Loader")
-    print("#TODO Implement")
-    return {
-        "name": "own_256",
-    }
+    raise Exception("TODO #DS_Loader33")
+#    print("Warning! " * 72)
+#    print("Dataset Loader Implement own Loader")
+#    print("#TODO Implement")
+#    return {
+#        "name": "own_256",
+#    }
 
 
 def deep_fashion_2_loader_info(variation):
@@ -113,8 +116,8 @@ def _fill_ds_settings(**settings):
 def _print_ds_settings(verbose, **ds_settings):
     if verbose:
         header_str = "*" * 24 + " Settings " + "*" * 24
-        print(header_str)
-        print("{")
+        logger.debug(header_str)
+        logger.debug("{")
         for k, v in ds_settings.items():
             tab = " " * 8
             k_str = f"{tab}'{k}':"
@@ -122,13 +125,13 @@ def _print_ds_settings(verbose, **ds_settings):
             padding_len = len(header_str) - len(k_str) - len(v_str) - len(tab)
             padding = max(padding_len, 0)
             pad_str = " " * padding
-            print(f"{k_str}{pad_str}{v_str}")
-        print("}")
-        print("*" * len(header_str))
+            logger.debug(f"{k_str}{pad_str}{v_str}")
+        logger.debug("}")
+        logger.debug("*" * len(header_str))
 
 
 def load_deepfashion_2(**settings):
-    print("Load own DeepFashion", settings["batch_size"], "Batch Size")
+    logger.debug(f"Load own DeepFashion {settings['batch_size']} Batch Size")
 
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
@@ -160,7 +163,7 @@ def load_deepfashion_2(**settings):
 
 
 def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
-    print("Load own DeepFashion", settings["batch_size"], "Batch Size")
+    logger.debug(f"Load own DeepFashion {settings['batch_size']} Batch Size")
 
     ds_settings = _fill_ds_settings(**settings)
     _print_ds_settings(settings.get("verbose", False), **ds_settings)
@@ -184,21 +187,21 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
     if embedding_base_path and force_ctl:
         DeleteOldModel.delete_path(embedding_base_path)
 
-    print("Load Pre")
+    logger.debug("Load Pre")
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=False, force_hard_sampling=False, embedding_path=embedding_base_path,
                               nrows=settings["nrows"])
-    print("Load [Done]")
+    logger.debug("Load [Done]")
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
-    print("Load Prepare 1")
+    logger.debug("Load Prepare 1")
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
-    print("Load Prepare 2")
+    logger.debug("Load Prepare 2")
     train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
-    print("Load Prepare 3")
+    logger.debug("Load Prepare 3")
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
     return {
@@ -233,7 +236,7 @@ def load_own_dataset(**settings):
 
 
 def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, **settings):
-    print("Load own DS", batch_size, "Batch Size")
+    logger.debug(f"Load own DS {batch_size} Batch Size")
     split = train_split
     settings["format"] = format
     settings["batch_size"] = batch_size
@@ -268,10 +271,10 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     if augmentation:
         augmentation = augmentation(is_train)
 
-    print("Augmentation", augmentation, "IS_Train", is_train)
+    logger.debug(f"Augmentation {augmentation}, IS_Train {is_train}")
 
     return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
-                                               augmentation=augmentation, generator_type=settings["generator_type"])) \
+                                                augmentation=augmentation, generator_type=settings["generator_type"])) \
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
@@ -330,13 +333,13 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
                                                          build_frequency=build_frequency)
     for i in [6, 15, 50]:  # <- just Retry a Few Time - forces Colab not to Close
         try:  # ^ Try Catch can be deleted. problem should be fixed from withing fashiondatasets::DeepFashion1Dataset
-            print(f"Trying to build Hard-Triplets {i} N_Chunks")
+            logger.debug(f"Trying to build Hard-Triplets {i} N_Chunks")
             return __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, i,
                                                              build_frequency=build_frequency)
         except Exception as e:
-            print("build_dataset_hard_pairs_deep_fashion_1 Failed")
-            print("Exception: ")
-            print(str(e))
+            logger.error("build_dataset_hard_pairs_deep_fashion_1 Failed")
+            logger.error("Exception: ")
+            logger.error(str(e))
             exception = e
 
     raise exception
@@ -390,8 +393,8 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                        job_settings["sampling"] == "hard" else None
 
-    ds_loader.load_split("train", is_triplet=False, force=False, #TODO: force eig. true
-        force_hard_sampling=job_settings["sampling"] == "hard",
+    ds_loader.load_split("train", is_triplet=False, force=False,  # TODO: force eig. true
+                         force_hard_sampling=job_settings["sampling"] == "hard",
                          embedding_path=embedding_base_path, nrows=job_settings["nrows"])
 
     # force=False, force_hard_sampling=False
@@ -424,7 +427,7 @@ def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
     csv = csv[0]
     csv_path = os.path.join(remote.base_path, csv)
 
-    _callback = lambda: print(f"{csv} downloaded!")
+    _callback = lambda: logger.info(f"{csv} downloaded!")
 
     remote.download(csv_path, "./deep_fashion_1_256/train.csv", callback=_callback, _async=False)
 

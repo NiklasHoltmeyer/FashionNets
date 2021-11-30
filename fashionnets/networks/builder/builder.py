@@ -3,12 +3,16 @@ from fashionnets.metrics.distance_layers import TripletDistance, QuadrupletDista
 from fashionnets.metrics.loss_layer import QuadrupletLoss, TripletLoss
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
 from fashionnets.models.embedding.simple_cnn import SimpleCNN
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow.keras import layers
+
+logger = defaultLogger("deepfashion_model_builder")
 
 
 def build_layers(builder):
     if builder.verbose:
-        print(f"is_triplet={builder.is_triplet}, is_ctl={builder.is_ctl}, alpha={builder.alpha}, beta={builder.beta}")
+        logger.debug(f"is_triplet={builder.is_triplet}, "
+                     f"is_ctl={builder.is_ctl}, alpha={builder.alpha}, beta={builder.beta}")
     anchor_input = layers.Input(name="anchor", shape=builder.input_shape + (builder.channels,))
     positive_input = layers.Input(name="positive", shape=builder.input_shape + (builder.channels,))
 
@@ -39,10 +43,10 @@ def build_layers(builder):
 
     if builder.is_ctl:
         input_layers = [anchor_input]
-#        if builder.is_triplet:
-#            input_layers = [anchor_input]
-#        else:
-#            input_layers = [anchor_input, negative_inputs[0]]
+    #        if builder.is_triplet:
+    #            input_layers = [anchor_input]
+    #        else:
+    #            input_layers = [anchor_input, negative_inputs[0]]
     else:
         input_layers = [anchor_input, positive_input, *negative_inputs]
         # noinspection PyUnreachableCode
@@ -53,10 +57,10 @@ def build_layers(builder):
             input_layers = input_layers + ctl_input
     else:
         assert False, "Currently just using ResNet which requires Preprocessing"
-        encoding_layers = [builder.back_bone(i) for i in input_layers]
-        if ctl_input:
-            encoding_layers = encoding_layers + ctl_input
-            input_layers = input_layers + ctl_input
+#        encoding_layers = [builder.back_bone(i) for i in input_layers]
+#        if ctl_input:
+#            encoding_layers = encoding_layers + ctl_input
+#            input_layers = input_layers + ctl_input
 
     distance_layers = distance_layer(*encoding_layers)
 

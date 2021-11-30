@@ -1,4 +1,7 @@
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
+
+logger = defaultLogger("deepfashion_callbacks")
 
 
 class SaveEmbeddingModel(keras.callbacks.Callback):
@@ -15,5 +18,5 @@ class SaveEmbeddingModel(keras.callbacks.Callback):
         try:
             self.model.save_backbone(self.model_cp_path, epoch)
         except Exception as e:
-            print("SaveEmbeddingModel::on_epoch_end")  # easier to trace Exception from withing Google Colab
+            logger.error("SaveEmbeddingModel::on_epoch_end")  # easier to trace Exception from withing Google Colab
             raise Exception(e)

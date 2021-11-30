@@ -1,5 +1,6 @@
 import os
 
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from kaggle.rest import ApiException
 
 from fashionnets.train_jobs.environment.Environment_Consts import kaggle
@@ -8,6 +9,7 @@ from fashionnets.util.remote import WebDav
 """Helper Classes to Init Training-Environment (Setting up Secrets, Defining Env Based Settings ...)
 """
 
+logger = defaultLogger("deepfashion_environment")
 
 # noinspection PyBroadException,PyTypeChecker
 class Environment:
@@ -19,7 +21,7 @@ class Environment:
         self.download_dependencies = download_dependencies
         self.dataset_prefix = dataset_prefix
 
-        print("Environment:", self)
+        logger.debug(f"Environment: {self}")
 
     def set_name(self, name):
         self.train_job_name = name
@@ -34,18 +36,18 @@ class Environment:
         preprocess_settings = self.dependencies["kaggle"].get("preprocess", None)
 
         if not preprocess_settings:
-            print("Preprocess not set")
+            logger.debug("Preprocess not set")
             return
 
         if skip_preprocess:
-            print("Skip Preprocess set")
+            logger.debug("Skip Preprocess set")
             return
 
         for cmd in self.dependencies["kaggle"]["preprocess"]["commands"]:
             try:
                 os.system(cmd)
             except:
-                print("Exception", cmd)
+                logger.error(f"Exception {cmd}")
                 pass
 
     def load_dependencies(self, kaggle_downloader=None, skip_preprocess=False):
@@ -55,7 +57,7 @@ class Environment:
         paths_exist = self.dependencies["kaggle"].get("preprocess", {}).get("check_existence", lambda: False)
 
         if paths_exist():
-            print("All Paths already exist!")
+            logger.debug("All Paths already exist!")
             return
 
         if kaggle_downloader:
@@ -63,12 +65,12 @@ class Environment:
                 if type(ds_name) is not str:
                     continue
                 ds_full_name = kaggle["datasets"]["prefix"] + ds_name.replace("_", "-")
-                print("Download:", ds_full_name)
+                logger.debug(f"Download: {ds_full_name}")
                 try:
                     kaggle_downloader(ds_full_name, f"./", unzip=True)
                 except ApiException as e:
-                    print("Exception", str(e))
-                    print("ds_full_name", ds_full_name)
+                    logger.error(f"Exception: {str(e)}")
+                    logger.error(f"ds_full_name: {ds_full_name}")
 
             self.prepare(skip_preprocess)
 

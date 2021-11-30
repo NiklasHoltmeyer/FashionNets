@@ -1,9 +1,11 @@
 from pathlib import Path
 
+from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 from tensorflow import keras
 
 from fashionnets.models.states.OptimizerState import OptimizerState
 
+logger = defaultLogger("deepfashion_callbacks")
 
 # noinspection PyUnresolvedReferences
 class SaveOptimizerState(keras.callbacks.Callback):
@@ -23,7 +25,7 @@ class SaveOptimizerState(keras.callbacks.Callback):
             OptimizerState(self.model.optimizer).save(path)
 
         except Exception as e:
-            print("CustomSaveOptimizerState::on_epoch_end")  # easier to trace Exception from withing Google Colab
+            logger.error("CustomSaveOptimizerState::on_epoch_end")  # easier to trace Exception from withing Google Colab
             raise Exception(e)
 
 
