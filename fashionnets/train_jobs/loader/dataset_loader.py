@@ -36,6 +36,8 @@ def loader_info(name, variation=""):
 
 def own_loader_info():
     raise Exception("TODO #DS_Loader33")
+
+
 #    print("Warning! " * 72)
 #    print("Dataset Loader Implement own Loader")
 #    print("#TODO Implement")
@@ -187,16 +189,18 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
                                     augmentation=compose_augmentations()(False),
                                     generator_type=settings["generator_type"],
                                     embedding_path=embedding_base_path,
-                                    hard_sampling=hard_sampling)
-
-    if embedding_base_path and force_ctl:
-        DeleteOldModel.delete_path(embedding_base_path)
+                                    hard_sampling=hard_sampling,
+                                    batch_size=settings["batch_size"],
+                                    n_chunks=settings.get("ds_load_n_chunks", None))
 
     logger.info("Load Pre")
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
-                              force=False, force_hard_sampling=False, embedding_path=embedding_base_path,
+                              force=settings.get("ds_load_force", False),
+                              force_hard_sampling=settings["sampling"] == "hard",
+                              embedding_path=embedding_base_path,
                               nrows=settings["nrows"])
+
     logger.info("Load [Done]")
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
@@ -352,9 +356,11 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
 
 
 def __build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, n_chunks, build_frequency):
+    job_settings["force_ctl"] = init_epoch > 0
+
     if init_epoch == 0 and not job_settings["is_ctl"] and not job_settings["sampling"] == "hard":
         return load_dataset_loader(**job_settings)()
-    job_settings["force_ctl"] = True
+
     result = __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency)
 
     if result is not None:
@@ -380,30 +386,15 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                        job_settings["sampling"] == "hard" else None
 
-    if embedding_base_path and job_settings["force_ctl"]:
+    if embedding_base_path and job_settings["force_ctl"] or job_settings["sampling"] == "hard":
         DeleteOldModel.delete_path(embedding_base_path)
         DeleteOldModel.delete_path(_load_centroid_base_path(**job_settings))
 
-    hard_sampling = job_settings["sampling"] == "hard"
+    job_settings["ds_load_force"] = True
+    job_settings["ds_load_n_chunks"] = n_chunks
 
-    ds_loader = DeepFashion1Dataset(base_path="./deep_fashion_1_256",
-                                    image_suffix="_256",
-                                    model=embedding_model,
-                                    batch_size=job_settings["batch_size"],
-                                    n_chunks=n_chunks,
-                                    augmentation=job_settings["augmentation"](is_train=False),
-                                    generator_type=job_settings["generator_type"],
-                                    embedding_path=embedding_base_path,
-                                    hard_sampling=hard_sampling)
+    datasets = load_dataset_loader(**job_settings)()
 
-    embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
-                                                                       job_settings["sampling"] == "hard" else None
-
-    ds_loader.load_split("train", is_triplet=False, force=False,  # TODO: force eig. true
-                         force_hard_sampling=job_settings["sampling"] == "hard",
-                         embedding_path=embedding_base_path, nrows=job_settings["nrows"])
-
-    # force=False, force_hard_sampling=False
     src = "./deep_fashion_1_256/train.csv"
     dst = f"./deep_fashion_1_256/train_{init_epoch:04d}.csv"
 
@@ -412,7 +403,7 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
     result_uploader = job_settings["environment"].webdav
     result_uploader.move(dst, _async=False)
 
-    return load_dataset_loader(**job_settings)()
+    return datasets
 
 
 def __download_deepfashion_hard_pairs(job_settings, init_epoch, build_frequency):
