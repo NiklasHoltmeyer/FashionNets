@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 from shutil import copyfile
@@ -20,7 +21,7 @@ from fashionnets.util.io import all_paths_exist
 import numpy as np
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 
-logger = defaultLogger("deepfashion_data_builder")
+logger = defaultLogger("deepfashion_data_builder", level=logging.INFO)
 
 
 def loader_info(name, variation=""):
@@ -164,7 +165,8 @@ def load_deepfashion_2(**settings):
     }
 
 
-@time_logger(name="Load", header="Pair-Gen (CTL)", padding_length=50, logger=defaultLogger("FashionNet"))
+@time_logger(name="DS-Loader::Load", header="Dataset-Loader", padding_length=50,
+             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
     logger.debug(f"Load own DeepFashion {settings['batch_size']} Batch Size")
 
@@ -190,21 +192,21 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
     if embedding_base_path and force_ctl:
         DeleteOldModel.delete_path(embedding_base_path)
 
-    logger.debug("Load Pre")
+    logger.info("Load Pre")
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=False, force_hard_sampling=False, embedding_path=embedding_base_path,
                               nrows=settings["nrows"])
-    logger.debug("Load [Done]")
+    logger.info("Load [Done]")
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
-    logger.debug("Load Prepare 1")
+    logger.info("Load Prepare 1")
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
-    logger.debug("Load Prepare 2")
+    logger.info("Load Prepare 2")
     train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
-    logger.debug("Load Prepare 3")
+    logger.info("Load Prepare 3")
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
     return {

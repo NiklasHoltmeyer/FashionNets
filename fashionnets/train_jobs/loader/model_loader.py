@@ -1,3 +1,5 @@
+import logging
+
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 
 from fashionnets.callbacks.callbacks import callbacks
@@ -18,7 +20,7 @@ def sanity_check_job_settings(**train_job):
 
 
 def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_weights=False, **train_job):
-    logger = defaultLogger("Load_Siamese_Model")
+    logger = defaultLogger("Load_Siamese_Model", level=logging.INFO)
     logger.disabled = not train_job["verbose"]
 
     sanity_check_job_settings(**train_job)

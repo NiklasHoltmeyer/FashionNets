@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fashionnets.train_jobs.environment.Environment_Builder import EnvironmentBuilder
@@ -9,7 +10,7 @@ from fashionnets.train_jobs.loader.path_loader import _load_checkpoint_path
 from fashionnets.util.io import json_dump, string_serializer
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 
-logger = defaultLogger("deepfashion_model_builder")
+logger = defaultLogger("deepfashion_model_builder", level=logging.INFO)
 
 def prepare_environment(notebook_name, debugging=False, **settings):
     environment = EnvironmentBuilder.by_runtime_notebook_name(notebook_name)

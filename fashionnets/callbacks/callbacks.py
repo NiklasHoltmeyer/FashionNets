@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import tensorflow as tf
@@ -13,7 +14,7 @@ from fashionnets.callbacks.save.optimizer_state import SaveOptimizerState
 
 csv_sep = ";"
 
-logger = defaultLogger("deepfashion_callbacks")
+logger = defaultLogger("deepfashion_callbacks", level=logging.INFO)
 
 def callbacks(checkpoint_path, name, save_format=None, save_weights_only=False, keep_n=2,
               remove_after_zip=True, verbose=False, result_uploader=None):

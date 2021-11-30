@@ -1,3 +1,4 @@
+import logging
 import os
 
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
@@ -9,7 +10,7 @@ from fashionnets.util.remote import WebDav
 """Helper Classes to Init Training-Environment (Setting up Secrets, Defining Env Based Settings ...)
 """
 
-logger = defaultLogger("deepfashion_environment")
+logger = defaultLogger("deepfashion_environment", level=logging.INFO)
 
 # noinspection PyBroadException,PyTypeChecker
 class Environment:
