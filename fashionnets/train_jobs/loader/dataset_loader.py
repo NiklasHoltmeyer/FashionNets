@@ -193,7 +193,6 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
                                     batch_size=settings["batch_size"],
                                     n_chunks=settings.get("ds_load_n_chunks", None))
 
-    logger.info("Load Pre")
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=settings.get("ds_load_force", False),
@@ -201,16 +200,12 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
                               embedding_path=embedding_base_path,
                               nrows=settings["nrows"])
 
-    logger.info("Load [Done]")
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
-    logger.info("Load Prepare 1")
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
-    logger.info("Load Prepare 2")
     train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
-    logger.info("Load Prepare 3")
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
 
     return {
@@ -378,10 +373,10 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, n_chunk
 
         # train_ctl, val_ctl
 
-    if model:
-        embedding_model = model.siamese_network.feature_extractor
-    else:
-        embedding_model = None
+#    if model:
+#        embedding_model = model.siamese_network.feature_extractor
+#    else:
+#        embedding_model = None
 
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                        job_settings["sampling"] == "hard" else None
