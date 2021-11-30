@@ -1,5 +1,5 @@
-fashionscrapper @ git+https://github.com/NiklasHoltmeyer/FashionScrapper.git#egg=FashionScrapper-1.0
-fashion_datasets @ git+https://github.com/NiklasHoltmeyer/FashionDatasets.git#egg=FashionDatasets-1.0
+fashionscrapper@git+https://github.com/NiklasHoltmeyer/FashionScrapper.git#egg=FashionScrapper-1.0
+fashion_datasets@git+https://github.com/NiklasHoltmeyer/FashionDatasets.git#egg=FashionDatasets-1.0
 pycocotools # ~=2.0.0
 tqdm # ~=4.62.3
 pandas # ~=1.2.3
@@ -16,3 +16,11 @@ kaggle # ~=1.5.12
 numba # ~=0.53.1
 keras # ~=2.6.0
 scipy # ~=1.6.2
+matplotlib
+torchvision
+
+
+
+
+
+
