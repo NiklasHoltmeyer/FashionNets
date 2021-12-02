@@ -22,6 +22,7 @@ def download_results(keep_latest_version=True):
         remote_path = "/".join([remote_base_path, result_folder])
         remote_files = client.list(remote_path)
         zips = filter(lambda x: x.endswith(".zip"), remote_files)
+
         zips_full_remote_path = map(
             lambda x: "/".join([remote_base_path, result_folder, x]).replace("//", "/"),
             zips)
