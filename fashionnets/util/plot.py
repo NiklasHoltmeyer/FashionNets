@@ -26,7 +26,7 @@ def prepare_history(history):
 
 
 def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colors=None,
-                 label_mapping=None, build_epochs=None, bin_size=5):
+                 label_mapping=None, build_epochs=None, bin_size=5, ymin=None, ymax=None):
     if colors is None:
         colors = list(reversed(
             ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
@@ -71,6 +71,8 @@ def plot_history(history, title=None, x_label=None, y_label=None, loc=None, colo
 
     plt.xticks(x_ticks)
     plt.legend(loc=loc)
+
+    plt.ylim(ymin=ymin, ymax=ymax)
 
     plt.xticks(x_ticks)
     plt.show()
