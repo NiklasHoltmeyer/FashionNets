@@ -17,30 +17,32 @@ result_folders = filter(lambda x: "quadruplet" in x or "triplet" in x, files)
 results_download_path = notebooks["local"]["paths"]["results_download_path"]
 
 
-def download_results(keep_latest_version=True):
+def download_results(keep_latest_version=True, extension=".zip"):
     for result_folder in result_folders:
         remote_path = "/".join([remote_base_path, result_folder])
         remote_files = client.list(remote_path)
-        zips = filter(lambda x: x.endswith(".zip"), remote_files)
 
-        zips_full_remote_path = map(
+        files = list(filter(lambda x: x.endswith(extension), remote_files))
+
+        files_full_remote_path = map(
             lambda x: "/".join([remote_base_path, result_folder, x]).replace("//", "/"),
-            zips)
+            files)
 
         target_folder = Path(results_download_path, result_folder).resolve()
-        zips_full_remote_path = sorted(zips_full_remote_path)
+        files_full_remote_path = sorted(files_full_remote_path)
 
-        if len(zips_full_remote_path) < 2:
+        if len(files_full_remote_path) < 2:
             continue
 
         if keep_latest_version:
-            zips_full_remote_path = zips_full_remote_path[:-1]
+            files_full_remote_path = files_full_remote_path[:-1]
 
-        for remote_zip in zips_full_remote_path:
+        for remote_zip in files_full_remote_path:
             cmd = f'rclone move "hi:/{remote_zip}" "{target_folder}" -P'
             print(os.system(cmd))
 
 
 while True:
-    download_results()
+    #download_results(extension=".zip")
+    download_results(extension=".csv")
     time.sleep(60 * 15)

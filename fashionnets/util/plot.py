@@ -73,7 +73,7 @@ def plot_history(histories, **kwargs):
                 label = label_mapping.get(k, k)
 
             plt.plot(x_values, v["values"], label=label, color=color)
-            plt.plot(v["min_idx"], v["min_value"], 'v', color=color, linewidth=linewidth, markersize=12)  #
+            plt.plot(v["min_idx"], v["min_value"], 'v', color=color, linewidth=linewidth, markersize=8)  #
 
             for b_epoch in build_epochs:
                 plt.plot(b_epoch, v["values"][b_epoch], build_epochs_symbol,
@@ -90,8 +90,12 @@ def plot_history(histories, **kwargs):
     plt.xticks(x_ticks)
     plt.legend(loc=loc)
 
+    xmax = kwargs.get("xmax", None)
+    if xmax:
+        xmax += 2
+
     plt.ylim(ymin=kwargs.get("ymin", None), ymax=kwargs.get("ymax", None))
-    plt.xlim(xmin=kwargs.get("xmin", None), xmax=kwargs.get("xmax", None) + 2)
+    plt.xlim(xmin=kwargs.get("xmin", None), xmax=xmax)
 
     plt.xticks(x_ticks)
 
