@@ -104,7 +104,7 @@ def prepare_dataset(datasets_, job_settings, is_triplet, is_ctl):
     }
 
 
-def load_dataset(model, base_path="./deep_fashion_1_256", image_suffix="_256", embedding_path="./embeddings"):
+def load_dataset(model, job_settings, base_path="./deep_fashion_1_256", image_suffix="_256", embedding_path="./embeddings"):
     def __load(model_, generator_type):
         ds_loader = DeepFashion1Dataset(base_path,
                                         image_suffix=image_suffix,
