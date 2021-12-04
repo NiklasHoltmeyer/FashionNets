@@ -65,6 +65,11 @@ def job_list(debugging):
                                          "augmentation": compose_augmentations(), "generator_type": "ctl",
                                          "is_ctl": True},
 
+        "q_1e5aug_random_building_ctl_less_often": {"run_idx": 852, **base_cfg1e5, "dataset": ds,
+                                         "freeze_layers": freeze_layers["none"],
+                                         "augmentation": compose_augmentations(), "generator_type": "ctl",
+                                         "is_ctl": True},
+
         "t_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                        "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True},
         "q_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
