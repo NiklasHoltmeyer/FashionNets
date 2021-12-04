@@ -25,7 +25,7 @@ def load_model_clean(train_job):
 
 
 def load_model(cp_path, train_job):
-    siamese_model_triplet, siamese_model_quadtruplet = load_model_clean()
+    siamese_model_triplet, siamese_model_quadtruplet = load_model_clean(train_job=train_job)
 
     train_job["path"]["checkpoint"] = cp_path
 
