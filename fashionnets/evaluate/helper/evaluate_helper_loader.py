@@ -6,6 +6,7 @@ from fashionnets.models.layer.Augmentation import compose_augmentations
 from fashionnets.train_jobs.loader.job_loader import prepare_environment, load_job_settings, add_back_bone_to_train_job
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
+from fashionnets.train_jobs.loader.path_loader import _load_embedding_base_path, _load_dataset_base_path
 
 logger = defaultLogger()
 
@@ -105,28 +106,35 @@ def prepare_dataset(datasets_, job_settings, is_triplet, is_ctl):
 
 
 def load_dataset(model, job_settings, base_path="./deep_fashion_1_256", image_suffix="_256", embedding_path="./embeddings"):
+    base_path = _load_dataset_base_path(**job_settings)
+    embedding_base_path = _load_embedding_base_path(**job_settings)
+
     def __load(model_, generator_type):
-        ds_loader = DeepFashion1Dataset(base_path,
-                                        image_suffix=image_suffix,
-                                        model=model_, nrows=None,
-                                        augmentation=compose_augmentations()(False),
-                                        generator_type=generator_type,
-                                        embedding_path=embedding_path,
-                                        batch_size=32)
+        ds_loader = DeepFashion1Dataset(base_path=base_path,
+                                    image_suffix="_256",
+                                    model=model_,
+                                    nrows=job_settings["nrows"],
+                                    augmentation=compose_augmentations()(False),
+                                    generator_type=generator_type,
+                                    embedding_path=embedding_base_path,
+                                    batch_size=job_settings["batch_size"])
+
+        job_settings["sampling"] = "random"
+        job_settings["ds_load_force"] = False
 
         t_ds = ds_loader.load(splits=["test", "val"],
                               is_triplet=True,
-                              force_train_recreate=False,
-                              force=False, force_hard_sampling=False,
-                              embedding_path=embedding_path,
-                              force_skip_map_full=True)
+                              force=job_settings.get("ds_load_force", False),
+                              force_hard_sampling=job_settings["sampling"] == "hard",
+                              embedding_path=embedding_base_path,
+                              nrows=job_settings["nrows"])
 
         q_ds = ds_loader.load(splits=["test", "val"],
                               is_triplet=False,
-                              force_train_recreate=False,
-                              force=False, force_hard_sampling=False,
-                              embedding_path=embedding_path,
-                              force_skip_map_full=True)
+                              force=job_settings.get("ds_load_force", False),
+                              force_hard_sampling=job_settings["sampling"] == "hard",
+                              embedding_path=embedding_base_path,
+                              nrows=job_settings["nrows"])
 
         return t_ds, q_ds
 
