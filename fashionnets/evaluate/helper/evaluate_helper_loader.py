@@ -104,25 +104,27 @@ def prepare_dataset(datasets_, job_settings, is_triplet, is_ctl):
     }
 
 
-def load_dataset(model, base_path="./deep_fashion_1_256", image_suffix="_256"):
+def load_dataset(model, base_path="./deep_fashion_1_256", image_suffix="_256", embedding_path="./embeddings"):
     def __load(model_, generator_type):
         ds_loader = DeepFashion1Dataset(base_path,
                                         image_suffix=image_suffix,
                                         model=model_, nrows=None,
                                         augmentation=compose_augmentations()(False),
                                         generator_type=generator_type,
-                                        embedding_path="./embeddings",
+                                        embedding_path=embedding_path,
                                         batch_size=32)
 
         t_ds = ds_loader.load(splits=["test", "val"],
                               is_triplet=True,
                               force_train_recreate=False,
-                              force=False, force_hard_sampling=False)
+                              force=False, force_hard_sampling=False,
+                              embedding_path=embedding_path)
 
         q_ds = ds_loader.load(splits=["test", "val"],
                               is_triplet=False,
                               force_train_recreate=False,
-                              force=False, force_hard_sampling=False)
+                              force=False, force_hard_sampling=False,
+                              embedding_path=embedding_path)
 
         return t_ds, q_ds
 
