@@ -118,13 +118,15 @@ def load_dataset(model, base_path="./deep_fashion_1_256", image_suffix="_256", e
                               is_triplet=True,
                               force_train_recreate=False,
                               force=False, force_hard_sampling=False,
-                              embedding_path=embedding_path)
+                              embedding_path=embedding_path,
+                              force_skip_map_full=True)
 
         q_ds = ds_loader.load(splits=["test", "val"],
                               is_triplet=False,
                               force_train_recreate=False,
                               force=False, force_hard_sampling=False,
-                              embedding_path=embedding_path)
+                              embedding_path=embedding_path,
+                              force_skip_map_full=True)
 
         return t_ds, q_ds
 
@@ -132,8 +134,6 @@ def load_dataset(model, base_path="./deep_fashion_1_256", image_suffix="_256", e
     t_ds, q_ds = __load(None, generator_type="apn")
     logger.info("Load DS (Q, T CTL)")
     t_ctl_ds, q_ctl_ds = __load(model, generator_type="ctl")
-
-    return t_ds, q_ds, t_ctl_ds, q_ctl_ds
 
     return {
         "triplet": prepare_dataset(t_ds, job_settings, is_triplet=True, is_ctl=False),
