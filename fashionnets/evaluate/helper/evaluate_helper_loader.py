@@ -48,10 +48,10 @@ def load_model(cp_path, train_job):
     t_model, q_model, tctl_model, qctl_model = load_model_clean(train_job=train_job)
 
     train_job["path"]["checkpoint"] = cp_path
-    logger.info("Load Checkpoints (Triplet, Quadtruplet)")
+
     (t_succ, t_init_epoch) = load_latest_checkpoint(t_model, **train_job)
     (q_succ, q_init_epoch) = load_latest_checkpoint(q_model, **train_job)
-    logger.info("Load Checkpoints (CTL Triplet, CTL Quadtruplet)")
+
     (tctl_succ, tctl_init_epoch) = load_latest_checkpoint(tctl_model, **train_job)
     (qctl_succ, qctl_init_epoch) = load_latest_checkpoint(qctl_model, **train_job)
 
@@ -104,13 +104,13 @@ def prepare_dataset(datasets_, job_settings, is_triplet, is_ctl):
     }
 
 
-def load_dataset(model, base_path="./deep_fashion_1_256", image_suffix="_256"):
+def load_dataset(model, generator_type, base_path="./deep_fashion_1_256", image_suffix="_256"):
     def __load(model_):
         ds_loader = DeepFashion1Dataset(base_path,
                                         image_suffix=image_suffix,
                                         model=model_, nrows=None,
                                         augmentation=compose_augmentations()(False),
-                                        generator_type="apn",
+                                        generator_type=generator_type,
                                         embedding_path="./embeddings",
                                         batch_size=32)
 
@@ -134,10 +134,10 @@ def load_dataset(model, base_path="./deep_fashion_1_256", image_suffix="_256"):
     return t_ds, q_ds, t_ctl_ds, q_ctl_ds
 
     return {
-        "triplet": prepare_dataset(t_ds, job_settings, is_triplet=True, is_ctl=False),
-        "quadtruplet": prepare_dataset(q_ds, job_settings, is_triplet=False, is_ctl=False),
-        "triplet_ctl": prepare_dataset(t_ctl_ds, job_settings, is_triplet=True, is_ctl=True),
-        "quadtruplet_ctl": prepare_dataset(q_ctl_ds, job_settings, is_triplet=False, is_ctl=True),
+        "triplet": prepare_dataset(t_ds, job_settings, is_triplet=True, is_ctl=False, generator_type="apn"),
+        "quadtruplet": prepare_dataset(q_ds, job_settings, is_triplet=False, is_ctl=False, generator_type="apn"),
+        "triplet_ctl": prepare_dataset(t_ctl_ds, job_settings, is_triplet=True, is_ctl=True, generator_type="ctl"),
+        "quadtruplet_ctl": prepare_dataset(q_ctl_ds, job_settings, is_triplet=False, is_ctl=True, generator_type="ctl"),
     }
 
 if __name__ == "__main__":
