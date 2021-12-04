@@ -90,12 +90,12 @@ def plot_history(histories, **kwargs):
     plt.xticks(x_ticks)
     plt.legend(loc=loc)
 
-    xmax = kwargs.get("xmax", None)
-    if xmax:
-        xmax += 2
+#    xmax = kwargs.get("xmax", None)
+#    if xmax:
+#        xmax += 2
 
     plt.ylim(ymin=kwargs.get("ymin", None), ymax=kwargs.get("ymax", None))
-    plt.xlim(xmin=kwargs.get("xmin", None), xmax=xmax)
+    plt.xlim(xmin=kwargs.get("xmin", None), xmax=None)
 
     plt.xticks(x_ticks)
 

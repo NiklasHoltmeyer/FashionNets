@@ -43,6 +43,6 @@ def download_results(keep_latest_version=True, extension=".zip"):
 
 
 while True:
-    #download_results(extension=".zip")
     download_results(extension=".csv")
+    download_results(extension=".zip")
     time.sleep(60 * 15)
