@@ -177,7 +177,7 @@ def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
     base_path = _load_dataset_base_path(**settings)
     embedding_base_path = _load_embedding_base_path(**settings)
 
-    model = settings["back_bone"]["embedding_model"] if settings["is_ctl"] else None
+    model = settings["back_bone"]["embedding_model"] if settings["is_ctl"] or settings["sampling"] == "hard" else None
     # back_bone
 
     ds_loader = DeepFashion1Dataset(base_path=base_path,
