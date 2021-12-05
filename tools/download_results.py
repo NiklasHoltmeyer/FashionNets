@@ -17,7 +17,7 @@ result_folders = filter(lambda x: "quadruplet" in x or "triplet" in x, files)
 results_download_path = notebooks["local"]["paths"]["results_download_path"]
 
 
-def download_results(keep_latest_version=Truje, extension=".zip"):
+def download_results(keep_latest_version=True, extension=".zip"):
     for result_folder in result_folders:
         remote_path = "/".join([remote_base_path, result_folder])
         remote_files = client.list(remote_path)
