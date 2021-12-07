@@ -169,7 +169,7 @@ def load_deepfashion_2(**settings):
 
 @time_logger(name="DS-Loader::Load", header="Dataset-Loader", padding_length=50,
              logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
-def load_deepfashion_1(force_train_recreate=False, force_ctl=False, **settings):
+def load_deepfashion_1(**settings):
     logger.debug(f"Load own DeepFashion {settings['batch_size']} Batch Size")
 
     ds_settings = _fill_ds_settings(**settings)

@@ -70,7 +70,7 @@ def job_list(debugging):
                                      "augmentation": compose_augmentations(),
                                      "sampling": "hard"},
 
-        "q_1e5aug_random_building_ctl": {"run_idx": 652, **base_cfg1e5, "dataset": ds,
+        "q_1e5aug_random_building_ctl": {"run_idx": 652, **base_cfg1e4, "dataset": ds,
                                          "freeze_layers": freeze_layers["none"],
                                          "augmentation": compose_augmentations(), "generator_type": "ctl",
                                          "is_ctl": True},

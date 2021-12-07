@@ -42,7 +42,7 @@ def plot_history(histories, **kwargs):
     #
     label_mapping = kwargs.get("label_mapping",  {"loss": "Train","val_loss": "Validation"})
 
-    x_label = kwargs.get("x_label", "Epoch")
+    x_label = kwargs.get("x_label", "Epoche")
     y_label = kwargs.get("y_label", "Loss")
     loc = kwargs.get("loc", 'upper left')
     bin_size = kwargs.get("bin_size", 5)
@@ -103,3 +103,60 @@ def plot_history(histories, **kwargs):
         plt.savefig(save_path)
 
     plt.show()
+
+def plot_improvements(state, xmax=None, monitor="val_loss", **kwargs):
+    x_label = kwargs.get("x_label", "Epoche")
+    y_label = kwargs.get("y_label", "Epochen ohne Verbesserung")
+    loc = kwargs.get("loc", 'upper left')
+    bin_size = kwargs.get("bin_size", 5)
+    save_path = kwargs.get("save_path", None)
+    title = kwargs.get("title", None)
+
+    val_loss = state.history_history[monitor]
+    epochs_without_improvements = []
+
+    ymax_ = 0
+
+    for idx, item in enumerate(val_loss):
+        lst = val_loss[:(idx + 1)]
+        min_value = min(lst)
+        min_idx = lst.index(min_value)
+
+        epochs_wo_improvement = idx - min_idx
+        epochs_without_improvements.append(epochs_wo_improvement)
+        ymax_ = max(ymax_, epochs_wo_improvement)
+
+    if xmax:
+        epochs_without_improvements = epochs_without_improvements[:xmax]
+
+    plt.plot(epochs_without_improvements)
+    if title:
+        plt.title(title)
+
+    max_x = xmax if xmax else len(epochs_without_improvements)
+
+    #max_x = min(len(epochs_without_improvements), max_x)
+
+    x_ticks = sorted(list(range(0, (max_x + 2), bin_size)))
+
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+
+    plt.xticks(x_ticks)
+    #plt.legend(loc=loc)
+
+    #    xmax = kwargs.get("xmax", None)
+    #    if xmax:
+    #        xmax += 2
+
+    plt.ylim(ymin=kwargs.get("ymin", None), ymax=kwargs.get("ymax", None))
+    plt.xlim(xmin=kwargs.get("xmin", None), xmax=None)
+
+    plt.xticks(x_ticks)
+
+    if save_path:
+        plt.savefig(save_path)
+
+    plt.show()
+
+
