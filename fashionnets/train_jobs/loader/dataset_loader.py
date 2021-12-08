@@ -35,7 +35,26 @@ def loader_info(name, variation=""):
 
 
 def own_loader_info():
-    raise Exception("TODO #DS_Loader33")
+    return {
+        "name": "own_256",
+        "variation": "own_256",  # "df_quad_3",
+        "preprocess": {
+            "commands": [
+                "mkdir -p ./own_256",
+                "mv asos ./own_256",
+                "mv hm ./own_256",
+                "mv mango ./own_256",
+                "mv entries.json ./own_256",
+                "mv entries_test.json ./own_256",
+                "mv entries_train.json ./own_256",
+                "mv entries_validation.json ./own_256",
+                "mv quadruplet.csv ./own_256",
+                "mv test.csv ./own_256",
+                "mv validation.csv ./own_256",
+            ],
+            "check_existence": lambda: all_paths_exist(["./own_256"])
+        }
+    }
 
 
 #    print("Warning! " * 72)
@@ -219,10 +238,10 @@ def load_deepfashion_1(**settings):
 
 def load_own_dataset(**settings):
     ds_settings = _fill_ds_settings(**settings)
-    _print_ds_settings(settings.get("verbose", False), **ds_settings)
+    _print_ds_settings(**settings)
 
-    base_path = _load_dataset_base_path(**settings)
-    train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**{"base_path": base_path, **ds_settings})
+    train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**settings)
+
     return {
         "train": train_dataset,
         "val": val_dataset,
@@ -235,23 +254,20 @@ def load_own_dataset(**settings):
     }
 
 
-def _load_own_dataset(base_path, batch_size, buffer_size, train_split, format, **settings):
-    logger.debug(f"Load own DS {batch_size} Batch Size")
-    split = train_split
-    settings["format"] = format
-    settings["batch_size"] = batch_size
+def _load_own_dataset(**settings):
+    # logger.debug(f"Load own DS {batch_size} Batch Size")
+    # split = train_split
+    # settings["format"] = format
+    # settings["batch_size"] = batch_size
 
-    quad = Quadruplets(base_path, **settings)
+    base_path = _load_dataset_base_path(**settings)
 
-    dataset = quad.load_as_dataset()
-    dataset = dataset.shuffle(buffer_size)
+    quad = Quadruplets(base_path=base_path, split=None, map_full_paths=True, **settings)
 
-    n_total_items = len(quad)
-    n_train_items = round(split * n_total_items)  # // batch_size
-    n_val_items = n_total_items - n_train_items
+    n_train_items, train_dataset = quad.load_as_dataset(split="train") # "train
+    n_val_items, val_dataset = quad.load_as_dataset(split="validation")
 
-    train_dataset = dataset.take(n_train_items)
-    val_dataset = dataset.skip(n_train_items)
+    settings["_dataset"] = settings.pop("dataset")
 
     train_dataset, val_dataset = prepare_ds(train_dataset, is_train=True, **settings), \
                                  prepare_ds(val_dataset, is_train=False, **settings)
@@ -351,10 +367,10 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch):
 
         # train_ctl, val_ctl
 
-#    if model:
-#        embedding_model = model.siamese_network.feature_extractor
-#    else:
-#        embedding_model = None
+    #    if model:
+    #        embedding_model = model.siamese_network.feature_extractor
+    #    else:
+    #        embedding_model = None
 
     embedding_base_path = _load_embedding_base_path(**job_settings) if job_settings["is_ctl"] or \
                                                                        job_settings["sampling"] == "hard" else None

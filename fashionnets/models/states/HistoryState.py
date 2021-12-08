@@ -23,22 +23,22 @@ class HistoryState:
             pickle.dump(self, f)
 
     @staticmethod
-    def load(path):
+    def load(path, skip_assert=False):
         if not path.endswith(".pkl"):
-            params, epochs, history = HistoryState.load_histories(path)
+            params, epochs, history = HistoryState.load_histories(path, skip_assert=skip_assert)
             return HistoryState(history=None, params=params, history_history=history, epoch=epochs)
         with open(path, 'rb') as f:
             state = pickle.load(f)
             return state
 
     @staticmethod
-    def load_histories(path):
+    def load_histories(path, skip_assert=False):
         files = os.listdir(path)
         history_file_paths = filter(lambda f: "history" in f, files)
         history_file_paths = filter(lambda f: f.endswith(".pkl"), history_file_paths)
         history_file_paths = map(lambda f: os.path.join(path, f), history_file_paths)
 
-        history_files = map(HistoryState.load, history_file_paths)
+        history_files = map(lambda p: HistoryState.load(p, skip_assert=skip_assert), history_file_paths)
         history_files = list(history_files)
 
         if len(history_files) < 1:
@@ -75,8 +75,10 @@ class HistoryState:
 
                 history[metric].append(metric_value)
         number_elements = distinct([len(x) for x in history.values()])
-        assert len(number_elements) == 1, "ALl Metric Values should have the same Number of Values!"
-        assert number_elements[0] == len(epochs)
+
+        if not skip_assert:
+            assert len(number_elements) == 1, "ALl Metric Values should have the same Number of Values!"
+            assert number_elements[0] == len(epochs)
 
         return params, epochs, dict(history)
 
