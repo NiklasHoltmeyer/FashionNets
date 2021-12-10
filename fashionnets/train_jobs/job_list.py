@@ -98,7 +98,7 @@ def job_list(debugging):
         "t_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                        "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True},
         "q_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
-                       "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True}
+                       "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True},
         # endregion
         "q_pre_test_4": {"run_idx": 4, **base_cfg1e4, "dataset": ds_own,
                                        "freeze_layers": freeze_layers["none"],
