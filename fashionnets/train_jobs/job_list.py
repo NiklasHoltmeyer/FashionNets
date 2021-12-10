@@ -11,7 +11,7 @@ def job_config_by_notebook_name(notebook_name, debugging):
 
 
 def job_list(debugging):
-    base_cfg1e5 = base_settings(debugging, 1e-4)
+    base_cfg1e4 = base_settings(debugging, 1e-4)
 #    base_cfg5e3 = base_settings(debugging, 5e-3)
 #    base_cfg1e3 = base_settings(debugging, 1e-3)
     base_cfg1e5 = base_settings(debugging, 1e-5)
@@ -40,6 +40,7 @@ def job_list(debugging):
     }
 
     train_jobs = {
+        # region Job_List_Old
         # None
         # WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"]},
 
@@ -98,7 +99,14 @@ def job_list(debugging):
                        "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True},
         "q_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                        "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True}
+        # endregion
+        "q_pre_test_4": {"run_idx": 4, **base_cfg1e4, "dataset": ds_own,
+                                       "freeze_layers": freeze_layers["none"],
+                                       "augmentation": compose_augmentations()},
 
+        "q_pre_test_5": {"run_idx": 5, **base_cfg1e5, "dataset": ds_own,
+                                       "freeze_layers": freeze_layers["none"],
+                                       "augmentation": compose_augmentations()},
     }
     #
 

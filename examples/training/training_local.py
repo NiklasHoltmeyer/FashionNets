@@ -23,7 +23,9 @@ datasets = train_job["run"]["dataset"]()
 train_ds, val_ds = datasets["train"], datasets["val"]
 
 for x in tqdm(train_ds):
+    print(x)
     pass
+exit(0)
 
 # result_uploader = train_job["environment"].webdav
 train_job["environment"].webdav = None
