@@ -12,8 +12,8 @@ def job_config_by_notebook_name(notebook_name, debugging):
 
 def job_list(debugging):
     base_cfg1e4 = base_settings(debugging, 1e-4)
-#    base_cfg5e3 = base_settings(debugging, 5e-3)
-#    base_cfg1e3 = base_settings(debugging, 1e-3)
+    #    base_cfg5e3 = base_settings(debugging, 5e-3)
+    #    base_cfg1e3 = base_settings(debugging, 1e-3)
     base_cfg1e5 = base_settings(debugging, 1e-5)
 
     # back_bone_cfg =
@@ -49,8 +49,8 @@ def job_list(debugging):
                                      "augmentation": compose_augmentations()},
 
         "q_test": {"run_idx": 14445, **base_cfg1e5, "dataset": ds_own,
-                                     "freeze_layers": freeze_layers["none"],
-                                     "augmentation": compose_augmentations()},
+                   "freeze_layers": freeze_layers["none"],
+                   "augmentation": compose_augmentations()},
 
         "t_1e5aug_random_building_hard_sampling": {"run_idx": 545, **base_cfg1e5, "dataset": ds,
                                                    "freeze_layers": freeze_layers["none"],
@@ -63,22 +63,22 @@ def job_list(debugging):
                                          "is_ctl": True},
 
         "t_ctl22": {"run_idx": 55222, **base_cfg1e5, "dataset": ds,
-                                         "freeze_layers": freeze_layers["none"],
-                                         "augmentation": compose_augmentations(), "generator_type": "ctl",
-                                         "is_ctl": True},
+                    "freeze_layers": freeze_layers["none"],
+                    "augmentation": compose_augmentations(), "generator_type": "ctl",
+                    "is_ctl": True},
 
         "t_1e5aug_random_building_ctl1e4": {"run_idx": 582, **base_cfg1e5, "dataset": ds,
-                                         "freeze_layers": freeze_layers["none"],
-                                         "augmentation": compose_augmentations(), "generator_type": "ctl",
-                                         "is_ctl": True},
+                                            "freeze_layers": freeze_layers["none"],
+                                            "augmentation": compose_augmentations(), "generator_type": "ctl",
+                                            "is_ctl": True},
 
         "q_1e5aug_random_building": {"run_idx": 642, **base_cfg1e5, "dataset": ds,
                                      "freeze_layers": freeze_layers["none"],
                                      "augmentation": compose_augmentations()},
 
         "q_1e5aug_random_building22": {"run_idx": 64222, **base_cfg1e5, "dataset": ds,
-                                     "freeze_layers": freeze_layers["none"],
-                                     "augmentation": compose_augmentations()},
+                                       "freeze_layers": freeze_layers["none"],
+                                       "augmentation": compose_augmentations()},
 
         "q_1e4aug_random_building": {"run_idx": 644, **base_cfg1e5, "dataset": ds,
                                      "freeze_layers": freeze_layers["none"],
@@ -86,27 +86,33 @@ def job_list(debugging):
                                      "sampling": "hard"},
 
         "q_1e5aug_random_building_ctl22": {"run_idx": 65222, **base_cfg1e5, "dataset": ds,
-                                         "freeze_layers": freeze_layers["none"],
-                                         "augmentation": compose_augmentations(), "generator_type": "ctl",
-                                         "is_ctl": True},
+                                           "freeze_layers": freeze_layers["none"],
+                                           "augmentation": compose_augmentations(), "generator_type": "ctl",
+                                           "is_ctl": True},
 
         "q_1e5aug_random_building_ctl_less_often": {"run_idx": 852, **base_cfg1e5, "dataset": ds,
-                                         "freeze_layers": freeze_layers["none"],
-                                         "augmentation": compose_augmentations(), "generator_type": "ctl",
-                                         "is_ctl": True},
+                                                    "freeze_layers": freeze_layers["none"],
+                                                    "augmentation": compose_augmentations(), "generator_type": "ctl",
+                                                    "is_ctl": True},
 
         "t_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                        "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True},
         "q_test_ctl": {"run_idx": 1337, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"],
                        "augmentation": compose_augmentations(), "generator_type": "ctl", "is_ctl": True},
         # endregion
-        "q_pre_test_4": {"run_idx": 4, **base_cfg1e4, "dataset": ds_own,
-                                       "freeze_layers": freeze_layers["none"],
-                                       "augmentation": compose_augmentations()},
+        "q_pre": {"run_idx": 11, **base_cfg1e5, "dataset": ds_own,
+                  "freeze_layers": freeze_layers["none"],
+                  "augmentation": compose_augmentations()},
 
-        "q_pre_test_5": {"run_idx": 5, **base_cfg1e5, "dataset": ds_own,
-                                       "freeze_layers": freeze_layers["none"],
-                                       "augmentation": compose_augmentations()},
+        "q_ctl_pre": {"run_idx": 12, **base_cfg1e5, "dataset": ds_own,
+                      "freeze_layers": freeze_layers["none"],
+                      "augmentation": compose_augmentations(), "generator_type": "ctl",
+                      "is_ctl": True},
+
+        "t_ctl_pre": {"run_idx": 13, **base_cfg1e5, "dataset": ds_own,
+                      "freeze_layers": freeze_layers["none"],
+                      "augmentation": compose_augmentations(), "generator_type": "ctl",
+                      "is_ctl": True},
     }
     #
 
