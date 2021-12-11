@@ -200,6 +200,8 @@ def load_deepfashion_1(**settings):
     # back_bone
 
     dataframes = settings.get("dataframes", None)
+    print("dataframes is not None")
+    print(dataframes is not None)
 
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
@@ -209,7 +211,7 @@ def load_deepfashion_1(**settings):
                                     generator_type=settings["generator_type"],
                                     embedding_path=embedding_base_path,
                                     batch_size=settings["batch_size"],
-                                    skip_build=dataframes is None)
+                                    skip_build=dataframes is not None)
 
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
