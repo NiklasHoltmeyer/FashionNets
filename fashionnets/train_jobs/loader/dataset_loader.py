@@ -199,6 +199,8 @@ def load_deepfashion_1(**settings):
     model = settings["back_bone"]["embedding_model"] if settings["is_ctl"] or settings["sampling"] == "hard" else None
     # back_bone
 
+    dataframes = settings.get("dataframes", None)
+
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
                                     model=model,
@@ -206,14 +208,16 @@ def load_deepfashion_1(**settings):
                                     augmentation=compose_augmentations()(False),
                                     generator_type=settings["generator_type"],
                                     embedding_path=embedding_base_path,
-                                    batch_size=settings["batch_size"])
+                                    batch_size=settings["batch_size"],
+                                    skip_build=dataframes is None)
 
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=settings.get("ds_load_force", False),
                               force_hard_sampling=settings["sampling"] == "hard",
                               embedding_path=embedding_base_path,
-                              nrows=settings["nrows"])
+                              nrows=settings["nrows"],
+                              dataframes=dataframes)
 
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
@@ -237,7 +241,11 @@ def load_deepfashion_1(**settings):
 
 
 def load_own_dataset(**settings):
-    return load_deepfashion_1(**settings)
+    train_df, val_df, n_train_items, n_val_items = _load_own_dataset(load_df=True, **settings)
+
+    return load_deepfashion_1(dataframes=[train_df, val_df],**settings)
+
+
     #ds_settings = _fill_ds_settings(**settings)
     #_print_ds_settings(**settings)
 
@@ -264,6 +272,14 @@ def _load_own_dataset(**settings):
     base_path = _load_dataset_base_path(**settings)
 
     quad = Quadruplets(base_path=base_path, split=None, map_full_paths=True, **settings)
+
+    if settings.get("load_df", False):
+        n_train_items, train_dataset = quad.load_as_df(split="train")  # "train
+        n_val_items, val_dataset = quad.load_as_df(split="validation")
+
+        return train_dataset, val_dataset, n_train_items, n_val_items
+
+
 
     n_train_items, train_dataset = quad.load_as_dataset(split="train") # "train
     n_val_items, val_dataset = quad.load_as_dataset(split="validation")
