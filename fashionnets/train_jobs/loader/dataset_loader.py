@@ -237,21 +237,22 @@ def load_deepfashion_1(**settings):
 
 
 def load_own_dataset(**settings):
-    ds_settings = _fill_ds_settings(**settings)
-    _print_ds_settings(**settings)
+    return load_deepfashion_1(**settings)
+    #ds_settings = _fill_ds_settings(**settings)
+    #_print_ds_settings(**settings)
 
-    train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**settings)
+    #train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**settings)
 
-    return {
-        "train": train_dataset,
-        "val": val_dataset,
-        "shape": ds_settings.get("target_shape"),
-        "n_items": {
-            "total": n_val + n_train,
-            "validation": n_val,
-            "train": n_train
-        }
-    }
+    #return {
+#        "train": train_dataset,
+#        "val": val_dataset,
+#        "shape": ds_settings.get("target_shape"),
+#        "n_items": {
+#            "total": n_val + n_train,
+#            "validation": n_val,
+#            "train": n_train
+#        }
+#    }
 
 
 def _load_own_dataset(**settings):
