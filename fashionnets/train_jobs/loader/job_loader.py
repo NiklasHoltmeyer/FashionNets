@@ -72,7 +72,17 @@ def add_back_bone_to_train_job(environment, **settings):
     settings["back_bone"]["preprocess_input_layer"] = preprocess_input_layer
     logger.debug(settings["back_bone"]["preprocess_input_layer"])
 
-    run_name = f"{settings['run_idx']}_{run_name}"
+    infos = [
+        settings['run_idx'],
+        settings.get("format", None),
+        "ctl" if settings.get("is_ctl", False) else "apn",
+        "t" if settings["is_triplet"] else "q",
+    ]
+
+    infos = [str(x) for x in infos]
+
+    run_name = "_".join(infos)
+
     settings["run_name"] = run_name
 
     environment.train_job_name = run_name

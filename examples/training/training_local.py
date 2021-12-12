@@ -17,7 +17,7 @@ training_job_cfg["nrows"] = None
 
 train_job = load_job_settings(environment=environment, training_job_cfg=training_job_cfg, kaggle_downloader=None)
 job_settings = add_back_bone_to_train_job(environment=environment, **training_job_cfg)
-
+exit(0)
 datasets = train_job["run"]["dataset"]()
 
 train_ds, val_ds = datasets["train"], datasets["val"]
