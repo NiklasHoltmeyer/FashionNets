@@ -8,7 +8,7 @@ class SiameseNetwork(tf.keras.Model):
     def __init__(self, back_bone, is_triplet, is_ctl, input_shape, alpha, beta,
                  preprocess_input=None, verbose=False, channels=3):
         super(SiameseNetwork, self).__init__()
-        self.back_bone = back_bone
+        self.back_bone__ = back_bone
         self.is_triplet = is_triplet
         self.is_ctl = is_ctl
         self.input_shape_ = input_shape
