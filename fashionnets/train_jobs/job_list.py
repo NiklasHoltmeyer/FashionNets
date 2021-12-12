@@ -44,20 +44,20 @@ def job_list(debugging):
         # None
         # WARNUNG! noch mit altem loss!        "q_11_none": {"run_idx": 311, **base_cfg1e5, "dataset": ds, "freeze_layers": freeze_layers["none"]},
 
-        "t_apn": {"run_idx": 542, **base_cfg1e5, "dataset": ds,
+        "t_apn": {"run_idx": 221, **base_cfg1e5, "dataset": ds,
                   "freeze_layers": freeze_layers["none"],
                   "augmentation": compose_augmentations()},
 
-        "q_apn": {"run_idx": 642, **base_cfg1e5, "dataset": ds,
+        "q_apn": {"run_idx": 222, **base_cfg1e5, "dataset": ds,
                   "freeze_layers": freeze_layers["none"],
                   "augmentation": compose_augmentations()},
 
-        "t_ctl": {"run_idx": 742, **base_cfg1e5, "dataset": ds,
+        "t_ctl": {"run_idx": 231, **base_cfg1e5, "dataset": ds,
                   "freeze_layers": freeze_layers["none"],
                   "augmentation": compose_augmentations(), "generator_type": "ctl",
                   "is_ctl": True},
 
-        "q_ctl": {"run_idx": 842, **base_cfg1e5, "dataset": ds,
+        "q_ctl": {"run_idx": 242, **base_cfg1e5, "dataset": ds,
                   "freeze_layers": freeze_layers["none"],
                   "augmentation": compose_augmentations(), "generator_type": "ctl",
                   "is_ctl": True},
