@@ -16,7 +16,7 @@ class SiameseModel(Model):
         self.siamese_network = siamese_network
         self.loss_tracker = metrics.Mean(name="loss")
         self.logger = defaultLogger(name="Siamese_Model")
-        self.back_bone = back_bone
+        self.back_bone__ = back_bone
 
     def call(self, inputs):
         return self.siamese_network(inputs)
@@ -108,12 +108,12 @@ class SiameseModel(Model):
         backbone_cp_path = Path(model_cp_path, f"backbone-{epoch:04d}.ckpt")
         backbone_cp_path.parent.mkdir(parents=True, exist_ok=True)
 
-        self.back_bone.save(backbone_cp_path)
+        self.back_bone__.save(backbone_cp_path)
 
     def load_embedding_weights(self, cp_path):
         if not Path(cp_path).exists():
             raise Exception(f"Checkpoint Path does not Exist! {cp_path}")
-        self.back_bone.load_weights(cp_path)
+        self.back_bone__.load_weights(cp_path)
 
     def extract_features(self, images):
         return self.siamese_network.extract_features(images)
