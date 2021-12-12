@@ -111,13 +111,15 @@ def deep_fashion_1_loader_info():
 def load_dataset_loader(**settings):
     ds_name = settings["dataset"]["name"]
     if ds_name == "own" or ds_name == "own_256":
+        settings["dataset_hard_pairs_fn"] = build_dataset_hard_pairs_own
         return lambda: load_own_dataset(**settings)
     if ds_name == "deep_fashion_2_256":
+        settings["dataset_hard_pairs_fn"] = build_dataset_hard_pairs_deep_fashion_2
         return lambda: load_deepfashion_2(**settings)
     if "deep_fashion_1_256" in ds_name:
+        settings["dataset_hard_pairs_fn"] = build_dataset_hard_pairs_deep_fashion_1
         return lambda: load_deepfashion_1(**settings)
     raise Exception(f'Unknown Dataset {ds_name}')
-
 
 def _fill_ds_settings(**settings):
     keys = ["format", "nrows", "target_shape", "batch_size", "buffer_size"]
