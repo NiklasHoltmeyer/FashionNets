@@ -27,13 +27,13 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
 
     optimizer = train_job["optimizer"]
 
-    back_bone_model = train_job["back_bone"]["embedding_model"]
+    embedding_model_no_input_layer = train_job["back_bone"]["embedding_model_no_input_layer"]
     back_bone_preprocess_input_layer = train_job["back_bone"]["preprocess_input_layer"]
 
     if force_preprocess_layer:
         assert back_bone_preprocess_input_layer is not None
 
-    siamese_network = SiameseNetwork(back_bone=back_bone_model,
+    siamese_network = SiameseNetwork(back_bone=embedding_model_no_input_layer,
                                      is_triplet=train_job["is_triplet"],
                                      is_ctl=train_job["is_ctl"],
                                      input_shape=train_job["input_shape"],
@@ -42,9 +42,11 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
                                      preprocess_input=back_bone_preprocess_input_layer,
                                      verbose=train_job["verbose"],
                                      channels=3)
-
-    siamese_model = SiameseModel(siamese_network, back_bone_model)
+    
+    siamese_model = SiameseModel(siamese_network, embedding_model_no_input_layer)
     siamese_model.compile(optimizer=optimizer)  # , run_eagerly=True
+    
+    train_job["back_bone"]["embedding_model"] = siamese_model.siamese_network.feature_extractor
 
     siamese_model.fake_predict()
     cp_path, run_name = train_job["path"]["checkpoint"], train_job["run"]["name"]
