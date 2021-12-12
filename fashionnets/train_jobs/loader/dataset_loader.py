@@ -200,8 +200,6 @@ def load_deepfashion_1(**settings):
     # back_bone
 
     dataframes = settings.get("dataframes", None)
-    print("dataframes is not None")
-    print(dataframes is not None)
 
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
