@@ -114,3 +114,6 @@ class SiameseModel(Model):
         if not Path(cp_path).exists():
             raise Exception(f"Checkpoint Path does not Exist! {cp_path}")
         self.back_bone.load_weights(cp_path)
+
+    def extract_features(self, images):
+        return self.siamese_network.extract_features(images)
