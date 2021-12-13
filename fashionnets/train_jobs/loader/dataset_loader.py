@@ -9,11 +9,13 @@ from fashiondatasets.deepfashion2.helper.pairs.deep_fashion_2_pairs_generator im
 from fashiondatasets.own.Quadruplets import Quadruplets
 from fashiondatasets.own.helper.mappings import preprocess_image
 import tensorflow as tf
+from fashionnets.train_jobs.settings.default_settings import base_settings
 from fashionscrapper.utils.io import time_logger
 
 from fashionnets.callbacks.garabe_collector.delete_checkpoints import DeleteOldModel
 
 from fashionnets.models.embedding.resnet50 import EMBEDDING_DIM
+from fashionnets.models.embedding.simple_cnn import SimpleCNN
 from fashionnets.models.layer.Augmentation import compose_augmentations
 from fashionnets.train_jobs.loader.path_loader import _load_dataset_base_path, _load_embedding_base_path, \
     _load_centroid_base_path
@@ -198,7 +200,12 @@ def load_deepfashion_1(**settings):
     base_path = _load_dataset_base_path(**settings)
     embedding_base_path = _load_embedding_base_path(**settings)
 
-    model = settings["back_bone"]["embedding_model"] if settings["is_ctl"] or settings["sampling"] == "hard" else None
+    if settings["is_ctl"] or settings["sampling"] == "hard":
+        model = settings["back_bone"]["embedding_model"]
+        assert model is not None
+    else:
+        model = None
+
     # back_bone
 
     dataframes = settings.get("dataframes", None)
@@ -243,6 +250,7 @@ def load_deepfashion_1(**settings):
 
 
 def load_own_dataset(**settings):
+    settings["nrows"] = 8
     train_df, val_df, n_train_items, n_val_items = _load_own_dataset(load_df=True, **settings)
 
     return load_deepfashion_1(dataframes=[train_df, val_df],**settings)
@@ -391,6 +399,7 @@ def build_dataset_hard_pairs_own(model, job_settings, init_epoch, build_frequenc
                                    init_epoch,
                                    build_frequency,
                                    ds_name="own_256")
+
     if result is not None:
         return result
 
