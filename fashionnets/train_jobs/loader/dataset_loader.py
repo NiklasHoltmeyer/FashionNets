@@ -283,8 +283,8 @@ def _load_own_dataset(**settings):
     quad = Quadruplets(base_path=base_path, split=None, map_full_paths=True, **settings)
 
     if settings.get("load_df", False):
-        train_dataset = quad.load_as_df(split="train")  # "train
-        val_dataset = quad.load_as_df(split="validation")
+        train_dataset = quad.load_as_df(split="train", **settings)  # "train
+        val_dataset = quad.load_as_df(split="validation", **settings)
 
         n_train_items, n_val_items = len(train_dataset), len(val_dataset)
 
