@@ -250,7 +250,6 @@ def load_deepfashion_1(**settings):
 
 
 def load_own_dataset(**settings):
-    settings["nrows"] = 8
     train_df, val_df, n_train_items, n_val_items = _load_own_dataset(load_df=True, **settings)
 
     return load_deepfashion_1(dataframes=[train_df, val_df],**settings)
