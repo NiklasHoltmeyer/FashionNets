@@ -318,7 +318,7 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     if settings.get("verbose", False):
         logger.debug(f"Augmentation {augmentation}, IS_Train {is_train}")
 
-    n1_sample = settings.get("settings", None)
+    n1_sample = settings.get("n1_sample", None)
     generator_type = settings["generator_type"]
 
     if generator_type == "ctl":
