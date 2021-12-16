@@ -1,5 +1,6 @@
-from fashionnets.models.embedding.simple_cnn import SimpleCNN
 from fashionnets.networks.builder.builder import build_layers
+
+from fashionnets.models.embedding.simple_cnn import SimpleCNN
 from tensorflow.keras import Model
 from tensorflow.keras import layers
 
