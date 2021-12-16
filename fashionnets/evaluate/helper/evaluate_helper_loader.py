@@ -81,7 +81,8 @@ def prepare_dataset(datasets_, job_settings, is_triplet, is_ctl):
     prepare_settings_ = {
         "is_triplet": is_triplet,
         "generator_type": "apn" if not is_ctl else "ctl",
-        "is_ctl": is_ctl
+        "is_ctl": is_ctl,
+        "n1_sample": "centroid"
     }
 
     logger.info(prepare_settings_)
