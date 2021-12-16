@@ -3,20 +3,23 @@ import os
 
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 
-notebook_name = "l_t_ctl_pre"  # 212 t_test_ctl
+notebook_name = "l_q_apn"  # 212 t_test_ctl
 #
 from fashionnets.train_jobs.loader.job_loader import load_job_settings, prepare_environment
 from fashionnets.train_jobs.loader.model_loader import load_siamese_model_from_train_job
 from fashionnets.train_jobs.loader.job_loader import add_back_bone_to_train_job
 from tqdm.auto import tqdm
 defaultLogger().setLevel(logging.DEBUG)
-
+# t_apn
+# q_apn
 os.chdir(r'F:\workspace\FashNets\runs\1337_resnet50_imagenet_triplet')
 environment, training_job_cfg = prepare_environment(notebook_name, debugging=True)
 training_job_cfg["nrows"] = None
 
 train_job = load_job_settings(environment=environment, training_job_cfg=training_job_cfg, kaggle_downloader=None)
 job_settings = add_back_bone_to_train_job(environment=environment, **training_job_cfg)
+print(job_settings)
+exit(0)
 
 siamese_model, init_epoch, _callbacks = load_siamese_model_from_train_job(**train_job,
                                                                           load_weights=False,

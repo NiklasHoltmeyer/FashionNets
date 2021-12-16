@@ -59,8 +59,15 @@ def job_list(debugging):
 
         "q_ctl": {"run_idx": 242, **base_cfg1e5, "dataset": ds,
                   "freeze_layers": freeze_layers["none"],
-                  "augmentation": compose_augmentations(), "generator_type": "ctl",
+                  "augmentation": compose_augmentations(),
+                  "generator_type": "ctl", "n1_sample": "centroid",
                   "is_ctl": True},
+
+        "q_ctl_instance": {"run_idx": 252, **base_cfg1e5, "dataset": ds,
+                           "freeze_layers": freeze_layers["none"],
+                           "augmentation": compose_augmentations(),
+                           "generator_type": "ctl", "n1_sample": "instance",
+                           "is_ctl": True},
 
         # endregion
         "q_pre": {"run_idx": 11, **base_cfg1e5, "dataset": ds_own,
@@ -69,8 +76,14 @@ def job_list(debugging):
 
         "q_ctl_pre": {"run_idx": 12, **base_cfg1e5, "dataset": ds_own,
                       "freeze_layers": freeze_layers["none"],
-                      "augmentation": compose_augmentations(), "generator_type": "ctl",
+                      "augmentation": compose_augmentations(), "generator_type": "ctl", "n1_sample": "centroid",
                       "is_ctl": True},
+
+        "q_ctl_instance_pre": {"run_idx": 15, **base_cfg1e5, "dataset": ds_own,
+                               "freeze_layers": freeze_layers["none"],
+                               "augmentation": compose_augmentations(),
+                               "generator_type": "ctl", "n1_sample": "instance",
+                               "is_ctl": True},
 
         "t_ctl_pre": {"run_idx": 13, **base_cfg1e5, "dataset": ds_own,
                       "freeze_layers": freeze_layers["none"],

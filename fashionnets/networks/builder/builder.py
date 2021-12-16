@@ -9,7 +9,7 @@ from tensorflow.keras import layers
 logger = defaultLogger("deepfashion_model_builder")
 
 
-def build_layers(builder):
+def nbuild_layers(builder):
     if builder.verbose:
         logger.debug(f"is_triplet={builder.is_triplet}, "
                      f"is_ctl={builder.is_ctl}, alpha={builder.alpha}, beta={builder.beta}")

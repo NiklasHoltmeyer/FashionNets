@@ -123,6 +123,7 @@ def load_dataset_loader(**settings):
         return lambda: load_deepfashion_1(**settings)
     raise Exception(f'Unknown Dataset {ds_name}')
 
+
 def _fill_ds_settings(**settings):
     keys = ["format", "nrows", "target_shape", "batch_size", "buffer_size"]
     missing_keys = list(filter(lambda k: k not in settings.keys(), keys))
@@ -252,15 +253,16 @@ def load_deepfashion_1(**settings):
 def load_own_dataset(**settings):
     train_df, val_df, n_train_items, n_val_items = _load_own_dataset(load_df=True, **settings)
 
-    return load_deepfashion_1(dataframes=[train_df, val_df],**settings)
+    return load_deepfashion_1(dataframes=[train_df, val_df], **settings)
+
+    # ds_settings = _fill_ds_settings(**settings)
+    # _print_ds_settings(**settings)
+
+    # train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**settings)
+
+    # return {
 
 
-    #ds_settings = _fill_ds_settings(**settings)
-    #_print_ds_settings(**settings)
-
-    #train_dataset, val_dataset, n_train, n_val = _load_own_dataset(**settings)
-
-    #return {
 #        "train": train_dataset,
 #        "val": val_dataset,
 #        "shape": ds_settings.get("target_shape"),
@@ -290,9 +292,7 @@ def _load_own_dataset(**settings):
 
         return train_dataset, val_dataset, n_train_items, n_val_items
 
-
-
-    n_train_items, train_dataset = quad.load_as_dataset(split="train") # "train
+    n_train_items, train_dataset = quad.load_as_dataset(split="train")  # "train
     n_val_items, val_dataset = quad.load_as_dataset(split="validation")
 
     settings["_dataset"] = settings.pop("dataset")
@@ -318,8 +318,15 @@ def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     if settings.get("verbose", False):
         logger.debug(f"Augmentation {augmentation}, IS_Train {is_train}")
 
+    n1_sample = settings.get("settings", None)
+    generator_type = settings["generator_type"]
+
+    if generator_type == "ctl":
+        assert n1_sample, "n1_sample need to be set if ctl is used"
+
     return dataset.map(_load_image_preprocessor(target_shape=target_shape, is_triplet=is_triplet,
-                                                augmentation=augmentation, generator_type=settings["generator_type"])) \
+                                                augmentation=augmentation, generator_type=settings["generator_type"],
+                                                n1_sample=n1_sample)) \
         .batch(batch_size, drop_remainder=False) \
         .prefetch(tf.data.AUTOTUNE)
 
@@ -333,21 +340,31 @@ def load_npy(p):
     return tf.convert_to_tensor(d, dtype=tf.float64)
 
 
-def _load_image_preprocessor(is_triplet, target_shape, generator_type, preprocess_img=None, augmentation=None):
+def _load_image_preprocessor(is_triplet, target_shape, generator_type, n1_sample=None, preprocess_img=None,
+                             augmentation=None):
     prep_image = preprocess_image(target_shape, preprocess_img=preprocess_img, augmentation=augmentation)
     assert not preprocess_img, "None of the two Datasets needs further Preprocessing!"
 
     if "ctl" == generator_type:
-        if is_triplet:
+        if is_triplet:  # Tripl -> A::jpg_path Cp::npy_path Cn::npy_path
             return lambda a, p_ctl, n_ctl: (prep_image(a),
                                             load_npy(p_ctl),
                                             load_npy(n_ctl))
-        else:
-            return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
-                                                         load_npy(p_ctl),
-                                                         load_npy(n1_ctl),
-                                                         load_npy(n2_ctl),
-                                                         )
+        else:  # Quad -> A::jpg_path N1::npy_path Cp::npy_path C_n1::npy_path C_n2::npy_path
+            if n1_sample == "centroid":
+                print("N1 Sample Centroid"  * 25)
+                return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
+                                                             load_npy(p_ctl),
+                                                             load_npy(n1_ctl),
+                                                             load_npy(n2_ctl),
+                                                             )
+            if n1_sample == "instance":
+                print("N1 Sample Instance"  * 25)
+                return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
+                                                             load_npy(p_ctl),
+                                                             load_npy(n1),
+                                                             load_npy(n2_ctl),
+                                                             )
 
     if "apn" == generator_type:
         if is_triplet:
@@ -387,6 +404,7 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
         return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch)
 
     raise Exception("Could not Download Train.csv.")
+
 
 def build_dataset_hard_pairs_own(model, job_settings, init_epoch, build_frequency):
     job_settings["force_ctl"] = init_epoch > 0
