@@ -352,7 +352,6 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, n1_sample
                                             load_npy(n_ctl))
         else:  # Quad -> A::jpg_path N1::npy_path Cp::npy_path C_n1::npy_path C_n2::npy_path
             if n1_sample == "centroid":
-                print("N1 Sample Centroid"  * 25)
                 return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
                                                              load_npy(p_ctl),
                                                              load_npy(n1_ctl),
