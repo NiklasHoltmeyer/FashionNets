@@ -25,6 +25,6 @@ class UploadResults(keras.callbacks.Callback):
                 try:
                     self.result_uploader.move(zip_name_old, _async=False)  # <- Retry uploading old Zips
                 except:
-                    logger.debug.info(f"Uploading: {zip_name_old} failed!")
+                    logger.warning(f"Uploading: {zip_name_old} failed!")
 
 
