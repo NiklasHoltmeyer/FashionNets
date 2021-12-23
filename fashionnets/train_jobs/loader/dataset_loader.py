@@ -357,13 +357,14 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, n1_sample
                                                              load_npy(n1_ctl),
                                                              load_npy(n2_ctl),
                                                              )
-            if n1_sample == "instance":
-                print("INSTANCE BASED\n" * 5)
-                return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
-                                                             load_npy(p_ctl),
-                                                             load_npy(n1),
-                                                             load_npy(n2_ctl),
-                                                             )
+            raise Exception("Quadtruplet / Triplet-net currently only supports N1 to be of C_N1")
+#            if n1_sample == "instance":
+#                print("INSTANCE BASED\n" * 5)
+#                return lambda a, n1, p_ctl, n1_ctl, n2_ctl: (prep_image(a),
+#                                                             load_npy(p_ctl),
+#                                                             prep_image(n1),
+#                                                             load_npy(n2_ctl),
+#                                                             )
 
     if "apn" == generator_type:
         if is_triplet:
