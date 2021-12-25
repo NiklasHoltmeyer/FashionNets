@@ -93,15 +93,15 @@ def job_list(debugging):
                       "is_ctl": True},
         # endregion
 
-        "q_fine_freeze_1": {"run_idx": 13371, **base_cfg1e5, "dataset": ds_own,
+        "q_fine_freeze_1": {"run_idx": 13371, **base_cfg1e5, "dataset": ds,
                             "freeze_layers": freeze_layers["none"],
                             "augmentation": compose_augmentations(), "nrows": 95_951//10},
 
-        "q_fine_freeze_2": {"run_idx": 13372, **base_cfg1e5, "dataset": ds_own,
+        "q_fine_freeze_2": {"run_idx": 13372, **base_cfg1e5, "dataset": ds,
                             "freeze_layers": freeze_layers["non_conv5_block1_out"],
                             "augmentation": compose_augmentations(), "nrows": 95_951//10},
 
-        "q_fine_freeze_3": {"run_idx": 13373, **base_cfg1e5, "dataset": ds_own,
+        "q_fine_freeze_3": {"run_idx": 13373, **base_cfg1e5, "dataset": ds,
                             "freeze_layers": freeze_layers["first_30"],
                             "augmentation": compose_augmentations(), "nrows": 95_951//10},
     }

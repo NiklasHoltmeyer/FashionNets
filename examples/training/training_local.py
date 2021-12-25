@@ -3,6 +3,8 @@ import os
 
 from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 
+from fashionnets.models.embedding.resnet50 import ResNet50Builder
+
 notebook_name = "l_q_fine_freeze_3"  # 212 t_test_ctl
 #
 from fashionnets.train_jobs.loader.job_loader import load_job_settings, prepare_environment
@@ -18,13 +20,16 @@ training_job_cfg["nrows"] = None
 
 train_job = load_job_settings(environment=environment, training_job_cfg=training_job_cfg, kaggle_downloader=None)
 job_settings = add_back_bone_to_train_job(environment=environment, **training_job_cfg)
-print(job_settings["run_name"])
-exit(0)
 
 siamese_model, init_epoch, _callbacks = load_siamese_model_from_train_job(**train_job,
                                                                           load_weights=False,
                                                                           force_preprocess_layer=True)
+siamese_model.siamese_network.back_bone = ResNet50Builder.freeze_first_n_layers(siamese_model.siamese_network.back_bone__, 30)
 
+x = sum([l.trainable for l in siamese_model.siamese_network.back_bone__.layers])
+print(x, len(siamese_model.siamese_network.back_bone__.layers) - x)
+print("WUHU")
+exit(0)
 datasets = train_job["run"]["dataset"]() # für ctl auf own nach load model
 
 train_ds, val_ds = datasets["train"], datasets["val"]

@@ -78,8 +78,7 @@ def load_siamese_model_from_train_job(force_preprocess_layer=False, force_load_w
     freeze_layers = train_job.get("freeze_layers", None)
 
     if freeze_layers:
-        raise Exception("nicht Usen. ResNet-Preprocess-Layer fehlt")
-        siamese_model.siamese_network.back_bone = freeze_layers(siamese_model.siamese_network.feature_extractor)
+        siamese_model.siamese_network.back_bone = freeze_layers(siamese_model.siamese_network.back_bone__)
     else:
         logger.info("No layers frozen!")
 
