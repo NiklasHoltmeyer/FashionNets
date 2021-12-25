@@ -389,7 +389,7 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     return load_dataset_loader(**job_settings)()
 
 
-def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency):
+def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency, move=True):
     job_settings["force_ctl"] = init_epoch > 0
 
     if init_epoch == 0 and not job_settings["is_ctl"] and not job_settings["sampling"] == "hard":
@@ -401,7 +401,7 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
         return result
 
     if (init_epoch % build_frequency) == 0:
-        return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch)
+        return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, move)
 
     raise Exception("Could not Download Train.csv.")
 
@@ -426,7 +426,7 @@ def build_dataset_hard_pairs_own(model, job_settings, init_epoch, build_frequenc
     raise Exception("Could not Download Train.csv.")
 
 
-def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, ds_name="deep_fashion_1_256"):
+def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, ds_name="deep_fashion_1_256", move=True):
     if Path(f"./{ds_name}/train.csv").exists():
         Path(f"./{ds_name}/train.csv").unlink()
 
@@ -454,7 +454,8 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, ds_name
     copyfile(src, dst)
 
     result_uploader = job_settings["environment"].webdav
-    result_uploader.move(dst, _async=False)
+    if move:
+        result_uploader.move(dst, _async=False)
 
     return datasets
 
