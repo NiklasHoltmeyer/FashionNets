@@ -401,7 +401,7 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
         return result
 
     if (init_epoch % build_frequency) == 0:
-        return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, move)
+        return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, move=move)
 
     raise Exception("Could not Download Train.csv.")
 
