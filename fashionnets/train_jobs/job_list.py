@@ -1,3 +1,4 @@
+from fashionnets.models.embedding.resnet50 import ResNet50Builder
 from fashionnets.models.layer.Augmentation import compose_augmentations
 from fashionnets.train_jobs.loader.dataset_loader import loader_info
 from fashionnets.train_jobs.settings.default_settings import base_settings, back_bone_settings
@@ -34,8 +35,8 @@ def job_list(debugging):
     }
 
     freeze_layers = {
-        #        "non_conv5_block1_out": ResNet50Builder.freeze_non_conv5_block1_out,
-        #        "first_30": lambda model: ResNet50Builder.freeze_first_n_layers(model, 30),
+        "non_conv5_block1_out": ResNet50Builder.freeze_non_conv5_block1_out,
+        "first_30": lambda model: ResNet50Builder.freeze_first_n_layers(model, 30),
         "none": None
     }
 
@@ -70,6 +71,7 @@ def job_list(debugging):
                            "is_ctl": True},
 
         # endregion
+        # region Pre
         "q_pre": {"run_idx": 11, **base_cfg1e5, "dataset": ds_own,
                   "freeze_layers": freeze_layers["none"],
                   "augmentation": compose_augmentations()},
@@ -89,6 +91,19 @@ def job_list(debugging):
                       "freeze_layers": freeze_layers["none"],
                       "augmentation": compose_augmentations(), "generator_type": "ctl",
                       "is_ctl": True},
+        # endregion
+
+        "q_fine_1": {"run_idx": 13371, **base_cfg1e5, "dataset": ds_own,
+                  "freeze_layers": freeze_layers["none"],
+                  "augmentation": compose_augmentations()},
+
+        "q_fine_2": {"run_idx": 13372, **base_cfg1e5, "dataset": ds_own,
+                     "freeze_layers": freeze_layers["non_conv5_block1_out"],
+                     "augmentation": compose_augmentations()},
+
+        "q_fine_3": {"run_idx": 13373, **base_cfg1e5, "dataset": ds_own,
+                     "freeze_layers": freeze_layers["first_30"],
+                     "augmentation": compose_augmentations()},
     }
     #
 
