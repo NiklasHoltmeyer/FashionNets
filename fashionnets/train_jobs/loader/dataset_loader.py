@@ -210,7 +210,7 @@ def load_deepfashion_1(**settings):
     # back_bone
 
     dataframes = settings.get("dataframes", None)
-    print("load_deepfashion_1", 1)
+
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
                                     model=model,
@@ -220,7 +220,7 @@ def load_deepfashion_1(**settings):
                                     embedding_path=embedding_base_path,
                                     batch_size=settings["batch_size"],
                                     skip_build=dataframes is not None)
-    print("load_deepfashion_1", 2)
+
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=settings.get("ds_load_force", False),
@@ -228,17 +228,17 @@ def load_deepfashion_1(**settings):
                               embedding_path=embedding_base_path,
                               nrows=settings["nrows"],
                               dataframes=dataframes)
-    print("load_deepfashion_1", 3)
+
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
-    print("load_deepfashion_1", 4)
+
     train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
-    print("load_deepfashion_1", 5)
+
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
-    print("load_deepfashion_1", 6)
+
     return {
         "type": "deepfashion_1",
         "train": train_ds,
@@ -393,15 +393,16 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
 
 def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency, move=True):
     job_settings["force_ctl"] = init_epoch > 0
-
+    print("build_dataset_hard_pairs_deep_fashion_1", 1)
     if init_epoch == 0 and not job_settings["is_ctl"] and not job_settings["sampling"] == "hard":
+        print("build_dataset_hard_pairs_deep_fashion_1", 2)
         return load_dataset_loader(**job_settings)()
-
+    print("build_dataset_hard_pairs_deep_fashion_1", 3)
     result = __download_hard_pairs(job_settings, init_epoch, build_frequency)
-
+    print("build_dataset_hard_pairs_deep_fashion_1", 4)
     if result is not None:
         return result
-
+    print("build_dataset_hard_pairs_deep_fashion_1", 5)
     if (init_epoch % build_frequency) == 0:
         return __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, move=move)
 
@@ -447,9 +448,9 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, ds_name
         DeleteOldModel.delete_path(_load_centroid_base_path(**job_settings))
 
     job_settings["ds_load_force"] = True
-
+    print("1337 1")
     datasets = load_dataset_loader(**job_settings)()
-
+    print("1337 2")
     src = f"./{ds_name}/train.csv"
     dst = f"./{ds_name}/train_{init_epoch:04d}.csv"
 
