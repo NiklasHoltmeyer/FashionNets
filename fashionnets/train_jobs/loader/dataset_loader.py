@@ -26,8 +26,6 @@ from fashiondatasets.utils.logger.defaultLogger import defaultLogger
 logger = defaultLogger("deepfashion_data_builder", level=logging.INFO)
 
 
-@time_logger(name="DS-Loader::loader_info", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def loader_info(name, variation=""):
     if "deep_fashion_2" in name:
         return deep_fashion_2_loader_info(variation)
@@ -111,8 +109,7 @@ def deep_fashion_1_loader_info():
         }
     }
 
-@time_logger(name="DS-Loader::load_dataset_loader", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
+
 def load_dataset_loader(**settings):
     ds_name = settings["dataset"]["name"]
     if ds_name == "own" or ds_name == "own_256":
@@ -127,8 +124,6 @@ def load_dataset_loader(**settings):
     raise Exception(f'Unknown Dataset {ds_name}')
 
 
-@time_logger(name="DS-Loader::_fill_ds_settings", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def _fill_ds_settings(**settings):
     keys = ["format", "nrows", "target_shape", "batch_size", "buffer_size"]
     missing_keys = list(filter(lambda k: k not in settings.keys(), keys))
@@ -147,8 +142,6 @@ def _fill_ds_settings(**settings):
     }
 
 
-@time_logger(name="DS-Loader::_print_ds_settings", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def _print_ds_settings(verbose, **ds_settings):
     if verbose:
         header_str = "*" * 24 + " Settings " + "*" * 24
@@ -166,8 +159,6 @@ def _print_ds_settings(verbose, **ds_settings):
         logger.debug("*" * len(header_str))
 
 
-@time_logger(name="DS-Loader::load_deepfashion_2", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def load_deepfashion_2(**settings):
     logger.debug(f"Load own DeepFashion {settings['batch_size']} Batch Size")
 
@@ -261,8 +252,6 @@ def load_deepfashion_1(**settings):
     }
 
 
-@time_logger(name="DS-Loader::load_own_dataset", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def load_own_dataset(**settings):
     train_df, val_df, n_train_items, n_val_items = _load_own_dataset(load_df=True, **settings)
 
@@ -286,8 +275,7 @@ def load_own_dataset(**settings):
 #        }
 #    }
 
-@time_logger(name="DS-Loader::_load_own_dataset", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
+
 def _load_own_dataset(**settings):
     # logger.debug(f"Load own DS {batch_size} Batch Size")
     # split = train_split
@@ -321,8 +309,6 @@ def filter_ds_not_nan(x):
     return not tf.reduce_any(tf.reduce_any(tf.math.is_nan(x)))
 
 
-@time_logger(name="DS-Loader::prepare_ds", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def prepare_ds(dataset, batch_size, is_triplet, is_train, **settings):
     target_shape = settings["input_shape"]
 
@@ -388,9 +374,6 @@ def _load_image_preprocessor(is_triplet, target_shape, generator_type, n1_sample
         else:
             return lambda a, p, n1, n2: (prep_image(a), prep_image(p), prep_image(n1), prep_image(n2))
 
-
-@time_logger(name="DS-Loader::build_dataset_hard_pairs_deep_fashion_2", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     if Path("./deep_fashion_256/train/quadruplets.csv").exists():
         Path("./deep_fashion_256/train/quadruplets.csv").unlink()
@@ -407,8 +390,6 @@ def build_dataset_hard_pairs_deep_fashion_2(model, job_settings):
     return load_dataset_loader(**job_settings)()
 
 
-@time_logger(name="DS-Loader::build_dataset_hard_pairs_deep_fashion_1", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, build_frequency, move=True):
     job_settings["force_ctl"] = init_epoch > 0
     print("build_dataset_hard_pairs_deep_fashion_1", 1)
@@ -427,8 +408,6 @@ def build_dataset_hard_pairs_deep_fashion_1(model, job_settings, init_epoch, bui
     raise Exception("Could not Download Train.csv.")
 
 
-@time_logger(name="DS-Loader::build_dataset_hard_pairs_own", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def build_dataset_hard_pairs_own(model, job_settings, init_epoch, build_frequency):
     job_settings["force_ctl"] = init_epoch > 0
 
@@ -449,8 +428,6 @@ def build_dataset_hard_pairs_own(model, job_settings, init_epoch, build_frequenc
     raise Exception("Could not Download Train.csv.")
 
 
-@time_logger(name="DS-Loader::__build_move_deepfashion_hard_pairs", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, ds_name="deep_fashion_1_256", move=True):
     if Path(f"./{ds_name}/train.csv").exists():
         Path(f"./{ds_name}/train.csv").unlink()
@@ -485,8 +462,6 @@ def __build_move_deepfashion_hard_pairs(model, job_settings, init_epoch, ds_name
     return datasets
 
 
-@time_logger(name="DS-Loader::__download_hard_pairs", header="Dataset-Loader", padding_length=50,
-             logger=defaultLogger("fashiondataset_time_logger"), log_debug=False)
 def __download_hard_pairs(job_settings, init_epoch, build_frequency, ds_name="deep_fashion_1_256"):
     if Path(f"./{ds_name}/train.csv").exists():
         Path(f"./{ds_name}/train.csv").unlink()

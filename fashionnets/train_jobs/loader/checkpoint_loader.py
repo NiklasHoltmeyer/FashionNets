@@ -32,17 +32,25 @@ def load_latest_checkpoint(model, **train_job):
     # noinspection PyTypeChecker
     last_epoch = retrieve_epoch_from_checkpoint(checkpoint_path)
 
-    opt_path = latest_optimizer(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
-    hist_path = latest_history(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
+    try:
+        opt_path = latest_optimizer(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
+    except:
+        opt_path=None
+        print("OPT PATH FAILED")
+    try:
+        hist_path = latest_history(checkpoint_path=train_job["path"]["checkpoint"], epoch=last_epoch)
+    except:
+        hist_path=None
+        print("hist_path PATH FAILED")
 
     model.load_embedding_weights(str(checkpoint_path.resolve()))
     model.make_train_function()
-
-    opt_state = OptimizerState.load(opt_path)
-    opt_state.apply(model)
-
-    history_state = HistoryState.load(hist_path)
-    history_state.apply(model)
+    if opt_path:
+        opt_state = OptimizerState.load(opt_path)
+        opt_state.apply(model)
+    if hist_path:
+        history_state = HistoryState.load(hist_path)
+        history_state.apply(model)
 
     logger.info("Model loaded Weights, Optimizer, History.")
 
