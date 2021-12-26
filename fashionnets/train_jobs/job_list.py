@@ -16,6 +16,7 @@ def job_list(debugging):
     #    base_cfg5e3 = base_settings(debugging, 5e-3)
     #    base_cfg1e3 = base_settings(debugging, 1e-3)
     base_cfg1e5 = base_settings(debugging, 1e-5)
+    base_cfg1e6 = base_settings(debugging, 1e-6)
 
     # back_bone_cfg =
     triplet_w_weights = back_bone_settings("resnet50", weights="imagenet", is_triplet=True)
@@ -93,16 +94,16 @@ def job_list(debugging):
                       "is_ctl": True},
         # endregion
 
-        "q_fine_freeze_1": {"run_idx": 13371, **base_cfg1e5, "dataset": ds,
+        "q_1e4": {"run_idx": 13371, **base_cfg1e4, "dataset": ds,
                             "freeze_layers": freeze_layers["none"],
                             "augmentation": compose_augmentations(), "nrows": 95_951//10},
 
-        "q_fine_freeze_2": {"run_idx": 13372, **base_cfg1e5, "dataset": ds,
-                            "freeze_layers": freeze_layers["non_conv5_block1_out"],
+        "q_1e5": {"run_idx": 13372, **base_cfg1e5, "dataset": ds,
+                            "freeze_layers": freeze_layers["none"],
                             "augmentation": compose_augmentations(), "nrows": 95_951//10},
 
-        "q_fine_freeze_3": {"run_idx": 13373, **base_cfg1e5, "dataset": ds,
-                            "freeze_layers": freeze_layers["first_30"],
+        "q_1e6": {"run_idx": 13373, **base_cfg1e6, "dataset": ds,
+                            "freeze_layers": freeze_layers["none"],
                             "augmentation": compose_augmentations(), "nrows": 95_951//10},
     }
     #
