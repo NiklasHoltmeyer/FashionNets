@@ -94,17 +94,14 @@ def job_list(debugging):
                       "is_ctl": True},
         # endregion
 
-        "q_1e4": {"run_idx": 13371, **base_cfg1e4, "dataset": ds,
-                            "freeze_layers": freeze_layers["none"],
-                            "augmentation": compose_augmentations(), "nrows": 95_951//10},
+        "q_fine_random": {"run_idx": 1001, **base_cfg1e5, "dataset": ds,
+                          "freeze_layers": freeze_layers["none"],
+                          "augmentation": compose_augmentations()},
 
-        "q_1e5": {"run_idx": 13372, **base_cfg1e5, "dataset": ds,
-                            "freeze_layers": freeze_layers["none"],
-                            "augmentation": compose_augmentations(), "nrows": 95_951//10},
+        "q_fine_hard": {"run_idx": 1002, **base_cfg1e5, "dataset": ds,
+                        "freeze_layers": freeze_layers["none"],
+                        "augmentation": compose_augmentations()},
 
-        "q_1e6": {"run_idx": 13373, **base_cfg1e6, "dataset": ds,
-                            "freeze_layers": freeze_layers["none"],
-                            "augmentation": compose_augmentations(), "nrows": 95_951//10},
     }
     #
 
