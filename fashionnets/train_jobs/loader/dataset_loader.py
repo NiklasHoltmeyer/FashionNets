@@ -210,7 +210,7 @@ def load_deepfashion_1(**settings):
     # back_bone
 
     dataframes = settings.get("dataframes", None)
-
+    print("load_deepfashion_1", 1)
     ds_loader = DeepFashion1Dataset(base_path=base_path,
                                     image_suffix="_256",
                                     model=model,
@@ -220,7 +220,7 @@ def load_deepfashion_1(**settings):
                                     embedding_path=embedding_base_path,
                                     batch_size=settings["batch_size"],
                                     skip_build=dataframes is not None)
-
+    print("load_deepfashion_1", 2)
     datasets = ds_loader.load(splits=["train", "val"],
                               is_triplet=settings["is_triplet"],
                               force=settings.get("ds_load_force", False),
@@ -228,15 +228,17 @@ def load_deepfashion_1(**settings):
                               embedding_path=embedding_base_path,
                               nrows=settings["nrows"],
                               dataframes=dataframes)
-
+    print("load_deepfashion_1", 3)
     train_ds_info, val_ds_info = datasets["train"], datasets["validation"]
 
     train_ds, val_ds = train_ds_info["dataset"], val_ds_info["dataset"]
 
     settings["_dataset"] = settings.pop("dataset")  # <- otherwise kwargs conflict 2x ds
+    print("load_deepfashion_1", 4)
     train_ds, val_ds = prepare_ds(train_ds, is_train=True, **settings), prepare_ds(val_ds, is_train=False, **settings)
+    print("load_deepfashion_1", 5)
     n_train, n_val = train_ds_info["n_items"], val_ds_info["n_items"]
-
+    print("load_deepfashion_1", 6)
     return {
         "type": "deepfashion_1",
         "train": train_ds,

@@ -100,7 +100,7 @@ def job_list(debugging):
 
         "q_fine_hard": {"run_idx": 1002, **base_cfg1e5, "dataset": ds,
                         "freeze_layers": freeze_layers["none"],
-                        "augmentation": compose_augmentations(), "sampling" : "hard"},
+                        "augmentation": compose_augmentations(), "sampling": "hard"},
 
     }
     #
