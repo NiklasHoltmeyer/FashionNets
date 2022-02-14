@@ -36,11 +36,11 @@ def prepare_history(history, **kwargs):
 
 def plot_history(histories, **kwargs):
     colors = kwargs.get("colors", list(reversed(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-                                                 '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22','#17becf'])))
+                                                 '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])))
     build_epochs = kwargs.get("build_epochs", [])
     build_epochs_symbol = kwargs.get("build_epochs_symbol", 'go')
-    #
-    label_mapping = kwargs.get("label_mapping",  {"loss": "Train","val_loss": "Validation"})
+    skip_metrics = kwargs.get("skip_metrics", [])
+    label_mapping = kwargs.get("label_mapping", {"loss": "Train", "val_loss": "Validation"})
 
     x_label = kwargs.get("x_label", "Epoche")
     y_label = kwargs.get("y_label", "Loss")
@@ -48,7 +48,7 @@ def plot_history(histories, **kwargs):
     bin_size = kwargs.get("bin_size", 5)
     save_path = kwargs.get("save_path", None)
     title = kwargs.get("title", None)
-
+    color_group = kwargs.get("color_group", False)
     linewidth = kwargs.get("linewidth", 2)
     markersize = kwargs.get("markersize", 12)
 
@@ -60,22 +60,33 @@ def plot_history(histories, **kwargs):
     max_x = 0
 
     for history, lbl in zip(histories, x_labels):
+        lines = []
         x_values, y_data = prepare_history(history, **kwargs)
 
         max_x = max(max_x, max(x_values))
-
-        for k, v in y_data.items():
+        if color_group:
             color = colors.pop()
 
+        for k, v in y_data.items():
+            if len(lines) < 1:
+                lines = ["-.", "--", "-", "--"] if color_group else ["-"]
+
+            if k in skip_metrics:
+                continue
+            if not color_group:
+                color = colors.pop()
+
             if lbl:
-                label = lbl
+                label = f"{lbl} ({label_mapping.get(k, k)})"
             else:
                 label = label_mapping.get(k, k)
-
-            plt.plot(x_values, v["values"], label=label, color=color)
-            plt.plot(v["min_idx"], v["min_value"], 'v', color=color, linewidth=linewidth, markersize=8)  #
+            line_style = lines.pop() if color_group else "-"
+            plt.plot(x_values, v["values"], label=label, color=color, linestyle=line_style)
+            plt.plot(v["min_idx"], v["min_value"], 'v', color=color, linewidth=linewidth, markersize=8,
+                     linestyle=line_style)  #
 
             for b_epoch in build_epochs:
+                print("1")
                 plt.plot(b_epoch, v["values"][b_epoch], build_epochs_symbol,
                          color=color, linewidth=linewidth, markersize=markersize)
 
@@ -90,9 +101,9 @@ def plot_history(histories, **kwargs):
     plt.xticks(x_ticks)
     plt.legend(loc=loc)
 
-#    xmax = kwargs.get("xmax", None)
-#    if xmax:
-#        xmax += 2
+    #    xmax = kwargs.get("xmax", None)
+    #    if xmax:
+    #        xmax += 2
 
     plt.ylim(ymin=kwargs.get("ymin", None), ymax=kwargs.get("ymax", None))
     plt.xlim(xmin=kwargs.get("xmin", None), xmax=None)
